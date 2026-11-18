@@ -1,0 +1,2 @@
+# Mitgelieferte Fremdbibliotheken (pdf.js, tus-js-client) NIE umwandeln (Zeilenenden): sonst stimmen die dokumentierten Pruefsummen nicht mehr.
+public/vendor/** -text

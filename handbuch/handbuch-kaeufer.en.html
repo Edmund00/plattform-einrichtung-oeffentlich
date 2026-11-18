@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Guide for Buyers</title>
+<!-- Kaeufer-Handbuch, English version (Uebersetzung 1:1 aus dem DE-Master handbuch-kaeufer.de.html; UI-Begriffe aus texte/en.json).
+     PDF bauen: node tools/handbuch-bauen.mjs --sprache=en (Bilder in bilder-en/ + PDF) oder zusaetzlich --nur-pdf.
+     Version, Stand und Software-Commit setzt das Bauskript ein (data-feld), ebenso die Seitenzahlen im Inhaltsverzeichnis (data-seite). -->
+<style>
+@font-face{font-family:'Jost';font-weight:300 700;src:url(../public/fonts/jost-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+2000-206F,U+20AC}
+@font-face{font-family:'Jost';font-weight:300 700;src:url(../public/fonts/jost-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA,U+1E00-1EFF}
+@font-face{font-family:'Cormorant Garamond';font-weight:400 700;src:url(../public/fonts/cormorant-garamond-normal-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+2000-206F,U+20AC}
+@font-face{font-family:'Cormorant Garamond';font-weight:400 700;src:url(../public/fonts/cormorant-garamond-normal-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA,U+1E00-1EFF}
+:root{--gold:#d4a843;--gold-d:#a87c2a;--gold-t:#7f5c1c;--ink:#211a0e;--soft:#7d7362;--line:#e7ddc9;--ivory:#faf6ee;--night:#0d0a05}
+@page{size:A4}
+*{box-sizing:border-box}
+html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{margin:0;font-family:'Jost',Arial,sans-serif;font-weight:400;font-size:10.5pt;line-height:1.55;color:var(--ink);background:#fff}
+h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;line-height:1.15;color:var(--ink)}
+h2.kapitel{font-size:25pt;margin:0 0 6mm;padding-bottom:3mm;border-bottom:2px solid var(--gold);break-before:page;break-after:avoid}
+h2.kapitel .nr{color:var(--gold-d);margin-right:1.8mm}
+h3{font-size:15pt;margin:7mm 0 2mm;break-after:avoid}
+p{margin:0 0 3mm;orphans:3;widows:3}
+ol,ul{margin:0 0 4mm;padding-left:6mm}
+/* kurze Listen (bis 8 Eintraege) nicht ueber den Seitenumbruch trennen; der einleitende Satz bleibt bei der Liste */
+ol:not(:has(> li:nth-child(9))),ul:not(:has(> li:nth-child(9))){break-inside:avoid}
+p:has(+ ol),p:has(+ ul){break-after:avoid}
+li{margin:0 0 1.5mm}
+strong{font-weight:600}
+.ui{font-weight:600;color:var(--gold-t)}
+figure{margin:4mm 0 6mm;break-inside:avoid;text-align:center}
+figure img{max-width:100%;max-height:100mm;width:auto;border:1px solid var(--line);border-radius:3mm;box-shadow:0 2mm 5mm -3mm rgba(33,26,14,.35)}
+figure img.schmal{max-width:62%}
+figure img.mittel{max-width:80%}
+figure img.hoch{max-height:215mm}
+figure img.lang{max-height:225mm}
+.zwei figure img{max-height:70mm}
+figcaption{font-size:8.5pt;color:var(--soft);margin-top:2mm}
+.hinweis{border-left:4px solid var(--gold);background:var(--ivory);padding:3mm 4mm;margin:4mm 0;border-radius:0 2mm 2mm 0;break-inside:avoid}
+.hinweis strong:first-child{display:block;margin-bottom:1mm}
+table{width:100%;border-collapse:collapse;margin:3mm 0 5mm;font-size:9.5pt;break-inside:auto}
+th,td{text-align:left;vertical-align:top;padding:2mm 3mm;border-bottom:1px solid var(--line)}
+th{background:var(--ivory);font-weight:600}
+tr{break-inside:avoid}
+table{break-inside:avoid}
+/* Deckblatt */
+.deckblatt{height:258mm;display:flex;flex-direction:column;justify-content:space-between;background:var(--night);color:#faf6ee;border-radius:4mm;padding:22mm 18mm}
+.deckblatt .marke{display:flex;align-items:center;gap:5mm;font-family:Arial,sans-serif;font-weight:700;font-size:18pt;max-width:100%;min-width:0}
+/* lange Markennamen: Logo schrumpft in der Breite (Seitenverhaeltnis bleibt), nichts wird rechts abgeschnitten */
+.deckblatt .marke img{display:block;height:24mm;width:auto;max-width:100%;min-width:0;object-fit:contain;object-position:left center}
+.deckblatt h1{color:#faf6ee;font-size:44pt;margin:0 0 6mm}
+.deckblatt .unter{color:#e8c777;font-size:15pt;margin:0}
+.deckblatt .linie{width:28mm;height:3px;background:var(--gold);margin:0 0 8mm}
+.deckblatt .stand{font-size:9pt;color:#b8ad94;line-height:1.7}
+/* Inhaltsverzeichnis */
+.inhalt{break-before:page}
+.inhalt h2{font-size:25pt;margin:0 0 8mm;padding-bottom:3mm;border-bottom:2px solid var(--gold)}
+.inhalt ol{list-style:none;padding:0}
+.inhalt li{margin:0 0 3mm;font-size:12pt}
+.inhalt a{display:flex;align-items:baseline;color:var(--ink);text-decoration:none}
+.inhalt a .nr{width:9mm;color:var(--gold-t);font-weight:600}
+.inhalt a .fueller{flex:1;border-bottom:1px dotted var(--soft);margin:0 2mm;transform:translateY(-1mm)}
+.inhalt a .s{min-width:8mm;text-align:right}
+.zwei{display:block}
+.zwei figure{flex:1}
+</style>
+</head>
+<body>
+<main>
+
+<section class="deckblatt">
+  <div class="marke"><img src="bilder-en/marke-logo-vertikal.svg" alt="Example Academy logo"></div>
+  <div>
+    <div class="linie"></div>
+    <h1>Guide for Buyers</h1>
+    <p class="unter">Find, buy and use courses – step by step</p>
+  </div>
+  <div class="stand">
+    Version <span data-feld="version">–</span> · As of <span data-feld="stand">–</span> · Software commit <span data-feld="commit">–</span><br>
+    This guide describes the course platform from the customer's point of view. The illustrations show the example platform “Example Academy” with fictitious courses and data.
+  </div>
+</section>
+
+<section class="inhalt">
+  <h2>Contents</h2>
+  <ol>
+    <li><a href="#k0"><span class="nr">★</span>Quick start in five steps<span class="fueller"></span><span class="s" data-seite="k0"></span></a></li>
+    <li><a href="#k1"><span class="nr">1</span>Overview<span class="fueller"></span><span class="s" data-seite="k1"></span></a></li>
+    <li><a href="#k2"><span class="nr">2</span>Registration and email confirmation<span class="fueller"></span><span class="s" data-seite="k2"></span></a></li>
+    <li><a href="#k3"><span class="nr">3</span>Signing in and password<span class="fueller"></span><span class="s" data-seite="k3"></span></a></li>
+    <li><a href="#k4"><span class="nr">4</span>Finding and choosing courses<span class="fueller"></span><span class="s" data-seite="k4"></span></a></li>
+    <li><a href="#k5"><span class="nr">5</span>Buying a course<span class="fueller"></span><span class="s" data-seite="k5"></span></a></li>
+    <li><a href="#k6"><span class="nr">6</span>Using courses and lessons<span class="fueller"></span><span class="s" data-seite="k6"></span></a></li>
+    <li><a href="#k7"><span class="nr">7</span>My account, orders and receipts<span class="fueller"></span><span class="s" data-seite="k7"></span></a></li>
+    <li><a href="#k8"><span class="nr">8</span>Managing and cancelling a subscription<span class="fueller"></span><span class="s" data-seite="k8"></span></a></li>
+    <li><a href="#k9"><span class="nr">9</span>Withdrawal and refund<span class="fueller"></span><span class="s" data-seite="k9"></span></a></li>
+    <li><a href="#k10"><span class="nr">10</span>Data protection and deleting your account<span class="fueller"></span><span class="s" data-seite="k10"></span></a></li>
+    <li><a href="#k11"><span class="nr">11</span>Help and contact<span class="fueller"></span><span class="s" data-seite="k11"></span></a></li>
+  </ol>
+</section>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k0"><span class="nr">★</span> Quick start in five steps</h2>
+<ol>
+  <li><strong>Create an account:</strong> Click <span class="ui">Register</span> at the top and enter your email address and a password (at least 8 characters). Tick the box for the terms (chapter 2).</li>
+  <li><strong>Confirm your email:</strong> Open the link in the confirmation email. Without a confirmed address, no purchase is possible (chapter 2).</li>
+  <li><strong>Choose a course:</strong> Open a course in the course list and read the description, lessons and price (chapter 4).</li>
+  <li><strong>Buy:</strong> Tick the consent box, click the buy button and pay on the Stripe payment page (chapter 5).</li>
+  <li><strong>Learn:</strong> You will find your courses under <span class="ui">My courses</span> (chapter 6). Help is available in chapter 11.</li>
+</ol>
+<div class="hinweis"><strong>Good to know</strong>Chapter 9 shows you how the platform processes a declaration of withdrawal and refunds. Your statutory consumer rights remain unaffected.</div>
+
+<h2 class="kapitel" id="k1"><span class="nr">1</span> Overview</h2>
+<p>On the course platform you buy online courses and use them directly in your browser. A course consists of lessons with text, video, PDF documents or audio. After the purchase you will find your courses under <span class="ui">My courses</span>, as long as you have access and are signed in.</p>
+<h3>What you need</h3>
+<ul>
+  <li>an up-to-date web browser (computer, tablet or smartphone),</li>
+  <li>your own email address that you can access,</li>
+  <li>for paid courses, a payment method offered on the payment page (for example a bank card).</li>
+</ul>
+<h3>The header</h3>
+<p>At the top of every page you will find the menu. As a guest you see <span class="ui">Courses</span>, <span class="ui">Sign in</span> and <span class="ui">Register</span>. After signing in, <span class="ui">My courses</span>, <span class="ui">My account</span> and <span class="ui">Sign out</span> appear.</p>
+<figure role="group"><img src="bilder-en/02-kopfzeile.png" alt="Platform header: the logo on the left, the menu items Courses, Sign in and Register on the right, followed by the language selection EN, DE and HU."><figcaption>Fig. 1 – Header with menu and language selection</figcaption></figure>
+<h3>Choosing the language</h3>
+<p>On the right of the header you choose the language: <span class="ui">EN</span> (English), <span class="ui">DE</span> (German) or <span class="ui">HU</span> (Hungarian). The platform remembers your choice in this browser and, if you are signed in, in your account. The page then reloads in the chosen language.</p>
+<div class="hinweis"><strong>Good to know</strong>The illustrations in this guide show example courses. Course names, prices and content on your platform may differ.</div>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k2"><span class="nr">2</span> Registration and email confirmation</h2>
+<p>To buy courses, you need an account. You can also view the course list and the course pages without an account.</p>
+<h3>Creating an account</h3>
+<ol>
+  <li>Click <span class="ui">Register</span> in the header.</li>
+  <li>Enter your <strong>email address</strong> and a <strong>password</strong> with at least 8 characters. With the eye icon in the password field you can briefly show the password.</li>
+  <li>Read the <strong>terms of participation</strong> and the <strong>privacy notice</strong> (links in the form) and tick the box. You must tick this box to register.</li>
+  <li>Click <span class="ui">Register</span>.</li>
+</ol>
+<figure role="group"><img class="mittel" src="bilder-en/05-registrierung.png" alt="Registration form with the fields email address and password, the checkbox for the terms of participation and the privacy policy, and the Register button."><figcaption>Fig. 2 – Registration form</figcaption></figure>
+<p>After registering you are signed in immediately. A notice at the top tells you that you still need to confirm your email address. If an account already exists for the address, the platform shows this and offers you the <span class="ui">Forgot your password?</span> link.</p>
+<figure role="group"><img src="bilder-en/06-nach-registrierung.png" alt="Page right after registration: a notice at the top says the email address still has to be confirmed, with a button to resend the confirmation email."><figcaption>Fig. 3 – After registration: notice about the email confirmation</figcaption></figure>
+<h3>Confirming your email address</h3>
+<p>You will receive an email with the button <span class="ui">Confirm my email address</span>. The link is valid for 24 hours and can only be used once.</p>
+<div class="zwei">
+  <figure role="group"><img src="bilder-en/07-mail-bestaetigung.png" alt="Confirmation email from the platform with a greeting, the button to confirm the email address and the note that the link is valid for 24 hours."><figcaption>Fig. 4 – Confirmation email</figcaption></figure>
+  <figure role="group"><img src="bilder-en/09-email-bestaetigt.png" alt="Message after clicking the confirmation link: the email address has been confirmed successfully."><figcaption>Fig. 5 – Confirmation successful</figcaption></figure>
+</div>
+<p>No email received? Check your spam folder. With the button <span class="ui">Resend confirmation email</span> in the notice at the top of the page you can request a new email. A new link replaces the old one.</p>
+<div class="hinweis"><strong>Important</strong>Without a confirmed email address you cannot buy a course, not even a free one. When you click the buy button, the notice “Confirm your email address to buy.” then appears.</div>
+<figure role="group"><img src="bilder-en/08-hinweis-bestaetigen.png" alt="Purchase box of a course showing the notice that you must confirm your email address before buying, after a purchase attempt without a confirmed address."><figcaption>Fig. 6 – Purchase attempt without a confirmed email address</figcaption></figure>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k3"><span class="nr">3</span> Signing in and password</h2>
+<h3>Signing in</h3>
+<ol>
+  <li>Click <span class="ui">Sign in</span>.</li>
+  <li>Enter your email address and password and click <span class="ui">Sign in</span>.</li>
+</ol>
+<figure role="group"><img class="mittel" src="bilder-en/10-anmeldung.png" alt="Login form with the fields email address and password, the Sign in button and the Forgot your password? link."><figcaption>Fig. 7 – Sign in</figcaption></figure>
+<p>If you were just about to buy or open a course, the platform takes you back there after signing in.</p>
+<ul>
+  <li><strong>Several devices:</strong> The number of simultaneous sign-ins is limited. If you sign in on another device, the oldest session may end. You then simply sign in again there.</li>
+  <li><strong>Too many failed attempts:</strong> After too many incorrect entries the platform temporarily blocks signing in (“Too many attempts. Please try again later.”). Then wait a little or reset your password.</li>
+  <li><strong>Signing out:</strong> Click <span class="ui">Sign out</span> in the header, especially on shared devices.</li>
+</ul>
+<h3>Forgot your password</h3>
+<ol>
+  <li>In the sign-in form, click <span class="ui">Forgot your password?</span></li>
+  <li>Enter your email address and click <span class="ui">Request link</span>. For security reasons the platform does not say whether an account exists for the address.</li>
+  <li>Open the link in the email. It is valid for <strong>30 minutes</strong> and can only be used once.</li>
+  <li>Enter the new password twice and click <span class="ui">Reset password</span>. Then sign in with the new password. All previous sign-ins are ended in the process.</li>
+</ol>
+<div class="zwei">
+  <figure role="group"><img src="bilder-en/11-passwort-vergessen.png" alt="Forgot password form: field for the email address and a button to request a reset link."><figcaption>Fig. 8 – Request link</figcaption></figure>
+  <figure role="group"><img src="bilder-en/13-passwort-neu.png" alt="Form for setting a new password: enter the new password twice and save it with the Reset password button."><figcaption>Fig. 9 – Set a new password</figcaption></figure>
+</div>
+<h3>Changing your password</h3>
+<p>When signed in, you change your password under <span class="ui">My account</span> → <span class="ui">Change password</span> (also linked under <span class="ui">My courses</span>): enter your current password, enter the new password twice, <span class="ui">Save password</span>.</p>
+<figure role="group"><img class="mittel" style="max-height:50mm" src="bilder-en/35-passwort-aendern.png" alt="Change password form in the account: fields for the current password and the new password twice, and the Save password button."><figcaption>Fig. 10 – Change password</figcaption></figure>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k4"><span class="nr">4</span> Finding and choosing courses</h2>
+<h3>The course list</h3>
+<p>The home page (<span class="ui">Courses</span>) shows all courses on offer with cover image, short description and price. Courses you already own are marked <span class="ui">Purchased</span> and can be opened directly with <span class="ui">Open</span>. With <span class="ui">View</span> you go to the course page.</p>
+<figure role="group"><img src="bilder-en/01-startseite.png" alt="Home page with the course list: course cards with cover image, short description and price, plus the View button and, for courses already bought, Open."><figcaption>Fig. 11 – Course list (home page)</figcaption></figure>
+<h3>The course page</h3>
+<p>On the course page you will find everything you need for your decision:</p>
+<ul>
+  <li>a cover image or a <strong>course trailer</strong> (if the provider has added one),</li>
+  <li>the <strong>description</strong> and the box <strong>Your provider</strong> with a contact address for questions before buying,</li>
+  <li><strong>What you will learn</strong>: the learning goals of the course,</li>
+  <li><strong>Lessons</strong>: all lessons with title, grouped into sections. Before the purchase they are marked <span class="ui">Available after purchase</span>,</li>
+  <li>on the right (on a smartphone below the trailer) the <strong>purchase box</strong> with price and buy button.</li>
+</ul>
+<figure role="group"><img class="hoch" src="bilder-en/03-kursseite.png" alt="Course page: on the left the cover image, description, provider, learning goals and the lessons marked as available after purchase; on the right the purchase box with price and buy button."><figcaption>Fig. 12 – Course page</figcaption></figure>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k5"><span class="nr">5</span> Buying a course</h2>
+<p>A course can be offered as a <strong>one-time purchase</strong>, as a <strong>subscription</strong> or <strong>free of charge</strong>. You can see what is offered in the purchase box. Requirement for every purchase: you are signed in and have confirmed your email address (see chapter 2).</p>
+<h3>Step 1: Give your consent</h3>
+<p>For paid courses the buy button is locked at first. First tick the box:</p>
+<p><em>“I expressly request that the service begins immediately, and I acknowledge that I lose my right of withdrawal once the content has been opened.”</em></p>
+<p>This is the wording the platform shows at this point. The legal consequences are explained in the provider's withdrawal information.</p>
+<p>Only then does <span class="ui">Buy now</span> (or <span class="ui">Subscribe</span>) become active. The platform stores the time of your consent. What this means for a later withdrawal is explained in chapter 9. Below the buy button, a link leads to the information on the right of withdrawal.</p>
+<div class="zwei">
+  <figure role="group"><img src="bilder-en/14-kaufkasten-vorher.png" alt="Purchase box with price, list of what you get and the unticked consent checkbox for immediate start; the Buy now button is greyed out and disabled."><figcaption>Fig. 13 – Buy button locked</figcaption></figure>
+  <figure role="group"><img src="bilder-en/15-kaufkasten-zustimmung.png" alt="The same purchase box with the consent checkbox ticked; the Buy now button is now active."><figcaption>Fig. 14 – Box ticked, buy button active</figcaption></figure>
+</div>
+<h3>Step 2: Paying</h3>
+<ol>
+  <li>Click <span class="ui">Buy now</span>. The message “Redirecting to payment …” appears.</li>
+  <li>You reach the secure payment page of the payment service provider <strong>Stripe</strong>. There you enter your payment details. The course platform does not see or store your card details.</li>
+  <li>A <strong>billing address</strong> must be entered on the payment page. Business customers can also enter a <strong>tax number</strong> (optional).</li>
+  <li>Confirm the payment. Stripe then takes you back to the course platform.</li>
+</ol>
+<div class="hinweis"><strong>Note</strong>The payment page is displayed by Stripe and is not shown in this guide. Which payment methods appear there depends on the provider's setup. You pay exactly the price in the currency shown on the course page.</div>
+<h3>Step 3: Confirmation</h3>
+<p>After you return, the platform shows “Thank you! We are checking the payment …”. Access is only granted once Stripe has confirmed the payment. This usually takes only seconds. As soon as the payment has been received, the button <span class="ui">Open</span> appears.</p>
+<div class="zwei">
+  <figure role="group"><img src="bilder-en/16-zahlung-wird-geprueft.png" alt="Course page after returning from the payment page, with the message that the payment is being checked."><figcaption>Fig. 15 – Payment is being checked</figcaption></figure>
+  <figure role="group"><img src="bilder-en/17-zahlung-eingegangen.png" alt="Course page after the payment has been confirmed: a notice that the payment was received and the Open button."><figcaption>Fig. 16 – Payment received</figcaption></figure>
+</div>
+<p>If the check takes longer, a notice appears asking you to look under <span class="ui">My courses</span> later. You do not need to pay again.</p>
+<p>In addition, you receive a <strong>purchase confirmation by email</strong> with the course, amount, date, order number, the provider's details, the time of your consent, a button to the course, a reference to the payment receipt and the withdrawal information.</p>
+<figure role="group"><img class="lang" src="bilder-en/18-mail-kauf.png" alt="Purchase confirmation email with course, amount, date, order number, provider details, time of consent, a button to the course and the withdrawal information."><figcaption>Fig. 17 – Purchase confirmation by email</figcaption></figure>
+<h3>Payment cancelled</h3>
+<p>If you cancel on the payment page, the platform shows “The payment was cancelled”. Whether a payment was recorded can be seen under <span class="ui">My orders</span>. Click <span class="ui">Back to the course</span> to try again.</p>
+<figure role="group"><img class="mittel" src="bilder-en/19-zahlung-abgebrochen.png" alt="Course page with the message that the payment was cancelled, the note that nothing was charged, and the Back to the course button."><figcaption>Fig. 18 – Payment cancelled</figcaption></figure>
+<h3>Taking out a subscription</h3>
+<p>If the provider also offers a course as a subscription, the purchase box additionally shows <span class="ui">Subscribe</span> with price and period (monthly or yearly). Here too the tick is mandatory. The subscription renews automatically until you cancel it (chapter 8). Only one subscription can run for a course at a time.</p>
+<h3>Free courses</h3>
+<p>Free courses show <span class="ui">Free access</span>. One click is enough: there is no payment page, the course is unlocked immediately. The provider can also unlock a course for you directly, free of charge. You then receive the email “Your access is now active”, and the course appears under <span class="ui">My courses</span>.</p>
+<div class="zwei">
+  <figure role="group"><img src="bilder-en/20-kaufkasten-abo.png" alt="Purchase box of a course offered both as a one-time purchase and as a subscription: one-time price, consent checkbox, the Buy now button and below it the Subscribe button with the monthly price."><figcaption>Fig. 19 – Purchase box with one-time purchase and subscription</figcaption></figure>
+  <figure role="group"><img src="bilder-en/21-kaufkasten-kostenlos.png" alt="Purchase box of a free course showing the price as free and the Free access button, which unlocks the course immediately without a payment page."><figcaption>Fig. 20 – Free course</figcaption></figure>
+</div>
+<div class="hinweis"><strong>Possible messages when buying</strong>“You already have access to this course.” – the course is already in your account. “A subscription for this course is already running.” – cancel the subscription first or contact the provider. “Sales are temporarily paused.” – the provider has briefly stopped new purchases; try again later.</div>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k6"><span class="nr">6</span> Using courses and lessons</h2>
+<h3>My courses</h3>
+<p>Under <span class="ui">My courses</span> you will find all courses you have access to, with the label <span class="ui">Access active</span>. For subscription courses, a second field shows the status of the subscription: <strong>Active</strong>, <strong>Cancelled</strong>, <strong>Payment pending</strong> or <strong>Ended</strong>. At the top you will find the buttons <span class="ui">Manage my subscription</span> and <span class="ui">Change password</span>.</p>
+<figure role="group"><img class="hoch" src="bilder-en/23-meine-kurse.png" alt="My courses page: purchased courses marked with active access, subscription courses with their subscription status, and at the top the buttons to manage the subscription and change the password."><figcaption>Fig. 21 – My courses</figcaption></figure>
+<h3>Course overview</h3>
+<p>With <span class="ui">Open</span> you go to the overview of the course. Each lesson shows its title and its type (text, video, PDF, audio). With <span class="ui">Open</span> you start the lesson.</p>
+<figure role="group"><img src="bilder-en/24-kursuebersicht.png" alt="Course overview after opening a course: lessons listed by section, each with title, type (text, video, PDF) and an Open button."><figcaption>Fig. 22 – Course overview with lessons</figcaption></figure>
+<h3>Lessons</h3>
+<p>At the end of each lesson, <span class="ui">Previous lesson</span> and <span class="ui">Next lesson</span> guide you through the course; <span class="ui">Back</span> takes you to the course overview.</p>
+<ul>
+  <li><strong>Text:</strong> The content appears directly on the page.</li>
+  <li><strong>Video and audio:</strong> Playback in the platform's player. Depending on the provider's setup, a video may also run via a connected video service.</li>
+  <li><strong>PDF:</strong> The document is shown in its own view. With the arrows you turn the pages, with <span class="ui">−</span> and <span class="ui">+</span> you zoom the view out and in.</li>
+</ul>
+<figure role="group"><img src="bilder-en/25-lektion-text.png" alt="First text lesson of a course with heading and lesson text, below it the Next lesson and Back buttons."><figcaption>Fig. 23 – Text lesson</figcaption></figure>
+<figure role="group"><img src="bilder-en/26-lektion-video.png" alt="Video lesson with an embedded video player; the buyer's email address is shown over the video as a watermark."><figcaption>Fig. 24 – Video lesson with overlaid email address</figcaption></figure>
+<figure role="group"><img src="bilder-en/27-lektion-pdf.png" alt="PDF lesson in the built-in document viewer with arrows for turning pages and the − and + buttons for zooming out and in."><figcaption>Fig. 25 – PDF lesson</figcaption></figure>
+<div class="hinweis"><strong>Protection of the content</strong>The content is intended for personal viewing only. Videos and PDFs can only be viewed on the platform; downloading is not intended. Exceptions are files that are expressly offered for download: for such products the lesson shows the button <span class="ui">Download PDF</span> (Fig. 26). It is only available with valid access. The platform places your email address over videos and PDFs as a watermark. Passing on and recording are not permitted.</div>
+<figure role="group"><img src="bilder-en/42-lektion-download.png" alt="Lesson with a file to download: lesson text and below it the Download PDF button."><figcaption>Fig. 26 – Lesson with a file for download</figcaption></figure>
+<p>If a file cannot be loaded at the moment, “The file could not be loaded right now. Please try again later.” appears. Reload the page after a short while.</p>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k7"><span class="nr">7</span> My account, orders and receipts</h2>
+<p>Under <span class="ui">My account</span> you will find your details, all orders and the settings for your account.</p>
+<figure role="group"><img src="bilder-en/28-konto-oben.png" alt="Top of the My account page with the account details and the start of the My orders list."><figcaption>Fig. 27 – My account</figcaption></figure>
+<h3>My orders</h3>
+<p>Each order shows order number, date, course, amount, type (<strong>One-time purchase</strong> or <strong>Subscription</strong>) and status:</p>
+<table>
+  <tr><th scope="col">Status</th><th scope="col">Meaning</th></tr>
+  <tr><td>Paid</td><td>The payment is confirmed, the course is unlocked.</td></tr>
+  <tr><td>Under review</td><td>The payment process is still being checked. Until then the course is not unlocked.</td></tr>
+  <tr><td>Refunded</td><td>The amount has been refunded in full. Access from this purchase has ended.</td></tr>
+  <tr><td>Cancelled for period end</td><td>The subscription is cancelled and ends with the paid period.</td></tr>
+</table>
+<p>Depending on the order, these buttons are available:</p>
+<ul>
+  <li><span class="ui">Open</span> – to the course,</li>
+  <li><span class="ui">Payment receipt</span> – opens the payment receipt in a new window at the payment service provider Stripe. There you can view and save it. The payment receipt is not an invoice,</li>
+  <li><span class="ui">Withdrawal from the contract</span> – see chapter 9,</li>
+  <li>for subscriptions, <span class="ui">Cancel subscription</span> and <span class="ui">Manage my subscription</span> – see chapter 8.</li>
+</ul>
+<figure role="group"><img src="bilder-en/29-bestellung-einmal.png" alt="A one-time purchase order with order number, date, course, amount, type and the status Paid, and the Open, Payment receipt and Withdrawal from the contract buttons."><figcaption>Fig. 28 – Order (one-time purchase)</figcaption></figure>
+<h3>Changing your email address</h3>
+<ol>
+  <li>Under <span class="ui">Change email address</span>, enter the new address and your current password.</li>
+  <li>Click <span class="ui">Send confirmation email</span>. The confirmation goes to the <strong>new</strong> address; the link is valid for 24 hours.</li>
+  <li>Open the link. From then on the new address applies and you sign in again. The old address receives a security notification.</li>
+</ol>
+<figure role="group"><img src="bilder-en/33-konto-email-aendern.png" alt="Change email address form with fields for the new address and the current password and the button to send the confirmation email."><figcaption>Fig. 29 – Change email address</figcaption></figure>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k8"><span class="nr">8</span> Managing and cancelling a subscription</h2>
+<p>If you have a course on subscription, it is listed under <span class="ui">My account</span> → <span class="ui">My orders</span> with the type <strong>Subscription</strong>.</p>
+<figure role="group"><img src="bilder-en/30-bestellung-abo.png" alt="Order with a running subscription under My orders: type Subscription, status Paid and the Open, Payment receipt, Withdrawal from the contract, Cancel subscription and Manage my subscription buttons."><figcaption>Fig. 30 – Order with a running subscription</figcaption></figure>
+<h3>Cancelling a subscription</h3>
+<ol>
+  <li>Click <span class="ui">Cancel subscription</span> on the subscription order. (Under <span class="ui">My courses</span>, the link <span class="ui">Cancel subscription</span> also leads here.)</li>
+  <li>You reach the Stripe customer portal and confirm the cancellation there.</li>
+  <li>You then return to <span class="ui">My account</span> and see “The cancellation of your subscription has been recorded.”</li>
+</ol>
+<p>After the cancellation, the order shows “Cancelled. Your access lasts until: …”. You can continue to use the course until the end of the period already paid for; after that the subscription no longer renews; any outstanding payment obligations remain unaffected.</p>
+<h3>Manage my subscription</h3>
+<p>The button <span class="ui">Manage my subscription</span> opens the Stripe customer portal. Which options are offered there (for example changing the payment method or viewing invoices) depends on the provider's setup. The customer portal and the cancellation page are displayed by Stripe and are not shown here.</p>
+<div class="hinweis"><strong>Payment pending</strong>If a subscription payment could not be collected, <span class="ui">My courses</span> shows “Payment pending”. Then check your payment method in the customer portal.</div>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k9"><span class="nr">9</span> Withdrawal and refund</h2>
+<p>This chapter describes how the platform technically processes a declaration of withdrawal. It is not legal advice. The provider's withdrawal information and terms of participation are authoritative (links in the footer and in the purchase confirmation). Your statutory consumer rights remain unaffected.</p>
+<h3>Declaring withdrawal</h3>
+<ol>
+  <li>Open <span class="ui">My account</span> and find the order under <span class="ui">My orders</span>.</li>
+  <li>Click <span class="ui">Withdrawal from the contract</span>. The platform shows the course, amount and order date.</li>
+  <li>Click <span class="ui">Continue to confirmation</span>.</li>
+  <li>Confirm the declaration “I hereby declare that I withdraw from the contract identified above.” with <span class="ui">Confirm withdrawal</span>.</li>
+</ol>
+<div class="zwei">
+  <figure role="group"><img src="bilder-en/37-widerruf-schritt1.png" alt="Withdrawal step 1: the platform shows the course, amount and order date and the button to continue to confirmation."><figcaption>Fig. 31 – Step 1</figcaption></figure>
+  <figure role="group"><img src="bilder-en/38-widerruf-schritt2.png" alt="Withdrawal step 2: the declaration of withdrawal from the contract named above and the button to confirm the withdrawal."><figcaption>Fig. 32 – Step 2: confirmation</figcaption></figure>
+</div>
+<p>You will also find the link <span class="ui">Withdrawal from the contract</span> in the footer of every page and in the purchase confirmation. You can also declare the withdrawal to the provider by email.</p>
+<h3>What the platform does next</h3>
+<p>The platform records your declaration with date and time and checks it automatically:</p>
+<table>
+  <tr><th scope="col">Check</th><th scope="col">Result</th></tr>
+  <tr><td>Is the order within the withdrawal period? (default setting of the software: 14 days from the order)</td><td>By default the platform checks a period of 14 days. If the declaration is rejected automatically, you can contact the provider to have your statutory rights examined.</td></tr>
+  <tr><td>Did you agree to immediate provision when buying (tick box) <strong>and</strong> then open a lesson of the course?</td><td>Then the platform automatically rejects the withdrawal according to its stored rules.</td></tr>
+  <tr><td>Subscription</td><td>An automatic withdrawal is only possible for the first payment of a subscription.</td></tr>
+  <tr><td>All conditions met</td><td>The platform automatically arranges the full refund via Stripe to the same means of payment. Access to the course ends; a subscription is ended.</td></tr>
+</table>
+<p><strong>Important:</strong> The table describes how the platform decides on the basis of the stored rules. Statutory claims may exist independently of this. Information on the contract terms can be found in the provider's withdrawal information and terms of participation. Your statutory consumer rights remain unaffected.</p>
+<p>You see the result immediately at the top of the page and on the order. You also receive an email. Depending on your bank, the credit may take a few days.</p>
+<figure role="group"><img src="bilder-en/39-widerruf-meldung.png" alt="Message at the top of the page after the withdrawal: the withdrawal has been recorded and the refund is being processed."><figcaption>Fig. 33 – Withdrawal recorded, refund in progress</figcaption></figure>
+<figure role="group"><img src="bilder-en/40-bestellung-nach-widerruf.png" alt="The same order after the withdrawal: status Refunded and the note Withdrawal recorded; the buttons, including the withdrawal button, are no longer shown."><figcaption>Fig. 34 – Order after the withdrawal</figcaption></figure>
+<div class="hinweis"><strong>In case of a rejection or an error</strong>The platform states the reason and refers you to customer service. If a refund could not be carried out for technical reasons, the withdrawal is still recorded and the provider is notified. You do not need to send a declaration again.</div>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k10"><span class="nr">10</span> Data protection and deleting your account</h2>
+<h3>Request my data</h3>
+<p>Under <span class="ui">My account</span> → <span class="ui">Request my data</span>, use <span class="ui">Download data</span> to download a file (JSON) with your personal data stored by the platform: account details, orders, access rights, consents and declarations of withdrawal.</p>
+<figure role="group"><img src="bilder-en/32-konto-daten-anfordern.png" alt="Request my data section in the account with a short explanation and the Download data button."><figcaption>Fig. 35 – Request my data</figcaption></figure>
+<h3>Delete account</h3>
+<ol>
+  <li>Under <span class="ui">Delete account</span>, enter your current password.</li>
+  <li>Click <span class="ui">Delete my account permanently</span> and confirm the follow-up question.</li>
+</ol>
+<figure role="group"><img src="bilder-en/34-konto-loeschen.png" alt="Delete account section with a warning, a field for the current password and the button to delete the account permanently."><figcaption>Fig. 36 – Delete account</figcaption></figure>
+<ul>
+  <li>The deletion is <strong>permanent</strong>. Your access to all courses ends and you are signed out.</li>
+  <li>Certain order and billing data may be retained due to statutory retention obligations. Details can be found in the provider's privacy notice.</li>
+  <li>If a subscription is still running, deletion is not possible (“Please cancel your subscription first.”). After the cancellation you can delete the account.</li>
+</ul>
+<p>Which data is processed for which purpose is set out in the provider's <strong>privacy notice</strong> (link in the footer).</p>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k11"><span class="nr">11</span> Help and contact</h2>
+<h3>How to reach the provider</h3>
+<ul>
+  <li><strong>Before buying:</strong> the box <strong>Your provider</strong> on every course page shows an email address for questions.</li>
+  <li><strong>After buying:</strong> the purchase confirmation gives the address for questions under “Good to know”.</li>
+  <li><strong>Legal information:</strong> In the footer of every page you will find <span class="ui">Legal notice</span>, <span class="ui">Privacy</span>, <span class="ui">Terms of participation</span>, <span class="ui">Withdrawal from the contract</span> and the <span class="ui">Withdrawal information</span>.</li>
+</ul>
+<figure role="group"><img src="bilder-en/41-fusszeile.png" alt="Footer of every page with the logo and the links Legal notice, Privacy, Terms of participation, Withdrawal from the contract and Withdrawal information."><figcaption>Fig. 37 – Footer with legal information</figcaption></figure>
+<h3>Frequent messages</h3>
+<table>
+  <tr><th scope="col">Message</th><th scope="col">What you can do</th></tr>
+  <tr><td>No purchase confirmation received by email or course not unlocked</td><td>Check your spam folder and check the status of the order under “My orders”. Do not start a second purchase. If the course remains locked, write to the email address in the box “Your provider” and include your order number.</td></tr>
+  <tr><td>Confirm your email address to buy.</td><td>Open the link in the confirmation email or request a new email (chapter 2).</td></tr>
+  <tr><td>Too many attempts. Please try again later.</td><td>Wait a little; if you have forgotten your password, request the link (chapter 3).</td></tr>
+  <tr><td>We are still checking the payment …</td><td>Look under “My courses” later. Do not pay again.</td></tr>
+  <tr><td>The payment was cancelled</td><td>Check under “My orders” whether a payment was recorded. If the payment status is unclear, do not start another purchase; if in doubt, contact the provider.</td></tr>
+  <tr><td>Sales are temporarily paused.</td><td>Try again later. Courses already bought remain usable.</td></tr>
+  <tr><td>The file could not be loaded right now.</td><td>Reload the page after a short while.</td></tr>
+  <tr><td>Could not connect to the server.</td><td>Check your internet connection and try again.</td></tr>
+  <tr><td>The link is invalid or has expired.</td><td>Request a new link (confirmation: valid for 24 hours, password: valid for 30 minutes).</td></tr>
+</table>
+
+</main>
+</body>
+</html>

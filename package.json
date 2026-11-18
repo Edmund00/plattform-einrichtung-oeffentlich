@@ -1,0 +1,14 @@
+﻿{
+  "name": "stripe-lern-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Kleine Uebungs-App: Stripe Checkout, Abo, Webhook, Kundenportal (nur Testmodus)",
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs"
+  },
+  "dependencies": {
+    "express": "5.1.0",
+    "stripe": "18.1.0"
+  }
+}

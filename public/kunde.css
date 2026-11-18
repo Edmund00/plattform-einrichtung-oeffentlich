@@ -1,0 +1,367 @@
+/* Kundenseiten: lokale Schriften und Farben (Palette stammt aus einem frueheren Design-Paket, siehe Abschlussbericht B9). */
+:root{
+ --s2-planen:linear-gradient(135deg,var(--night),var(--gold-m));
+ --s2-video:linear-gradient(35deg,var(--black),var(--text-second));
+ --s2-plattform:linear-gradient(155deg,var(--gold-m),var(--night));
+ --hero-overlay:rgba(0,0,0,.8);
+ --black:#070503;--night:#0d0a05;--gold:#d4a843;--gold-m:#8e702d;--gold-d:#8a6d2c;--gold-l:#e3c685;
+ --ivory:#faf6ee;--ink:#1a1a1a;--line:#dcd8d1;--soft:#7d7362;--white:#fff;
+ --text-second:#52514f;--text-on-dark:#ffffff;--footer-text:#cfcecd;
+ --ok-bg:#eef7ee;--ok-border:#bcd9bc;--ok-text:#2e6b2e;
+ --err-bg:#fbeeee;--err-border:#e3bcbc;--err-text:#8b2f2f;--err-strong:#c0392b;
+ --font-body:'Jost',sans-serif;--font-head:'Cormorant Garamond',serif;
+ --grad:linear-gradient(100deg,var(--gold),var(--gold-m));
+ --shadow:0 24px 50px -30px rgba(20,14,8,.45);
+ --gold-glow:0 14px 28px -12px rgba(212,168,67,.55);
+ --dark-gradient:linear-gradient(180deg,var(--night),var(--black));
+ --gold-border:rgba(212,168,67,.25);--gold-overlay:rgba(212,168,67,.3);
+ --shade:rgba(33,26,14,.35);
+ /* A10-02: Fokusring mind. 3:1 auf allen Seitenflaechen (WCAG 1.4.11): #8a6420 auf Weiss 5,35, Elfenbein 4,96, Schwarz 3,92, Nacht #0d0a05 3,69 */
+ --focus:#8a6d2c;--knopf-text:#000000;
+ --watermark-fg:rgba(255,255,255,.12);--watermark-dark:rgba(0,0,0,.14);--check-gold:#9a7b2f;--demo-text:#7a5b00;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;min-width:0;background:var(--ivory);color:var(--ink);font-family:var(--font-body);font-size:17px;font-weight:300;line-height:1.7}
+img,video,canvas{max-width:100%}
+button,input,select,textarea{font-family:var(--font-body)}
+#app{width:100%;min-width:0;min-height:100vh}
+h1,h2,h3{font-family:var(--font-head);font-weight:500;line-height:1.15}
+h1{font-size:clamp(34px,5vw,56px);margin:0}
+h2{font-size:clamp(29px,3.4vw,42px);margin:0 0 16px}
+h3{font-size:24px;font-weight:600;margin:14px 0 8px}
+p{margin:0 0 16px}
+a{color:var(--ink)}
+a:hover{color:var(--ink)}
+::selection{background:var(--gold);color:var(--knopf-text)}
+a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+[hidden]{display:none!important}
+.oldal-main{min-height:50vh;padding:0 22px 86px}
+.oldal-main>*{min-width:0}
+.oldal-main>.hero{margin:0 -22px 86px}
+.oldal-main>.szakasz,.oldal-main>.kurzus-racs,.oldal-main>.karte,.oldal-main>.formular-kartya,.oldal-main>.lecke-nezet,.oldal-main>.tananyag-fej,.oldal-main>.lecke-linkek,.oldal-main>.liste,.oldal-main>h1,.oldal-main>h2,.oldal-main>.meldung,.oldal-main>.knopf,.oldal-main>.pdf-leser{max-width:1060px;margin-left:auto;margin-right:auto}
+.oldal-main>.meldung{margin-top:18px}
+.oldal-main>.szakasz{padding-top:0}
+.oldal-main>.formular-kartya{margin-top:86px}
+.kopf{position:sticky;top:0;z-index:50;background:var(--white);border-bottom:1px solid var(--line)}
+.kopf-belso{max-width:1060px;margin:0 auto;min-height:70px;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:0 22px}
+.kopf-rechts{display:flex;align-items:center;min-width:0}
+.marka{display:inline-flex;align-items:center;min-width:0;flex-shrink:0;max-width:min(100%,400px)}
+.marka img{height:44px;width:auto;max-width:min(100%,400px);object-fit:contain}
+.menue{display:flex;justify-content:flex-end;align-items:center;gap:20px;min-width:0}
+.menue a,.menue button{border:0;background:none;padding:8px 0;min-height:44px;color:var(--ink);text-decoration:none;font-family:var(--font-body);font-size:12.5px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;white-space:nowrap;cursor:pointer}
+.menue a:hover,.menue button:hover{color:var(--ink);text-decoration:underline;text-decoration-color:var(--gold-d)}
+.hero{background:var(--black);color:var(--text-on-dark);text-align:center;padding:86px 22px}
+.hero-belso{max-width:1060px;margin:0 auto}
+.hero-logo{display:block;width:min(420px,72vw);height:auto;max-height:160px;object-fit:contain;margin:0 auto 16px}
+.hero h1{max-width:21ch;margin:0 auto;color:var(--text-on-dark)}
+.hero .lead{max-width:54ch;margin:24px auto 0;color:var(--text-on-dark);font-size:18px}
+.hero-banner{position:relative;isolation:isolate;min-height:360px;display:grid;place-items:center}
+.hero-banner-bild{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-1}
+.hero-banner .hero-belso{background:var(--hero-overlay);color:var(--text-on-dark);padding:24px;max-width:min(1060px,100%);min-width:0;overflow-wrap:anywhere}
+.hero-banner h1,.hero-banner .lead{color:var(--text-on-dark)}
+@media(max-width:600px){.hero-banner{padding:40px 16px;min-height:300px}.hero-banner .hero-belso{padding:20px 12px}.hero-banner h1{font-size:clamp(26px,8vw,40px)}}
+.hero-kurs{background:var(--night);text-align:left}
+.hero-kurs h1{margin:0;max-width:24ch}
+.hero-kurs .lead{margin:22px 0 0}
+.kurzus-racs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;align-items:stretch}
+.karte{background:var(--white);border:1px solid var(--line);border-radius:18px;padding:28px;margin:0 0 18px;min-width:0;overflow-wrap:break-word;hyphens:manual;transition:border-color .2s,transform .2s,box-shadow .2s}
+.karte:hover{border-color:var(--line)}
+.kurzus-kartya:focus-within{border-color:var(--gold)}
+.kurzus-kartya{display:flex;flex-direction:column;gap:8px;margin:0}
+.kurzus-kartya h2,.kurzus-kartya h3{font-size:24px;font-weight:600;margin:0}
+.kurzus-kartya .szoveg{font-size:15.5px;color:var(--text-second);flex:1}
+.kurzus-kartya .ar,.kurzus-kartya .plakette{margin-top:auto}
+.kurzus-kartya .plakette{align-self:flex-start}
+.klein,.hinweis{font-size:14px;color:var(--text-second)}
+p.klein > a{display:inline-block;padding:12px 6px;margin:-12px -2px}
+.szoveg{white-space:pre-wrap;overflow-wrap:break-word;hyphens:manual}
+.zeile{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.ar{font-family:var(--font-head);font-size:24px;font-weight:600;color:var(--ink)}
+.knopf{display:inline-flex;justify-content:center;align-items:center;gap:8px;min-height:48px;padding:13px 24px;border:1px solid transparent;border-radius:40px;background:var(--grad);color:var(--knopf-text);text-decoration:none;text-align:center;font-family:var(--font-body);font-size:13px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;cursor:pointer;transition:transform .2s,box-shadow .2s,border-color .2s;overflow-wrap:anywhere}
+.knopf:hover{transform:translateY(-2px);box-shadow:var(--gold-glow);color:var(--knopf-text)}
+.knopf.hell,.knopf.ghost{background:transparent;color:var(--ink);border:1px solid var(--gold-d)}
+.knopf.hell:hover,.knopf.ghost:hover{background:var(--ivory);color:var(--ink)}
+.knopf.gross{width:100%;min-height:58px;margin:8px 0 12px}
+.knopf.klein{min-height:44px;padding:8px 16px;font-size:11.5px}
+.knopf.gruen{background:var(--grad);color:var(--knopf-text)}
+.knopf:disabled{opacity:.55;cursor:not-allowed;transform:none;box-shadow:none}
+.kurs-layout{max-width:1060px;margin:0 auto 86px;display:grid;grid-template-columns:minmax(0,1fr) 360px;grid-template-areas:'lektionen preis';gap:40px;align-items:start}
+.kurs-lektionen{grid-area:lektionen;min-width:0}
+.preis-kasten{grid-area:preis;width:100%;max-width:none;background:var(--white);border:1px solid var(--line);border-radius:18px;padding:28px;margin:0;position:sticky;top:90px;min-width:0}
+.preis-kasten .knopf{display:flex;width:100%}
+.lektions-gruppen{min-width:0}
+.kurs-lektionen-liste{list-style:none;margin:0 0 20px;padding:0;gap:10px}
+.kurs-lektionen-liste .lektion-eintrag{display:block;list-style:none;padding:0;border-radius:14px;overflow:hidden}
+.lektions-link,.lektions-inhalt{display:flex;align-items:center;gap:12px;min-width:0;padding:16px 20px;color:var(--ink);text-decoration:none}
+.lektion-nummer{flex:0 0 32px;width:32px;font-family:var(--font-head);font-size:22px;font-weight:600;color:var(--gold-d)}
+.lektion-titel{flex:1 1 auto;min-width:0;overflow-wrap:break-word;hyphens:manual}
+.lektion-eintrag .plakette{flex-shrink:0;margin-left:16px}
+.lektion-eintrag.gesperrt{opacity:.75}
+.lektion-eintrag.waehlbar{transition:border-color .2s,transform .2s}
+.lektion-eintrag.waehlbar:hover,.lektion-eintrag.waehlbar:focus-within{border-color:var(--gold);transform:translateY(-2px)}
+.lektion-eintrag.waehlbar .lektions-link:focus-visible{outline:3px solid var(--focus);outline-offset:-3px}
+.liste{list-style:none;margin:22px 0;padding:0;display:grid;gap:12px}
+.liste li,.lecke-kartya{background:var(--white);border:1px solid var(--line);border-radius:18px;padding:16px 20px;overflow-wrap:anywhere}
+.lecke-kartya:focus-within{border-color:var(--gold)}
+.plakette{display:inline-flex;align-items:center;max-width:100%;padding:4px 12px;border:1px solid var(--gold);border-radius:30px;font-size:10.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ink)}
+.plakette.ok{background:var(--ok-bg);border-color:var(--ok-border);color:var(--ok-text)}
+.plakette.offen{background:var(--err-bg);border-color:var(--err-border);color:var(--err-text)}
+.feld{display:block;margin:0 0 18px}
+.beschriftung{display:block;margin:0 0 6px;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;color:var(--ink)}
+input,textarea,select{width:100%;min-height:48px;padding:13px 15px;border:1px solid var(--line);border-radius:12px;background:var(--ivory);color:var(--ink);font:400 15px var(--font-body);transition:border-color .2s}
+input:focus,textarea:focus,select:focus{border-color:var(--gold)}
+.formular-kartya{max-width:480px;margin:0 auto;padding:36px}
+.formular-kartya .knopf{width:100%}
+.meldung{position:relative;z-index:5;margin:0 0 18px;border-radius:12px}
+.meldung.ok{padding:14px 18px;background:var(--ok-bg);color:var(--ok-text);border:1px solid var(--ok-border)}
+.meldung.rot{padding:14px 18px;background:var(--err-bg);color:var(--err-text);border:1px solid var(--err-border)}
+h1.fehlerseite{font:inherit;font-weight:500;margin:0 0 18px}
+.meldung:empty{display:none}
+.allapot-kartya{max-width:650px;margin:0 auto;border-left:3px solid var(--gold)}
+.szakasz{margin:0 0 86px}
+.szakasz h2{margin-bottom:18px}
+.tananyag-fej{padding:26px 0}
+.lecke-linkek{display:flex;flex-wrap:wrap;gap:12px;margin:20px 0}
+.lecke-nezet{min-width:0}
+.lecke-nezet .szoveg{margin:18px 0}
+.lecke-nezet.media-tartalom{background:var(--night);color:var(--text-on-dark);border:1px solid var(--gold-border);border-radius:18px;padding:22px}
+.lecke-nezet.media-tartalom .szoveg{color:var(--text-on-dark)}
+.lecke-nezet.media-tartalom h1,.lecke-nezet.media-tartalom h2,.lecke-nezet.media-tartalom h3{color:var(--text-on-dark)}
+.lecke-nezet.media-tartalom .klein{color:var(--text-on-dark)}
+.medium{display:block;width:100%;max-height:70vh;background:var(--black);border-radius:12px;margin:0 0 16px}
+video.medium{aspect-ratio:16/9}
+audio.medium{max-height:none;min-height:54px}
+.schutz-rahmen{position:relative;min-height:120px;overflow:hidden;background:var(--night);border-radius:12px}
+.schutz-rahmen.pdf-rahmen{min-height:0;overflow:visible}
+.schutz-rahmen .medium{margin:0}
+.bunny-player{display:block;width:100%;aspect-ratio:16/9;border:0;background:var(--black);border-radius:12px}
+.wasserzeichen{position:absolute;z-index:4;pointer-events:none;user-select:none;max-width:65%;color:var(--watermark-fg);font-size:clamp(10px,1.2vw,13px);font-weight:500;text-shadow:0 0 1px var(--watermark-dark),0 0 1px var(--watermark-fg);overflow-wrap:anywhere}
+.pdf-leser{width:100%;min-width:0;user-select:none;-webkit-user-select:none;color:var(--text-on-dark)}
+.pdf-werkzeuge{display:flex;align-items:center;justify-content:center;flex-wrap:nowrap;gap:6px;position:sticky;top:72px;z-index:3;background:var(--night);padding:6px;border:1px solid var(--gold-border);border-radius:40px;max-width:100%}
+.pdf-werkzeuge .knopf{min-height:44px;min-width:44px;width:44px;height:44px;padding:0;flex:0 0 44px;font-size:23px;letter-spacing:0;color:var(--gold-l);border-color:var(--gold);background:transparent}
+.pdf-werkzeuge .knopf:hover{color:var(--text-on-dark);background:var(--night)}
+.pdf-zaehler{flex:0 1 auto;min-width:0;font-size:14px;white-space:nowrap;text-align:center;color:var(--text-on-dark)}
+.pdf-seiten{display:flex;flex-direction:column;align-items:center;gap:18px;overflow-x:auto;padding:72px 0 16px;max-width:100%}
+.pdf-seite{position:relative;background:var(--white);max-width:none;box-shadow:var(--shadow)}
+.pdf-leinwand{display:block;user-select:none;-webkit-user-select:none;pointer-events:none}
+.fuss{background:var(--dark-gradient);border-top:1px solid var(--gold-border);color:var(--footer-text);text-align:center;padding:44px 22px 40px;font-size:13px}
+.fuss-inhalt{max-width:1060px;margin:0 auto}
+.fuss-logo{display:block;width:240px;max-width:100%;height:auto;max-height:100px;object-fit:contain;margin:0 auto 18px}
+.fuss-links{display:flex;justify-content:center;flex-wrap:wrap;gap:12px 24px}
+.fuss-links a{color:var(--footer-text);text-decoration:none}
+.fuss-links a:hover{color:var(--gold-l)}
+.fuss-copy{margin-top:20px}
+@media(max-width:899px){
+ .kurs-layout{grid-template-columns:minmax(0,1fr);grid-template-areas:'preis' 'lektionen';gap:30px;margin-bottom:56px}
+ .preis-kasten{position:static}
+}
+@media(max-width:900px){.kurzus-racs{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:559px){
+ .oldal-main{padding:0 22px 56px}
+ .oldal-main>.hero{margin:0 -22px 30px}
+ .oldal-main>.formular-kartya{margin-top:56px}
+ .hero{padding:30px 22px}
+ .hero-logo{max-height:150px;width:auto;max-width:min(420px,72vw);object-fit:contain;margin-bottom:8px}
+ .hero .lead{margin-top:12px}
+ .szakasz{margin-bottom:56px}
+ .kopf-belso{min-height:0;display:flex;flex-direction:column;gap:0;padding:6px 12px 0}
+ .marka{width:100%;height:42px;justify-content:center}
+ .marka img{height:36px;width:auto;max-width:100%;object-fit:contain}
+ .kopf-rechts{flex-direction:column;width:100%}
+ .sprachwahl{margin-left:0;justify-content:center;width:100%;padding-bottom:4px}
+ .menue{display:flex;width:100%;min-height:48px;justify-content:space-around;align-items:center;gap:0}
+ .menue a,.menue button{display:inline-flex;flex:0 1 auto;align-items:center;justify-content:center;min-width:0;min-height:44px;padding:8px 4px;font-size:12px;letter-spacing:.08em;white-space:nowrap}
+ .kurzus-racs{grid-template-columns:minmax(0,1fr)}
+ .karte{padding:22px}
+ .formular-kartya{padding:24px}
+ .kurs-layout{gap:24px}
+ .preis-kasten{padding:22px}
+ .lektion-eintrag .plakette{margin-left:40px}
+ .lektions-link,.lektions-inhalt{padding:16px 12px;gap:8px;flex-wrap:wrap}
+ .lektion-titel{flex:1 1 calc(100% - 48px);overflow-wrap:break-word}
+ .pdf-werkzeuge{top:101px;gap:3px;padding:4px;border-radius:40px}
+ .pdf-werkzeuge .knopf{padding:0;font-size:22px}
+ .pdf-zaehler{font-size:12px}
+ .lecke-nezet.media-tartalom{padding:12px}
+ .lecke-nezet.media-tartalom h1{margin-bottom:8px}
+ .lecke-nezet.media-tartalom .klein{margin-bottom:4px}
+ .pdf-seiten{padding-top:72px}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important}}
+@media print{.schutz-rahmen,.pdf-leser,.pdf-seiten,.pdf-leinwand{display:none!important}}
+
+/* Scheibe 13: Oeffentliche Werbe-Vorschau, ohne Aenderung des Medien-Schutzes. */
+.kurs-titelbild{width:100%;aspect-ratio:16/9;overflow:hidden;background:linear-gradient(135deg,var(--ivory),var(--gold-l));border:1px solid var(--line);border-radius:12px;display:grid;place-items:center;margin-bottom:14px}
+.kurs-titelbild img{display:block;width:100%;height:100%;object-fit:cover}
+.kurs-bild-platzhalter{font:600 clamp(24px,4vw,38px) var(--font-head);color:var(--ink);letter-spacing:.12em}
+.kurs-kauf-rechts{grid-area:preis;position:sticky;top:90px;min-width:0}
+.kurs-kauf-rechts .preis-kasten{position:static}
+.kurs-trailer{max-width:100%;margin:0 0 18px}
+.kurs-trailer h2{font-size:25px}
+.kurs-trailer-video{display:block;width:100%;height:auto;aspect-ratio:16/9;background:var(--night);border-radius:12px}
+.kurs-nutzen{background:var(--white);padding:22px;border:1px solid var(--line);border-radius:18px;margin:0 0 28px}
+.kurs-nutzen ul{margin:12px 0 0;padding-left:22px}
+.kurs-nutzen li{padding:4px 0;overflow-wrap:break-word;hyphens:manual}
+.formular-kartya .meldung[role="alert"]{display:flex;flex-direction:column;gap:8px}
+@media(max-width:899px){.kurs-kauf-rechts{position:static}}
+@media(max-width:559px){.kurs-trailer h2{font-size:24px}.kurs-nutzen{padding:18px}}
+
+/* Scheibe 14: E-Mail-Bestaetigung, responsiv. */
+.gratis-mail-hinweis{display:flex;flex-wrap:wrap;align-items:center;gap:var(--sp-3)}
+.email-hinweis{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px;padding:16px 22px;border:1px solid var(--gold-d);border-radius:14px;background:var(--ivory);margin:20px auto;max-width:1060px;color:var(--ink)}
+.email-hinweis strong{flex:1 1 240px}
+.email-hinweis .knopf{min-height:44px}
+@media(max-width:559px){.email-hinweis{padding:14px;gap:10px}.email-hinweis .knopf{width:100%}}
+
+/* Scheibe 16: Trailer und Preis immer vor der langen Beschreibung auf Mobilgeraeten. */
+.oldal-main>.hero-kurs{margin-bottom:28px}
+.kurs-layout{grid-template-areas:'trailer preis' 'beschreibung preis' 'lektionen preis';grid-template-columns:minmax(0,1fr) 360px;row-gap:20px}
+.kurs-layout>.kurs-trailer{grid-area:trailer;min-width:0;margin:0}
+.kurs-layout>.kurs-beschreibung{grid-area:beschreibung;min-width:0}
+.kurs-beschreibung-text{white-space:pre-line;overflow-wrap:break-word;hyphens:manual;line-height:1.8;margin:0 0 12px}
+.kurs-layout>.kurs-lektionen{grid-area:lektionen}
+.kurs-layout>.kurs-kauf-rechts{grid-area:preis}
+@media(max-width:899px){.kurs-layout{grid-template-columns:minmax(0,1fr);grid-template-areas:'trailer' 'preis' 'beschreibung' 'lektionen';gap:18px}.kurs-layout>.kurs-kauf-rechts{position:static}.kurs-layout>.kurs-trailer{width:100%}}
+@media(max-width:559px){.oldal-main>.hero-kurs{margin-bottom:18px}.hero-kurs{padding:28px 22px 20px}.kurs-layout{margin-top:0;gap:14px}.kurs-layout>.kurs-trailer{width:100%;margin-left:0}.kurs-trailer h2{margin:0 0 8px}.kurs-trailer-video{width:100%;aspect-ratio:16/9;object-fit:contain;border-radius:12px}.kurs-kauf-rechts .preis-kasten{padding:20px}}
+
+/* Scheibe 18: Kundenkonto – reine CSS-Regeln, ohne Inline-Stile. */
+.konto-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.konto-form>p,.konto-form>.knopf{grid-column:1/-1}
+.konto-form .feld{min-width:0}
+.konto-form input{max-width:100%;width:100%}
+.konto-bestellung{margin:0 0 14px}
+.konto-bestellung p{margin:5px 0}
+.konto-bestellung .knopf{margin:8px 10px 0 0}
+@media(max-width:559px){.konto-form{grid-template-columns:minmax(0,1fr)}}
+
+/* Scheibe 20: sichtbare, nicht versteckte Kündigung. */
+.abo-lemondas{background:var(--gold-d);color:var(--white);border:2px solid var(--gold-d);font-weight:600;margin:8px 10px 8px 0}
+.abo-lemondva{font-weight:600;color:var(--ink);border-left:3px solid var(--gold-d);padding-left:12px}
+.abo-link{display:inline-block;color:var(--gold-d);font-weight:600;margin:6px 0}
+
+/* Scheibe 22: Mustererklärung bleibt auch mobil gut lesbar. */
+.mailrecht-muster{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.75}
+
+/* Scheibe 30: Touch-Ziele ohne sichtbare Vergroesserung. */
+.fuss-links a{display:inline-flex;align-items:center;min-height:44px}
+.oldal-main a,.oldal-main button,.fuss a,.kopf button{min-height:44px}
+.oldal-main label:has(input[type=checkbox]){display:inline-flex;align-items:center;min-height:44px}
+.jelszo-rahmen{display:flex;align-items:stretch;min-width:0;width:100%;max-width:100%}
+.jelszo-rahmen input{flex:1 1 auto;min-width:0;width:1%}
+.jelszo-auge{flex:0 0 44px;min-width:44px;min-height:44px;border:1px solid var(--gold-d);border-radius:0 12px 12px 0;background:var(--ivory);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:6px;font-size:11px;line-height:1.2;text-align:center}
+.jelszo-knopf-text{overflow-wrap:anywhere}
+.jelszo-rahmen input{border-top-right-radius:0;border-bottom-right-radius:0}
+
+.jelszo-auge{position:relative}
+.jelszo-auge svg{display:block;flex-shrink:0}
+.jelszo-knopf-text{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.jelszo-auge [hidden]{display:none}
+
+/* Pruefrunde 3 (Agent G6) und Edmunds iPhone-Foto 01.11.2026: Die globale input-Regel (width:100%, min-height:48px) machte das Zustimmungs-Haekchen riesig und
+   quetschte den Text in eine schmale Spalte. Haekchen und Auswahlpunkte bekommen feste Groesse, der Text nimmt den Rest und bricht um. */
+input[type=checkbox],input[type=radio]{width:24px;height:24px;min-height:0;padding:0;margin:2px 0 0;flex:0 0 24px;accent-color:var(--gold)}
+.oldal-main label.ellallas-zustimmung:has(input[type=checkbox]){display:flex;align-items:flex-start;gap:12px;width:100%;max-width:100%;min-height:44px;text-align:left}
+.ellallas-zustimmung span{flex:1 1 auto;min-width:0;overflow-wrap:anywhere;line-height:1.5}
+
+.sprachwahl{display:flex;gap:2px;align-items:center;margin-left:14px}.sprachwahl button{border:1px solid transparent;background:none;min-height:44px;min-width:44px;padding:0 8px;color:var(--ink);font:600 12px var(--font-body);letter-spacing:.06em;cursor:pointer;border-radius:8px}.sprachwahl button:hover{text-decoration:underline}.sprachwahl button.aktiv{border-color:var(--gold-d);cursor:default}
+.kurs-bild-platzhalter{text-align:center;padding:0 14px;line-height:1.25;letter-spacing:.04em}
+.kaufbox-liste{margin:0 0 14px}
+.kaufbox-titel{font:600 15px var(--font-head);margin:0 0 6px}
+.kaufbox-liste ul{list-style:none;margin:0;padding:0}
+.kaufbox-liste li{padding:4px 0 4px 22px;position:relative;font-size:14px;line-height:1.4}
+.kaufbox-liste li::before{content:'';position:absolute;left:3px;top:8px;width:5px;height:10px;border:solid var(--check-gold);border-width:0 2px 2px 0;transform:rotate(45deg)}
+.kaufbox-demo{margin-top:8px;color:var(--demo-text)}
+.anbieter-block{margin:26px 0 0;padding:18px 22px;border:1px solid var(--line);border-left:4px solid var(--gold);border-radius:12px;background:var(--white)}.anbieter-block:empty{display:none}.anbieter-block h3{margin:0 0 8px}.anbieter-block p{margin:6px 0}
+.fuss-logo{width:190px}.kurs-beschreibung>.kurs-titelbild{margin:0 0 22px}
+
+/* B5: Kursliste: sauberer Umbruch (ganze Woerter, Silbentrennung), nichts abschneiden, Demo-Plakette auf jeder Karte */
+.kurzus-kartya h2{overflow-wrap:break-word;word-break:normal;hyphens:manual;line-height:1.25}
+.kurzus-kartya .szoveg{overflow-wrap:break-word;hyphens:manual}
+.kurzus-kartya .demo-plakette{align-self:flex-start;margin-top:0;font-size:11px}
+.kurs-bild-platzhalter{padding:10px 16px;text-align:center;line-height:1.25;font-size:clamp(18px,3.4vw,28px);letter-spacing:.04em;overflow-wrap:break-word;hyphens:manual;max-width:100%}
+/* B5: Widerrufs-Zustimmung mobil gegliedert und lesbar (Wortlaut unveraendert) */
+.ellallas-zustimmung{border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+@media(max-width:559px){.ellallas-zustimmung{gap:12px;align-items:flex-start}.ellallas-zustimmung span{font-size:14.5px;line-height:1.5;hyphens:manual}.ellallas-zustimmung input{flex:0 0 24px;width:24px;height:24px;margin-top:2px}}
+
+/* B9: Demo-Box */
+.demo-box{border:2px dashed var(--gold-d);background:var(--ivory)}
+.demo-box h2{margin-top:0}
+.demo-knoepfe{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px}
+.demo-knoepfe .knopf{flex:1 1 220px;min-height:48px}
+
+/* B9: festes Abstands-System (Variablen) fuer Raender, Abstaende und Karten; gilt fuer Desktop und Mobil */
+:root{--sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-5:24px;--sp-6:32px;--sp-7:48px;--radius-m:14px;--radius-l:18px}
+.karte{padding:var(--sp-5);margin:0 0 var(--sp-4);border-radius:var(--radius-l)}
+.kurzus-racs{gap:var(--sp-5)}
+.kurzus-kartya{gap:var(--sp-2)}
+.szakasz{margin-block:var(--sp-6)}
+.liste li,.lecke-kartya{padding:var(--sp-4) var(--sp-5)}
+@media(max-width:559px){.karte{padding:var(--sp-4)}.kurzus-racs{gap:var(--sp-4)}.szakasz{margin-block:var(--sp-5)}.liste li,.lecke-kartya{padding:var(--sp-3) var(--sp-4)}}
+
+/* Einrichtung E2/E3 */
+#app>.karte.einrichtung-karte{width:100%;max-width:520px;margin:0 auto 24px}
+#app .einrichtung-form{width:100%;max-width:none;margin-top:24px}
+#app .einrichtung-karte .einrichtung-form>h2{font-size:24px;margin:0 0 18px}
+#app .einrichtung-form .feld,#app .einrichtung-form input,#app .einrichtung-form .knopf{width:100%;max-width:none;min-width:0}
+.einrichtung-form .hinweis{margin:8px 0 0}
+
+/* K1: catalogue controls, usable at 375 px and with keyboard. */
+.k1-werkzeuge{display:flex;flex-wrap:wrap;align-items:end;gap:12px;margin-bottom:24px;min-width:0}
+.k1-werkzeuge[hidden]{display:none}
+.k1-feld{display:flex;flex-direction:column;gap:6px;min-width:0;max-width:100%;flex:1 1 190px;color:var(--ink)}
+.k1-feld input,.k1-feld select{width:100%;max-width:100%;min-width:0;min-height:44px;padding:8px;background:var(--white);color:var(--ink);border:1px solid var(--text-second)}
+.k1-werkzeuge .knopf,.k1-preis .knopf,.k1-seiten .knopf,.k1-kategorien .knopf{min-height:44px;white-space:normal;overflow-wrap:anywhere}
+.k1-preis,.k1-seiten{display:flex;flex-wrap:wrap;align-items:center;gap:8px;max-width:100%}
+.k1-preis [aria-pressed="true"]{background:var(--ink);color:var(--white)}
+.k1-werkzeuge :focus-visible,.k1-kategorien :focus-visible,.k1-seiten :focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+.k1-admin-katalog,.k1-kategorien{min-width:0;overflow-wrap:anywhere}
+.k1-kategorie-form{display:flex;flex-wrap:wrap;gap:12px;margin-top:20px}
+.k1-kategorie{padding-block:16px;border-bottom:1px solid var(--line)}
+
+/* S2: Text auf dunklen Musterflächen; Kennzeichen auf hellem Grund. */
+.s2-beispiele{margin-top:48px}
+.s2-cover{min-height:180px;padding:28px;display:flex;align-items:center;color:var(--white);background:var(--s2-planen);font-family:var(--font-head);font-size:30px;line-height:1.2;overflow-wrap:anywhere}
+.s2-video{background:var(--s2-video)}
+.s2-plattform{background:var(--s2-plattform)}
+.s2-kennzeichen{display:inline-block;color:var(--ink);background:var(--ivory);border:1px solid var(--line);padding:6px 12px;font-size:13px;font-weight:600;overflow-wrap:anywhere}
+.s2-karte,.s2-detail{min-width:0;overflow-wrap:anywhere}
+.s2-detail>p,.s2-detail>.s2-kennzeichen{margin-top:20px}
+
+.s2-karte h3{margin-bottom:var(--sp-3)}
+.s2-detail .karte,.s2-detail .preis-kasten{overflow-wrap:anywhere}
+.s2-karte .s2-kennzeichen{align-self:flex-start}
+h1 + p .s2-kennzeichen{margin-top:16px}
+/* K3: Kategorien in Kopf, Katalog und Fuss. */
+.menue{flex-wrap:wrap}
+.kopf-kategorien{position:relative;min-width:0;max-width:100%}
+.kopf-kategorien summary,.fuss-kategorien summary{min-height:44px;padding:10px 8px;cursor:pointer;overflow-wrap:anywhere}
+.kopf-kategorien summary{font-size:13px;color:var(--ink)}
+.kopf-kategorien ul,.fuss-kategorien ul,.k3-chips ul,.k3-liste,.k3-pfad{list-style:none;margin:0;padding:0}
+.kopf-kategorien ul{position:absolute;right:0;top:100%;width:290px;max-width:calc(100vw - 24px);max-height:60vh;overflow-y:auto;background:var(--white);border:1px solid var(--line);border-radius:var(--radius-m);padding:var(--sp-2);box-shadow:var(--shadow)}
+.menue .kopf-kategorien a{display:flex;align-items:center;min-height:44px;padding:8px;white-space:normal;text-transform:none;letter-spacing:normal;overflow-wrap:anywhere}
+.k3-chips{max-width:1060px;min-width:0;width:100%;margin:var(--sp-4) auto;padding:var(--sp-2) 0;overflow-x:auto}
+.k3-chips ul{display:flex;gap:var(--sp-2);width:max-content}
+.k3-chips a{display:flex;align-items:center;min-height:44px;padding:8px 16px;border:1px solid var(--line);border-radius:var(--radius-m);background:var(--white);color:var(--ink);text-decoration:none}
+.k3-chips a[aria-current=page]{background:var(--ink);color:var(--white);border-color:var(--ink)}
+.k3-chips a:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.fuss-kategorien{max-width:640px;margin:var(--sp-4) auto;color:var(--footer-text)}
+.fuss-kategorien ul{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--sp-2)}
+.fuss-kategorien a{display:flex;justify-content:center;align-items:center;min-height:44px;padding:8px;color:var(--footer-text);overflow-wrap:anywhere}
+.fuss-kategorien a:hover{color:var(--text-on-dark)}
+.fuss-kategorien :focus-visible{outline:3px solid var(--footer-text);outline-offset:2px}
+.k3-seite{min-width:0;overflow-wrap:anywhere}
+.k3-pfad{display:flex;flex-wrap:wrap;gap:var(--sp-2);margin-bottom:var(--sp-4)}
+.k3-pfad a{display:inline-flex;align-items:center;min-height:44px}
+.k3-suche{display:flex;flex-direction:column;max-width:480px;margin:var(--sp-5) 0}
+.k3-suche input{min-height:44px;min-width:0;width:100%}
+.k3-liste{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-3);margin:var(--sp-4) 0}
+.k3-liste a{display:flex;align-items:center;min-height:44px;padding:var(--sp-3);background:var(--white);border:1px solid var(--line);border-radius:var(--radius-m);overflow-wrap:anywhere}
+@media(max-width:767px){.menue{justify-content:center;column-gap:8px}.kopf-kategorien ul{position:fixed;top:auto;right:12px}.fuss-kategorien ul,.k3-liste{grid-template-columns:minmax(0,1fr)}}
+
+.k3-seite h1,.k3-seite :is(a,button,input),.k3-liste a{scroll-margin-top:160px}
+
+/* K3 N2: transparenter Rand folgt jeder Hintergrundfarbe. */
+.k3-chips{mask-image:linear-gradient(to right,var(--ink) calc(100% - 36px),transparent);-webkit-mask-image:linear-gradient(to right,var(--ink) calc(100% - 36px),transparent)}
+.k3-chips.k3-chips-ende{mask-image:none;-webkit-mask-image:none}
+h1[tabindex="-1"]:focus,h2[tabindex="-1"]:focus,h3[tabindex="-1"]:focus{outline:none}

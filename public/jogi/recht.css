@@ -1,0 +1,6 @@
+/* Rechtsseiten (Impressum, Datenschutz, Teilnahmebedingungen) der Musterplattform. Eigene Datei statt <style> im Kopf,
+   damit die strenge CSP (style-src 'self', ohne unsafe-inline) gilt und die Seiten trotzdem gestaltet sind (A5-02, 12.11.2026). */
+body{font:17px/1.65 system-ui,Segoe UI,Arial,sans-serif;max-width:760px;margin:30px auto;padding:0 20px;color:#101827}
+h1{font-size:28px}
+.demo{background:#fff3cd;border-left:4px solid #e5b86c;padding:10px 14px;margin:18px 0}
+a{color:#137c75}

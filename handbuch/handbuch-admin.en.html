@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Admin area manual</title>
+<!-- Englische Fassung des Admin-Handbuchs, 1:1 aus dem deutschen Master handbuch-admin.de.html uebersetzt (nichts hinzugefuegt, nichts weggelassen).
+     UI-Begriffe exakt aus texte/en.json. PDF bauen: node tools/handbuch-admin-bauen.mjs --sprache=en (Bilder + PDF) oder zusaetzlich --nur-pdf.
+     Bewusst NICHT enthalten (wie im Master): Einrichtung, Umgebungsvariablen, Schluessel, Zahlungs-/Video-/Mail-Dienste, technische Anbindung, Notfallzugang.
+     Version, Stand und Software-Commit setzt das Bauskript ein (data-feld), ebenso die Seitenzahlen im Inhaltsverzeichnis (data-seite). -->
+<style>
+@font-face{font-family:'Jost';font-weight:300 700;src:url(../public/fonts/jost-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+2000-206F,U+20AC}
+@font-face{font-family:'Jost';font-weight:300 700;src:url(../public/fonts/jost-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA,U+1E00-1EFF}
+@font-face{font-family:'Cormorant Garamond';font-weight:400 700;src:url(../public/fonts/cormorant-garamond-normal-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+2000-206F,U+20AC}
+@font-face{font-family:'Cormorant Garamond';font-weight:400 700;src:url(../public/fonts/cormorant-garamond-normal-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA,U+1E00-1EFF}
+:root{--gold:#d4a843;--gold-d:#a87c2a;--gold-t:#7f5c1c;--ink:#211a0e;--soft:#7d7362;--line:#e7ddc9;--ivory:#faf6ee;--night:#0d0a05}
+@page{size:A4}
+*{box-sizing:border-box}
+html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{margin:0;font-family:'Jost',Arial,sans-serif;font-weight:400;font-size:10.5pt;line-height:1.55;color:var(--ink);background:#fff}
+h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;line-height:1.15;color:var(--ink)}
+h2.kapitel{font-size:25pt;margin:0 0 6mm;padding-bottom:3mm;border-bottom:2px solid var(--gold);break-before:page;break-after:avoid}
+h2.kapitel .nr{color:var(--gold-d);margin-right:1.8mm}
+h3{font-size:15pt;margin:7mm 0 2mm;break-after:avoid}
+p{margin:0 0 3mm;orphans:3;widows:3}
+ol,ul{margin:0 0 4mm;padding-left:6mm}
+li{margin:0 0 1.5mm;orphans:2;widows:2}
+strong{font-weight:600}
+.ui{font-weight:600;color:var(--gold-t)}
+figure{margin:4mm 0 6mm;break-inside:avoid;text-align:center}
+figure img{max-width:100%;max-height:88mm;width:auto;border:1px solid var(--line);border-radius:3mm;box-shadow:0 2mm 5mm -3mm rgba(33,26,14,.35)}
+figure img.schmal{max-width:62%}
+figure img.mittel{max-width:80%}
+figure img.klein{max-height:55mm}
+figure img.hoch{max-height:215mm}
+figcaption{font-size:8.5pt;color:var(--soft);margin-top:2mm}
+.hinweis{border-left:4px solid var(--gold);background:var(--ivory);padding:3mm 4mm;margin:4mm 0;border-radius:0 2mm 2mm 0;break-inside:avoid}
+.hinweis strong:first-child{display:block;margin-bottom:1mm}
+.recht{border-left-color:#a33a2a}
+table{width:100%;border-collapse:collapse;margin:3mm 0 5mm;font-size:9.5pt}
+th,td{text-align:left;vertical-align:top;padding:2mm 3mm;border-bottom:1px solid var(--line)}
+th{background:var(--ivory);font-weight:600}
+tr{break-inside:avoid}
+.eng th,.eng td{padding:1.3mm 3mm}
+table{break-inside:avoid}
+table.lang{break-inside:auto}
+.deckblatt{height:258mm;display:flex;flex-direction:column;justify-content:space-between;gap:8mm;background:var(--night);color:#faf6ee;border-radius:4mm;padding:22mm 18mm;overflow:hidden}
+.deckblatt>*{min-width:0;max-width:100%}
+.deckblatt .marke img{display:block;width:auto;height:auto;max-height:24mm;max-width:100%}
+.deckblatt h1{color:#faf6ee;font-size:44pt;margin:0 0 6mm;overflow-wrap:break-word;hyphens:auto}
+.deckblatt .unter{color:#e8c777;font-size:15pt;margin:0;overflow-wrap:break-word}
+.deckblatt .linie{width:28mm;height:3px;background:var(--gold);margin:0 0 8mm}
+.deckblatt .stand{font-size:9pt;color:#b8ad94;line-height:1.7;overflow-wrap:anywhere}
+.inhalt{break-before:page}
+.inhalt h2{font-size:25pt;margin:0 0 8mm;padding-bottom:3mm;border-bottom:2px solid var(--gold)}
+.inhalt ol{list-style:none;padding:0}
+.inhalt li{margin:0 0 2.6mm;font-size:12pt}
+.inhalt a{display:flex;align-items:baseline;color:var(--ink);text-decoration:none}
+.inhalt a .nr{width:9mm;color:var(--gold-t);font-weight:600}
+.inhalt a .fueller{flex:1;border-bottom:1px dotted var(--soft);margin:0 2mm;transform:translateY(-1mm)}
+.inhalt a .s{min-width:8mm;text-align:right}
+</style>
+</head>
+<body>
+<main>
+
+<section class="deckblatt">
+  <div class="marke"><img src="bilder-admin-en/marke-logo-vertikal.svg" alt="Example Academy logo"></div>
+  <div>
+    <div class="linie"></div>
+    <h1>Admin area manual</h1>
+    <p class="unter">Managing courses, orders and access – for day-to-day operation</p>
+  </div>
+  <div class="stand">
+    Version <span data-feld="version">–</span> · Date <span data-feld="stand">–</span> · Software commit <span data-feld="commit">–</span><br>
+    This manual describes how to use the course platform from the operator’s point of view. Setup and technical details are covered in the separate installation manual.
+    Illustrations show example courses and example accounts with fictitious data.
+  </div>
+</section>
+
+<section class="inhalt">
+  <h2>Contents</h2>
+  <ol>
+    <li><a href="#k0"><span class="nr">★</span>Quick start in six steps<span class="fueller"></span><span class="s" data-seite="k0"></span></a></li>
+    <li><a href="#k1"><span class="nr">1</span>Signing in to the admin area<span class="fueller"></span><span class="s" data-seite="k1"></span></a></li>
+    <li><a href="#k2"><span class="nr">2</span>The overview<span class="fueller"></span><span class="s" data-seite="k2"></span></a></li>
+    <li><a href="#k3"><span class="nr">3</span>Creating and editing courses<span class="fueller"></span><span class="s" data-seite="k3"></span></a></li>
+    <li><a href="#k4"><span class="nr">4</span>Lessons and media<span class="fueller"></span><span class="s" data-seite="k4"></span></a></li>
+    <li><a href="#k5"><span class="nr">5</span>Publishing, archiving, deleting<span class="fueller"></span><span class="s" data-seite="k5"></span></a></li>
+    <li><a href="#k6"><span class="nr">6</span>Orders and access<span class="fueller"></span><span class="s" data-seite="k6"></span></a></li>
+    <li><a href="#k7"><span class="nr">7</span>Refunds and withdrawal<span class="fueller"></span><span class="s" data-seite="k7"></span></a></li>
+    <li><a href="#k8"><span class="nr">8</span>Customers and accounts<span class="fueller"></span><span class="s" data-seite="k8"></span></a></li>
+    <li><a href="#k9"><span class="nr">9</span>Events and logs<span class="fueller"></span><span class="s" data-seite="k9"></span></a></li>
+    <li><a href="#k10"><span class="nr">10</span>Pausing sales<span class="fueller"></span><span class="s" data-seite="k10"></span></a></li>
+    <li><a href="#k11"><span class="nr">11</span>Backup<span class="fueller"></span><span class="s" data-seite="k11"></span></a></li>
+    <li><a href="#k12"><span class="nr">12</span>A typical workflow<span class="fueller"></span><span class="s" data-seite="k12"></span></a></li>
+    <li><a href="#k13"><span class="nr">13</span>Effects of changes<span class="fueller"></span><span class="s" data-seite="k13"></span></a></li>
+    <li><a href="#k14"><span class="nr">14</span>Functions in the admin area<span class="fueller"></span><span class="s" data-seite="k14"></span></a></li>
+    <li><a href="#k15"><span class="nr">15</span>Help and common messages<span class="fueller"></span><span class="s" data-seite="k15"></span></a></li>
+  </ol>
+</section>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k0"><span class="nr">★</span> Quick start in six steps</h2>
+<ol>
+  <li><strong>Sign in:</strong> Open the admin address you received during setup and sign in with your admin account (chapter 1).</li>
+  <li><strong>Create a course:</strong> Click <span class="ui">New course</span>, enter title, description, currency and price, and click <span class="ui">Save</span>. The course is now a <strong>draft</strong> and invisible to customers (chapter 3).</li>
+  <li><strong>Add lessons:</strong> Under <span class="ui">Add a new lesson</span>, create text, video, PDF or audio lessons and upload the file if needed (chapter 4).</li>
+  <li><strong>Design the preview:</strong> Upload a cover image and enter the learning goals under <span class="ui">What you will learn</span> (chapter 3).</li>
+  <li><strong>Publish:</strong> Click <span class="ui">Done</span> and confirm with <span class="ui">Yes</span>. From now on the course is visible to everyone and can be bought (chapter 5).</li>
+  <li><strong>Check daily:</strong> The overview shows key figures, <span class="ui">Payments to review</span> and all orders and events (chapters 2, 6 and 9).</li>
+</ol>
+<div class="hinweis"><strong>Good to know</strong>The admin area has exactly one role: <strong>Admin</strong>. Every admin account may use all functions described here. Admin accounts are created during setup (installation manual), not in the admin area.</div>
+
+<div class="hinweis"><strong>Language</strong>The admin area appears in the language you selected on the customer side of the platform (EN, DE or HU in the header). Dates follow the selected language (English, for example, 12 Nov 2026). The admin area always shows times in the Budapest time zone.</div>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k1"><span class="nr">1</span> Signing in to the admin area</h2>
+<p>The admin area is a separate page of your platform. Open the admin address you received during setup and sign in with the email address and password of your admin account.</p>
+<ol>
+  <li>Enter <span class="ui">Email address</span> and <span class="ui">Password</span>. The eye symbol lets you show the password briefly.</li>
+  <li>Click <span class="ui">Sign in</span>. You will then see the overview <strong>My courses</strong>.</li>
+</ol>
+<figure role="group"><img class="mittel" style="max-height:62mm" src="bilder-admin-en/a02-anmeldung.png" alt="Sign-in page of the admin area with the fields email address and password, the eye icon for showing the password and the Sign in button."><figcaption>Fig. 1 – Signing in to the admin area</figcaption></figure>
+<ul>
+  <li><strong>Wrong details:</strong> The platform reports “Wrong email address or password.” Every attempt is recorded in the <span class="ui">Admin sign-ins</span> log (chapter 9).</li>
+  <li><strong>Too many failed attempts:</strong> Signing in is temporarily locked (“Too many attempts. Please wait 15 minutes and try again.”).</li>
+  <li><strong>Forgotten password:</strong> The link <span class="ui">Forgot your password?</span> below the form leads to the general page for resetting the password. You will receive a link by email.</li>
+  <li><strong>Customer accounts:</strong> Anyone who signs in with a normal customer account only sees “You do not have permission.”</li>
+  <li><strong>Signing out:</strong> <span class="ui">Sign out</span> is at the top right of every admin page.</li>
+</ul>
+<figure role="group"><img class="mittel" style="max-height:38mm" src="bilder-admin-en/a01-anmeldung-fehler.png" alt="Sign-in form with an error message after a wrong email address or password."><figcaption>Fig. 2 – Message for wrong sign-in details</figcaption></figure>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k2"><span class="nr">2</span> The overview</h2>
+<p>After signing in you see the overview <strong>My courses</strong>. From top to bottom you will find: key figures, the main buttons, all courses, the payments to review, the open withdrawals, the list <strong>Orders and events</strong> and, at the very bottom, the tools.</p>
+<figure role="group"><img class="hoch" style="max-height:200mm" src="bilder-admin-en/a03-uebersicht.png" alt="The whole overview page of the admin area from top to bottom: key figures, main buttons, course list, payments to review, open withdrawals, orders and events, and the tools."><figcaption>Fig. 3 – Overview (whole page without the tools bar)</figcaption></figure>
+<figure role="group"><img src="bilder-admin-en/a03b-uebersicht-oben.png" alt="Top section of the overview with the key figures, the main buttons and the list of courses."><figcaption>Fig. 3a – Detail: key figures, main buttons and course list</figcaption></figure>
+<figure role="group"><img style="max-height:55mm" src="bilder-admin-en/a03c-ereignisse-tabelle.png" alt="Section of the overview with the table of the latest orders and events: time, event, course, amount, customer and status, such as Paid, Refunded or Under review."><figcaption>Fig. 3b – Detail: the latest orders and events</figcaption></figure>
+<h3>Key figures</h3>
+<figure role="group"><img style="max-height:32mm" src="bilder-admin-en/a04-kennzahlen.png" alt="Six key figure tiles: gross revenue, orders, active participants, refunds, open checks (highlighted) and published courses."><figcaption>Fig. 4 – Key figures</figcaption></figure>
+<table>
+  <tr><th scope="col">Key figure</th><th scope="col">What is counted</th></tr>
+  <tr><td>Revenue, gross</td><td>Sum of paid orders, per currency. Refunded orders are not included. Fees of the payment service provider are not deducted.</td></tr>
+  <tr><td>Orders</td><td>Number of orders with status “paid” (free courses do not create an order).</td></tr>
+  <tr><td>Active participants</td><td>Number of accounts with at least one valid access to a course.</td></tr>
+  <tr><td>Refunds</td><td>Number of orders with status “refunded”.</td></tr>
+  <tr><td>Open checks</td><td>Payments to review plus withdrawals whose refund is still in progress or has failed. The number matches the entries in the boxes <strong>Payments to review</strong> and <strong>Open withdrawals</strong>. If the number is greater than 0, the field is highlighted in colour.</td></tr>
+  <tr><td>Published courses</td><td>Number of courses with status “Published”.</td></tr>
+</table>
+<h3>Main buttons and course list</h3>
+<p><span class="ui">New course</span> creates a course (chapter 3). <span class="ui">Sales</span> opens the page for pausing sales (chapter 10). Below them are all courses, newest first, with status (<strong>Draft</strong>, <strong>Published</strong> or <strong>Archived</strong>), price and number of lessons. <span class="ui">Open</span> takes you to the course page.</p>
+<figure role="group"><img style="max-height:16mm" src="bilder-admin-en/a05-hauptknoepfe.png" alt="Row with the two main buttons of the overview: New course and Sales."><figcaption>Fig. 5 – Main buttons</figcaption></figure>
+<figure role="group"><img style="max-height:24mm" src="bilder-admin-en/a06-kurskarte.png" alt="One course in the course list with title, status, price, number of lessons and the Open button."><figcaption>Fig. 6 – A course in the list</figcaption></figure>
+<h3>Tools</h3>
+<p>At the end of the page are the tools, among them <span class="ui">Import course package</span> (chapter 3), <span class="ui">Stripe reconciliation</span> and <span class="ui">Admin sign-ins</span> (chapter 9) and <span class="ui">Backup</span> (chapter 11).</p>
+<figure role="group"><img style="max-height:16mm" src="bilder-admin-en/a09-werkzeuge.png" alt="Section of the tools at the end of the overview with the Import course package, Stripe reconciliation and Backup buttons."><figcaption>Fig. 7 – Tools (detail)</figcaption></figure>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k3"><span class="nr">3</span> Creating and editing courses</h2>
+<h3>Creating a new course</h3>
+<ol>
+  <li>On the overview, click <span class="ui">New course</span>.</li>
+  <li>Fill in the fields:
+    <ul>
+      <li><strong>Title</strong> (required, up to 200 characters) and <strong>Description</strong> (up to 5000 characters),</li>
+      <li><strong>Currency</strong>: HUF (Ft) or EUR (€). <em>The currency cannot be changed later.</em></li>
+      <li><strong>Price</strong> for a one-off purchase: in <strong>EUR</strong> with up to two decimal places, using a point or a comma (for example 19.99 or 19,99); in <strong>HUF</strong> only whole forints (for example 19900). The empty field shows an example (EUR 49.00, HUF 19900). <strong>0</strong> means: free course.</li>
+      <li><strong>Subscription price</strong> (leave empty: no subscription) and <strong>Billing period</strong> (Monthly or Yearly).</li>
+    </ul></li>
+  <li>Click <span class="ui">Save</span>. The platform reports “The course has been created. Now add lessons.”</li>
+</ol>
+<figure role="group"><img class="mittel" src="bilder-admin-en/a13-neuer-kurs.png" alt="New course form with fields for title, description, currency, price, subscription price and billing period, and the Save button."><figcaption>Fig. 8 – Form “New course”</figcaption></figure>
+<p>The new course is a <strong>draft</strong>: customers cannot see it and cannot buy it until you publish it (chapter 5).</p>
+<figure role="group"><img src="bilder-admin-en/a14-kurs-entwurf.png" alt="Course page of a newly created course with the status draft and the message that lessons can now be added."><figcaption>Fig. 9 – New course with status “Draft”</figcaption></figure>
+<h3>Rules for prices</h3>
+<ul>
+  <li><strong>One-off purchase and subscription:</strong> A course can have a one-off price and, in addition, a subscription price. Customers then see both options.</li>
+  <li><strong>Subscription:</strong> Subscription price and period belong together. The subscription price must be greater than 0.</li>
+  <li><strong>Free:</strong> A course with price 0 cannot have a subscription (“A subscription cannot be added to a free course.”).</li>
+  <li><strong>Euro:</strong> Up to two decimal places, without thousands separators and without a currency symbol (19.99 and 19,99 are equivalent).</li>
+  <li><strong>Forint:</strong> With HUF, only whole forints are allowed.</li>
+</ul>
+<h3>Editing course details</h3>
+<p>On the course page, <span class="ui">Edit course details</span> opens the same form. Title, description, price, subscription price and period can be changed at any time; the currency field is locked. <span class="ui">Save</span> applies the change immediately. What a price change means for buyers is described in chapter 13.</p>
+<figure role="group"><img class="mittel" src="bilder-admin-en/a21b-kursdaten-abo.png" alt="Edit course details form of a course with a subscription: title, description, price, subscription price and period; the currency field is locked."><figcaption>Fig. 10 – Course details of a course with a subscription</figcaption></figure>
+<h3>Preview: cover image, trailer and “What you will learn”</h3>
+<p>In the <strong>Preview</strong> box you design what prospective customers see on the course page:</p>
+<ul>
+  <li><strong>Cover image:</strong> JPEG, PNG or WebP, at most 2 MB. <span class="ui">Replace</span> exchanges it after a confirmation question, <span class="ui">Delete</span> removes it.</li>
+  <li><strong>Trailer video:</strong> MP4 or WebM, at most 30 MB. The trailer is <strong>public and not protected</strong>. Upload only promotional material there, never course content.</li>
+  <li><strong>What you will learn:</strong> the learning goals, one per line (at most 8 lines of 120 characters each). Apply them with <span class="ui">Save</span>.</li>
+</ul>
+<figure role="group"><img src="bilder-admin-en/a20-vorschau.png" alt="Preview section of a course with an uploaded cover image and the learning goals under What you will learn."><figcaption>Fig. 11 – Preview with cover image and learning goals</figcaption></figure>
+<h3>Importing and exporting a course package</h3>
+<p>A <strong>course package</strong> is a text package with course details and lesson texts. Under <span class="ui">Import course package</span> you paste such a package, click <span class="ui">Check</span>, see the result (title, number of lessons, price, notes) and create a new <strong>draft</strong> with <span class="ui">Create draft</span>. Videos and PDFs are not included; you upload them afterwards. A package has 1 to 40 lessons and at most 300 KB; there can be at most 50 drafts at the same time. If the same package is imported a second time, the platform opens the existing draft. On the course page, <span class="ui">Export course package</span> creates a package for copying – only for courses in forints.</p>
+<figure role="group"><img class="mittel klein" src="bilder-admin-en/a35-kurspaket.png" alt="Import course package tool with a text field for pasting the package and the Check and Create draft buttons."><figcaption>Fig. 12 – Import course package</figcaption></figure>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k4"><span class="nr">4</span> Lessons and media</h2>
+<h3>Adding a new lesson</h3>
+<ol>
+  <li>Open the course and scroll to <span class="ui">Add a new lesson</span>.</li>
+  <li>Enter the <strong>Section</strong> (for example “Basics”, optional), the <strong>Lesson title</strong> (required) and the <strong>Type</strong>: Text, Video, PDF or Audio.</li>
+  <li>The <strong>Text</strong> field holds the lesson text (up to 8000 characters). For video, PDF and audio it is the description of the file.</li>
+  <li>Click <span class="ui">Add lesson</span>. The lesson is added to the end of the list.</li>
+</ol>
+<figure role="group"><img class="mittel" src="bilder-admin-en/a15-lektion-neu.png" alt="Add a new lesson form with type text, title, section and the field for the lesson text, and the Add lesson button."><figcaption>Fig. 13 – New text lesson</figcaption></figure>
+<p>For video, PDF and audio the note “You can upload the file after the lesson has been created.” appears.</p>
+<figure role="group"><img class="mittel" src="bilder-admin-en/a16-lektion-neu-video.png" alt="The same form with the type video and the note that the file is uploaded after the lesson has been created."><figcaption>Fig. 14 – New video lesson</figcaption></figure>
+<div class="hinweis"><strong>New lesson in a published course</strong>In a <strong>draft</strong>, a new lesson becomes visible as soon as you publish the course. If the course is already <strong>published</strong> or <strong>archived</strong>, the platform creates a new lesson <strong>hidden</strong> at first, so that buyers do not see unfinished content. A corresponding note then appears above the form, and after creating the lesson the platform reports “The lesson has been added and is still hidden. Use “Show” to make it visible to participants.” When the lesson is ready, click <span class="ui">Show</span> in the lesson list.</div>
+<figure role="group"><img src="bilder-admin-en/a18b-lektion-neu-ausgeblendet.png" alt="Notice above the lesson form in a published course: the new lesson is still hidden and becomes visible with Show."><figcaption>Fig. 15 – New lesson in a published course: note above the form</figcaption></figure>
+<h3>Uploading files</h3>
+<p>In the lesson, click <span class="ui">Upload file</span> and select the file. A progress bar shows the upload; afterwards the file name and size appear.</p>
+<table>
+  <tr><th scope="col">Type</th><th scope="col">Allowed files</th></tr>
+  <tr><td>Video</td><td>.mp4, .webm</td></tr>
+  <tr><td>PDF</td><td>.pdf</td></tr>
+  <tr><td>Audio</td><td>.mp3, .m4a, .ogg</td></tr>
+</table>
+<ul>
+  <li>Each lesson has one file. Uploading again <strong>replaces</strong> the old file.</li>
+  <li><span class="ui">Delete file</span> removes the file permanently after a confirmation question.</li>
+  <li>The permitted file size is configured; if a file is too large, the platform reports “The file is too large. At most … MB can be uploaded.”</li>
+  <li>As long as a file is attached to the lesson, its type cannot be changed.</li>
+</ul>
+<figure role="group"><img src="bilder-admin-en/a17-lektion-datei.png" alt="Video lesson with an uploaded file (name and size), the Upload file and Delete file buttons, plus Up, Down, Hide, Edit and Delete lesson."><figcaption>Fig. 16 – Video lesson with uploaded file</figcaption></figure>
+<h3>Order, hiding, editing, deleting</h3>
+<ul>
+  <li><span class="ui">▲ Up</span> / <span class="ui">▼ Down</span> move a lesson by one position (“The order has been changed.”).</li>
+  <li><span class="ui">Hide</span> hides a lesson from buyers; it is shown faded with “Hidden”. <span class="ui">Show</span> makes it visible again.</li>
+  <li><span class="ui">Edit</span> opens a form for title, section and text at the bottom of the page.</li>
+  <li><span class="ui">Delete lesson</span> only appears while the course is a draft or the lesson is hidden. The lesson and its file are deleted permanently.</li>
+</ul>
+<figure role="group"><img class="hoch" style="max-height:105mm" src="bilder-admin-en/a18-lektionsliste.png" alt="Lesson list of a course; one lesson is marked as hidden, with buttons for moving, editing, showing and deleting next to it."><figcaption>Fig. 17 – Lesson list with a hidden lesson</figcaption></figure>
+<figure role="group"><img class="mittel" style="max-height:45mm" src="bilder-admin-en/a19-lektion-bearbeiten.png" alt="Form for editing a lesson with title, section and text and the Save button."><figcaption>Fig. 18 – Editing a lesson</figcaption></figure>
+<div class="hinweis"><strong>Protecting the content</strong>Buyers see videos and PDFs only on the platform; downloading is not intended. Files that are expressly offered for download are an exception. Older lessons of the type “File” are shown in the admin area with the note that they must be converted to PDF format.</div>
+
+<div class="hinweis"><strong>Video storage</strong>If an external video service is set up for the platform, the overview (chapter 2) additionally shows the <strong>Video storage</strong> box with the status of pending deletion jobs. Without this setup (as in the illustrations) the box is missing.</div>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k5"><span class="nr">5</span> Publishing, archiving, deleting</h2>
+<p>A course has one of three statuses:</p>
+<table>
+  <tr><th scope="col">Status</th><th scope="col">For customers</th><th scope="col">Possible steps</th></tr>
+  <tr><td>Draft</td><td>invisible, cannot be bought</td><td>Publish (<span class="ui">Done</span>), delete</td></tr>
+  <tr><td>Published</td><td>in the course list, can be bought</td><td>Archive</td></tr>
+  <tr><td>Archived</td><td>no longer in the course list, cannot be bought; buyers with valid access can still open the course</td><td>publish again (<span class="ui">Done</span>)</td></tr>
+</table>
+<h3>Publishing</h3>
+<ol>
+  <li>At the bottom of the course page, click <span class="ui">Done</span>.</li>
+  <li>The question “Are you sure? The course will then be visible to everyone.” appears. If the course has no visible lesson, the platform additionally warns that customers would get an empty course.</li>
+  <li>Confirm with <span class="ui">Yes</span>. Message: “Done! The course is published.”</li>
+</ol>
+<figure role="group"><img class="mittel klein" src="bilder-admin-en/a23-veroeffentlichen-frage.png" alt="Confirmation question before publishing a course with the answer buttons Yes and Cancel."><figcaption>Fig. 19 – Confirmation question before publishing</figcaption></figure>
+<figure role="group"><img src="bilder-admin-en/a24-kurs-veroeffentlicht.png" alt="Course page after publishing with the message that the course is now published and the status published."><figcaption>Fig. 20 – Published course</figcaption></figure>
+<h3>Archiving</h3>
+<p>A published course has the button <span class="ui">Archive</span>. After the question “Archive this course? Existing participants keep their access.” the course disappears from the course list and can no longer be bought. With <span class="ui">Done</span> you can publish it again later.</p>
+<figure role="group"><img class="mittel klein" src="bilder-admin-en/a25-archivieren-frage.png" alt="Confirmation question before archiving: existing participants keep their access; answer buttons Yes and Cancel."><figcaption>Fig. 21 – Confirmation question before archiving</figcaption></figure>
+<h3>Deleting</h3>
+<p><span class="ui">Delete course</span> is only available for a <strong>draft</strong> that has never had orders, access or subscriptions. The course, all lessons and all files are deleted – permanently. In all other cases the platform reports “This course cannot be deleted. Please archive it instead.”</p>
+<figure role="group"><img class="mittel klein" src="bilder-admin-en/a22-aktionen-entwurf.png" alt="The Delete course button, which only appears for a course in draft status."><figcaption>Fig. 22 – Deleting is only possible for a draft</figcaption></figure>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k6"><span class="nr">6</span> Orders and access</h2>
+<p>Paid purchases run automatically: when the payment service provider Stripe confirms a payment, the platform creates the order, unlocks the course and sends the customer the purchase confirmation. You do not have to do anything for this. You only need to step in for <strong>payments to review</strong>.</p>
+<h3>Payments to review</h3>
+<p>If an incoming payment does not match the course details, the platform does <strong>not</strong> grant access; instead it places the order in the <strong>Payments to review</strong> box and notifies you by email. Course, customer, amount, time and reason are shown.</p>
+<figure role="group"><img class="mittel" style="max-height:45mm" src="bilder-admin-en/a07-pruefen.png" alt="Payments to review box with one payment: course, customer, amount, time and reason, plus the Approve and Reject buttons."><figcaption>Fig. 23 – A payment to review</figcaption></figure>
+<table>
+  <tr><th scope="col">Reason (as displayed)</th><th scope="col">Typical cause</th></tr>
+  <tr><td>The amount or currency paid does not match the current course price.</td><td>The price was changed while a customer was already on the payment page (chapter 13).</td></tr>
+  <tr><td>The billing interval of the subscription does not match the current course setting.</td><td>The subscription period was changed.</td></tr>
+  <tr><td>There was already a valid purchase or a running subscription for this course …</td><td>Double payment; no additional access.</td></tr>
+  <tr><td>The paying Stripe customer does not match the user. / The course or the user no longer exists.</td><td>Assignment unclear.</td></tr>
+</table>
+<p>First check the payment in the Stripe account. Then:</p>
+<div class="hinweis recht"><strong>Caution before approving</strong>Only approve once payment, amount, currency and buyer assignment have been checked in Stripe. Approving immediately grants permanent access.</div>
+<ul>
+  <li><span class="ui">Approve</span>: The customer receives permanent access and the purchase confirmation by email. If a subscription to this course is running for them, it is ended at Stripe. Payments for a subscription cannot be approved here (“A subscription can only be activated after a payment confirmed by Stripe.”).</li>
+  <li><span class="ui">Reject</span>: No access. The money initially remains received – you make a refund <strong>in Stripe</strong>. For a subscription payment, the subscription is ended at Stripe.</li>
+</ul>
+<figure role="group"><img class="mittel" style="max-height:30mm" src="bilder-admin-en/a10-pruefen-frage.png" alt="Confirmation question when approving a payment under review, with the answer buttons Yes and Cancel."><figcaption>Fig. 24 – Confirmation question when approving</figcaption></figure>
+<figure role="group"><img class="mittel" style="max-height:30mm" src="bilder-admin-en/a11-pruefen-erledigt.png" alt="Payments to review box without entries: there are no more payments to review."><figcaption>Fig. 25 – No more payments to review</figcaption></figure>
+<h3>Access to a course</h3>
+<p>On every course page, the <strong>Access</strong> box lists all accounts with access: email address, date and origin (<strong>Payment</strong>, <strong>Subscription</strong> with “Access until”, or <strong>Free access</strong>). “Free access” appears for access you have granted and for access to free courses.</p>
+<figure role="group"><img class="mittel" style="max-height:42mm" src="bilder-admin-en/a27-zugaenge.png" alt="List of accesses to a course with email address, date and origin (here free access and payment), each with the Withdraw access button, below it the field for granting access."><figcaption>Fig. 26 – Access to a course</figcaption></figure>
+<h3>Granting access</h3>
+<ol>
+  <li>Enter the address under <span class="ui">Email address of a registered user</span>. The account must already exist; otherwise the platform reports “There is no registered user with this email address.”</li>
+  <li>Click <span class="ui">Grant access</span>. The access is permanent (origin “Free access”).</li>
+</ol>
+<p>If the account already has subscription access, it is converted into permanent access and the running subscription is first ended at Stripe. If ending it at Stripe fails, nothing changes.</p>
+<p><strong>Email to the customer:</strong> After you grant access, the customer automatically receives a short email in the language of their account. It tells them that they have been given free access to the course, names the course title and contains a link to their courses. Accounts that have since been deleted do not receive an email.</p>
+<figure role="group"><img class="mittel" style="max-height:42mm" src="bilder-admin-en/a26-zugang-erteilen.png" alt="Grant access form with the field for the email address of a registered user and the Grant access button."><figcaption>Fig. 27 – Granting access</figcaption></figure>
+<h3>Withdrawing access</h3>
+<p><span class="ui">Withdraw access</span> next to an entry asks: “Really withdraw access? The order remains. For a subscription, it is ended at Stripe immediately; the money is not refunded automatically.” After <span class="ui">Yes</span> the customer can no longer open the course. If needed, you make a refund in Stripe.</p>
+<figure role="group"><img class="mittel" style="max-height:32mm" src="bilder-admin-en/a28-zugang-entziehen-frage.png" alt="Confirmation question before withdrawing access, noting that a subscription is ended at Stripe immediately and the money is not refunded automatically."><figcaption>Fig. 28 – Confirmation question before withdrawing</figcaption></figure>
+<h3>Subscriptions of a course</h3>
+<p>For courses with a subscription, the <strong>Subscriptions</strong> box shows every subscription with email address, status (<strong>Active</strong>, <strong>Payment pending</strong>, <strong>Cancelled</strong>, <strong>Ended</strong>), the end of the paid period and, where applicable, “Ends at the end of the paid period”. Customers can cancel themselves; the admin area has no cancellation button of its own. From the admin area, only <span class="ui">Withdraw access</span> ends a subscription.</p>
+<figure role="group"><img class="mittel" style="max-height:34mm" src="bilder-admin-en/a29-abos.png" alt="List of three subscriptions, each with customer email, status and date: Payment pending, Cancelled with the note “Ends at the end of the paid period”, and Active."><figcaption>Fig. 29 – Subscriptions of a course: active, cancelled at the end of the period, payment pending</figcaption></figure>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k7"><span class="nr">7</span> Refunds and withdrawal</h2>
+<div class="hinweis recht"><strong>Legal notice</strong>This chapter only describes how the software works. It is neither a recommendation nor legal advice. The stored rules must be legally reviewed before use in operation with real money.</div>
+<h3>Refunds</h3>
+<p>The admin area has no refund button. You make refunds in the Stripe account. Stripe reports them to the platform, and the platform books them automatically:</p>
+<table>
+  <tr><th scope="col">Refund in Stripe</th><th scope="col">Result on the platform</th></tr>
+  <tr><td>full</td><td>Order “refunded”, the access from this payment ends (free access remains), event “Refund”.</td></tr>
+  <tr><td>partial</td><td>Noted on the order; the access remains.</td></tr>
+  <tr><td>Chargeback by the customer’s bank</td><td>The order becomes a payment to review, the access is withdrawn.</td></tr>
+</table>
+<p>If the Stripe reconciliation (chapter 9) finds a refund that has not been booked completely, it offers <span class="ui">Book refund retroactively</span>.</p>
+<h3>Withdrawal by customers</h3>
+<p>Customers declare a withdrawal themselves in their account. The platform decides automatically according to rules that are <strong>stored in the software</strong>. These rules <strong>cannot</strong> be configured in the admin area; changing them means changing the software.</p>
+<table>
+  <tr><th scope="col">Stored rule</th><th scope="col">Result</th></tr>
+  <tr><td>Deadline (default setting of the software: 14 days from the order)</td><td>By default, the platform checks a period of 14 days; it automatically rejects declarations received later. Statutory rights may exist independently of this.</td></tr>
+  <tr><td>When buying, the customer agreed to the immediate start (checkbox) and then opened content of the course</td><td>automatic rejection</td></tr>
+  <tr><td>Subscription</td><td>automatic withdrawal only for the first payment of a subscription</td></tr>
+  <tr><td>all conditions met</td><td>automatic full refund via Stripe, the access ends, a subscription is ended</td></tr>
+</table>
+<p>For every withdrawal declaration you receive an email with course, customer, order number, amount, time and result. If the refund fails technically, the email says so (“… but the refund failed. Please check in Stripe and refund manually if necessary.”), the case appears in the box <strong>Open withdrawals</strong>, and the key figure <strong>Open checks</strong> includes it. In the case of an automatic rejection, check the declaration including possible statutory rights; if in doubt, seek legal advice.</p>
+<figure role="group"><img class="mittel" style="max-height:60mm" src="bilder-admin-en/a36-mail-widerruf.png" alt="Email to the operator after a withdrawal: course, user email address, order number, amount, time of receipt and result of the automatic refund."><figcaption>Fig. 30 – Email to the operator after a withdrawal</figcaption></figure>
+<h3>Open withdrawals</h3>
+<p>On the overview, the box <strong>Open withdrawals</strong> shows all withdrawals whose refund is still being processed or has failed, newest first. Each entry names the course, the customer’s email address, order number, amount, time and the state (“The withdrawal declaration is being processed.” or “… but the refund failed …”). These entries are included in the key figure <strong>Open checks</strong>; if there is no open withdrawal, the box says “No open withdrawal.”</p>
+<figure role="group"><img class="schmal" src="bilder-admin-en/a07b-widerrufe.png" alt="Open withdrawals box with one entry: course, customer, order number, amount, time and the note that the refund failed and must be checked in Stripe."><figcaption>Fig. 31 – Open withdrawals: refund failed</figcaption></figure>
+<ul>
+  <li>The list is for viewing only; it has no buttons. Check every entry in Stripe and refund manually if necessary.</li>
+  <li>The platform continues to process a withdrawal “being processed” automatically: once the refund has been made, it disappears from the list; if the refund fails, it changes to “refund failed”.</li>
+  <li>An entry “refund failed” stays in the list and in the key figure, even after you have refunded in Stripe. Keep a note of cases you have dealt with; your technical support can help with questions.</li>
+  <li>Completed withdrawals (refunded or rejected) do not appear in this list. You recognise them by the email, by the key figure <strong>Refunds</strong> and in the list <strong>Orders and events</strong> (event type “Refund”).</li>
+</ul>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k8"><span class="nr">8</span> Customers and accounts</h2>
+<p>Customers create their account themselves and manage it themselves (email address, password, data request, deletion). The admin area has <strong>no customer list</strong> and no way to create, change, block or delete customer accounts.</p>
+<p>What you as the operator can see and do regarding customers:</p>
+<ul>
+  <li><strong>Orders and events</strong>: registrations, confirmed email addresses, purchases, subscriptions, refunds and deleted accounts, with search by email address (chapter 9).</li>
+  <li><strong>Access</strong> and <strong>Subscriptions</strong> per course, granting and withdrawing access (chapter 6).</li>
+  <li><strong>Payments to review</strong> with the customer’s email address (chapter 6).</li>
+</ul>
+<div class="hinweis"><strong>Data protection</strong>Exports of the event list contain email addresses. Store and share them only to the extent you are allowed to.</div>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k9"><span class="nr">9</span> Events and logs</h2>
+<h3>Orders and events</h3>
+<p>The overview shows the list of all events, newest first, 50 per page (<span class="ui">Previous</span> / <span class="ui">Next</span>). Each row shows time (Budapest), event, course, amount, customer and status.</p>
+<figure role="group"><img src="bilder-admin-en/a08-ereignisse.png" alt="Orders and events table with time, event, course, amount, customer and status, below it the Previous and Next buttons."><figcaption>Fig. 32 – Orders and events</figcaption></figure>
+<table>
+  <tr><th scope="col">Event</th><th scope="col">Possible statuses</th></tr>
+  <tr><td>Registration, Email confirmed</td><td>Registered, Confirmed</td></tr>
+  <tr><td>Purchase</td><td>Paid, Free, Under review</td></tr>
+  <tr><td>Refund</td><td>Refunded, Partially refunded, Refund failed; for chargebacks: Bank inquiry, Disputed payment, Dispute won, Dispute lost</td></tr>
+  <tr><td>Subscription started, Subscription cancelled, Subscription ended</td><td>Paid, Under review, Ended</td></tr>
+  <tr><td>Account deleted</td><td>–</td></tr>
+</table>
+<p><strong>Filtering:</strong> Choose event type, start date, end date and the customer’s email address and click <span class="ui">Filter</span>. <strong>Exporting:</strong> <span class="ui">Download CSV</span> or <span class="ui">Download JSON</span> saves the filtered events (at most 10,000 rows) as a file. Events are deleted automatically after a retention period (default setting of the software: 730 days). The operator must have the required retention periods legally reviewed.</p>
+<figure role="group"><img src="bilder-admin-en/a12-ereignisse-filter.png" alt="The same table filtered by the event type Refund, with the Filter, Download CSV and Download JSON buttons."><figcaption>Fig. 33 – Filtered by “Refund”</figcaption></figure>
+<h3>Stripe reconciliation</h3>
+<p>The reconciliation compares the platform’s orders with the data in the Stripe account (period: the last 35 days). It runs automatically; <span class="ui">Reconcile now</span> starts it immediately. The page shows the last reconciliation, the discrepancies found and the earlier reconciliations. If there is a discrepancy, you receive an email.</p>
+<figure role="group"><img src="bilder-admin-en/a30-abgleich.png" alt="Stripe reconciliation page with the latest reconciliation without discrepancies, the list of earlier runs and the Reconcile now button."><figcaption>Fig. 34 – Stripe reconciliation without findings</figcaption></figure>
+<table>
+  <tr><th scope="col">Possible discrepancy</th><th scope="col">What to do</th></tr>
+  <tr><td>According to Stripe it was paid, but the platform has no order.</td><td>Check in Stripe; the order can only be restored after a manual check.</td></tr>
+  <tr><td>The platform marks it as paid, but Stripe has no confirmed payment.</td><td>Check in Stripe.</td></tr>
+  <tr><td>The Stripe refund is not fully booked on the platform.</td><td><span class="ui">Book refund retroactively</span> (order and access may change).</td></tr>
+  <tr><td>Disputed payment (chargeback), the order still shows as paid.</td><td>Check in Stripe and withdraw the access.</td></tr>
+  <tr><td>A subscription that had already ended was still running at Stripe.</td><td>Nothing – the platform has ended it afterwards.</td></tr>
+</table>
+<p>Note on the page: this reconciliation does not show delivery failures of the Stripe notifications; you can find them in the Stripe Dashboard.</p>
+<h3>Admin sign-ins</h3>
+<p>The log shows the last 100 sign-in attempts to the admin area with time, result (for example “Sign-in successful”, “Sign-in failed”, “Temporarily locked”), shortened email address and shortened network address. Unexpected entries are a reason to change the password and inform your technical support.</p>
+<figure role="group"><img class="mittel klein" src="bilder-admin-en/a31-admin-anmeldungen.png" alt="List of admin sign-ins with time, result, shortened email address and shortened network address."><figcaption>Fig. 35 – Admin sign-ins</figcaption></figure>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k10"><span class="nr">10</span> Pausing sales</h2>
+<p>With the <span class="ui">Sales</span> button on the overview you temporarily stop all <strong>new paid</strong> purchases (one-off purchase and subscription), for example while courses are being revised.</p>
+<ol>
+  <li>Enter a <strong>reason</strong> (1 to 200 characters).</li>
+  <li>Click <span class="ui">Pause sales</span> and confirm with <span class="ui">Yes</span>.</li>
+  <li>To resume, click <span class="ui">Resume sales</span> and confirm.</li>
+</ol>
+<figure role="group"><img class="klein" src="bilder-admin-en/a33-verkauf-laeuft.png" alt="Sales page in the state sales running, with the field for a reason and the Pause sales button."><figcaption>Fig. 36 – Sales are running</figcaption></figure>
+<figure role="group"><img class="klein" src="bilder-admin-en/a34-verkauf-pausiert.png" alt="Sales page in the paused state with the reason entered and the Resume sales button."><figcaption>Fig. 37 – Sales are paused</figcaption></figure>
+<ul>
+  <li>Customers who want to buy see “Sales are temporarily paused. Please check back later.”</li>
+  <li>Courses already bought remain usable, running subscriptions continue.</li>
+  <li>Free courses can still be unlocked during the pause.</li>
+  <li>Stripe payment pages that are already open can still be used for up to 24 hours; these payments continue to be processed.</li>
+  <li>The page shows the start, the reason and who paused, and below that the last 50 sales events.</li>
+  <li>If the sales pause is enforced technically, contact your technical support.</li>
+</ul>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k11"><span class="nr">11</span> Backup</h2>
+<p>Under <span class="ui">Backup</span> (tools) you see whether the backup is active, when the last successful backup ran and the list of the latest backups (time, type, result, file name, local and external storage).</p>
+<ul>
+  <li>The platform backs up automatically (at start-up and regularly afterwards). These entries are called “automatic”.</li>
+  <li><span class="ui">Back up now</span> immediately creates an additional backup (“manual”). If one is already running, the platform reports this.</li>
+  <li><span class="ui">Download latest backup</span> saves the last successful backup as an encrypted file. Opening and restoring it is the task of your technical support. Keep encrypted backup files safe and do not pass them on without authorisation.</li>
+  <li>“The backup is switched off” means: it was not activated during setup. In that case, contact your technical support.</li>
+  <li>If there are problems with the backup, the platform sends a warning email to the configured addresses.</li>
+</ul>
+<figure role="group"><img src="bilder-admin-en/a32-sicherung.png" alt="Backup page with the status of the latest backup and the Back up now and Download latest backup buttons."><figcaption>Fig. 38 – Backup</figcaption></figure>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k12"><span class="nr">12</span> A typical workflow</h2>
+<p>This is how a new course comes about, from the first click to the first order – using the example “Negotiating successfully” from the illustrations.</p>
+<table>
+  <tr><th scope="col">Step</th><th scope="col">What you do</th><th scope="col">Result</th></tr>
+  <tr><td>1. Create the course</td><td><span class="ui">New course</span>: title, description, currency EUR, price 149.00, <span class="ui">Save</span></td><td>Draft, invisible to customers (Fig. 8, 9)</td></tr>
+  <tr><td>2. Create lessons</td><td>Create four lessons (text, video, PDF, text); hide the bonus lesson</td><td>Lesson list (Fig. 17)</td></tr>
+  <tr><td>3. Upload media</td><td>Video and PDF via <span class="ui">Upload file</span></td><td>File name and size appear (Fig. 16)</td></tr>
+  <tr><td>4. Preview</td><td>Cover image and “What you will learn”</td><td>Course page complete for prospective customers (Fig. 11)</td></tr>
+  <tr><td>5. Check the price</td><td><span class="ui">Edit course details</span>: price, if applicable subscription price and period</td><td>Check the price carefully before publishing (chapter 13)</td></tr>
+  <tr><td>6. Publish</td><td><span class="ui">Done</span> → <span class="ui">Yes</span></td><td>Course visible and can be bought (Fig. 20)</td></tr>
+  <tr><td>7. Check the order</td><td>Overview: key figures, list “Orders and events”, if applicable <span class="ui">Payments to review</span></td><td>Paid purchases are unlocked automatically (Fig. 32)</td></tr>
+  <tr><td>8. Manage access</td><td>Course page → <strong>Access</strong>: grant or withdraw access if needed</td><td>Fig. 26–28</td></tr>
+</table>
+<div class="hinweis"><strong>Tip</strong>Set the price and subscription <strong>before</strong> you publish. Price changes during ongoing payments lead to payments to review (chapter 13).</div>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k13"><span class="nr">13</span> Effects of changes</h2>
+<p>The following table describes what a change means for existing buyers and ongoing payments.</p>
+<table class="eng lang">
+  <tr><th scope="col">Change</th><th scope="col">Effect</th></tr>
+  <tr><td>Changing the one-off price</td><td>Existing orders and access remain unchanged. New purchases pay the new price. Anyone who opened the payment page <strong>before</strong> the change and then pays the old price does not receive automatic access: the payment ends up among the payments to review (“amount or currency does not match”).</td></tr>
+  <tr><td>Changing the subscription price</td><td>Running subscriptions continue to be renewed by Stripe at the <strong>previous</strong> price; the platform recognises these renewals as valid, the access remains. New subscriptions pay the new price.</td></tr>
+  <tr><td>Changing the subscription period</td><td>A new subscription payment whose period does not match the current setting goes to the payments to review.</td></tr>
+  <tr><td>Switching off the subscription (emptying the subscription price)</td><td>New subscriptions are no longer possible. Running subscriptions continue to be renewed, provided the amount was already paid earlier for this subscription.</td></tr>
+  <tr><td>Currency</td><td>Cannot be changed after creation.</td></tr>
+  <tr><td>Changing title, description, lesson texts</td><td>Immediately visible to everyone, including buyers.</td></tr>
+  <tr><td>New lesson</td><td>In a draft, visible as soon as the course is published. In a published or archived course it is created <strong>hidden</strong>; buyers only see it after <span class="ui">Show</span>.</td></tr>
+  <tr><td>Hiding a lesson</td><td>Buyers no longer see the lesson; orders and access remain.</td></tr>
+  <tr><td>Replacing or deleting a file</td><td>The old file is gone immediately; buyers only see the new file (or no file).</td></tr>
+  <tr><td>Archiving a course</td><td>No longer in the course list, can no longer be bought. Buyers with valid access can still open the course. A payment started before archiving still unlocks access. Publishing again is possible.</td></tr>
+  <tr><td>Deleting a course</td><td>Only for drafts without orders, access and subscriptions. Permanent, with all lessons and files.</td></tr>
+  <tr><td>Deleting a lesson</td><td>Only in drafts or for hidden lessons. Permanent, with the file.</td></tr>
+  <tr><td>Granting access</td><td>Permanent access; the customer receives an email. A running subscription of the customer for this course is ended at Stripe.</td></tr>
+  <tr><td>Withdrawing access</td><td>The customer loses access immediately. The order remains, a subscription is ended at Stripe, nothing is refunded automatically.</td></tr>
+  <tr><td>Pausing sales</td><td>No new paid purchases; free unlocks remain possible, existing access and subscriptions remain (chapter 10).</td></tr>
+</table>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k14"><span class="nr">14</span> Functions in the admin area</h2>
+<p>Overview of all functions and what they change. There is a single role (Admin); all functions are available to every admin account.</p>
+<table class="eng lang">
+  <tr><th scope="col">Function</th><th scope="col">Content</th><th scope="col">Orders</th><th scope="col">Access</th></tr>
+  <tr><td>Create course, edit course details, preview</td><td>yes</td><td>–</td><td>–</td></tr>
+  <tr><td>Create, edit, move, show/hide, delete lessons</td><td>yes</td><td>–</td><td>–</td></tr>
+  <tr><td>Upload, replace, delete file</td><td>yes</td><td>–</td><td>–</td></tr>
+  <tr><td>Import / export course package</td><td>new draft / read only</td><td>–</td><td>–</td></tr>
+  <tr><td>Publish, archive</td><td>visibility</td><td>–</td><td>–</td></tr>
+  <tr><td>Delete course (draft only)</td><td>yes, permanently</td><td>–</td><td>–</td></tr>
+  <tr><td>Approve payment to review</td><td>–</td><td>status “paid”</td><td>access is granted</td></tr>
+  <tr><td>Reject payment to review</td><td>–</td><td>status “rejected”</td><td>no access</td></tr>
+  <tr><td>Grant / withdraw access</td><td>–</td><td>unchanged</td><td>yes (subscription ended at Stripe if applicable)</td></tr>
+  <tr><td>Book refund retroactively (reconciliation)</td><td>–</td><td>yes</td><td>may change</td></tr>
+  <tr><td>Pause / resume sales</td><td>–</td><td>no new purchases</td><td>–</td></tr>
+  <tr><td>View and export events, view open withdrawals, start reconciliation, view admin sign-ins</td><td>–</td><td>read only</td><td>read only</td></tr>
+  <tr><td>Start and download backup</td><td>–</td><td>–</td><td>–</td></tr>
+</table>
+<p>Refunds, cancellations of subscriptions and changes to payments themselves do not take place in the admin area, but in the Stripe account or by the customers.</p>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k15"><span class="nr">15</span> Help and common messages</h2>
+<table class="eng lang">
+  <tr><th scope="col">Message</th><th scope="col">Meaning and what you can do</th></tr>
+  <tr><td>Please enter the price as a whole number, for example 39900.</td><td>Course in HUF: whole forints only, without a decimal separator or currency symbol.</td></tr>
+  <tr><td>Please enter the price with at most two decimal places, for example 49.00.</td><td>Course in EUR: at most two digits after the point or comma, without thousands separators or currency symbol.</td></tr>
+  <tr><td>For the subscription, give price and period together, or leave both empty.</td><td>Add or empty the subscription price.</td></tr>
+  <tr><td>A subscription cannot be added to a free course.</td><td>Set a price or delete the subscription price.</td></tr>
+  <tr><td>The lesson type cannot be changed while a file belongs to it.</td><td>Delete the file first or create a new lesson.</td></tr>
+  <tr><td>The file is too large.</td><td>Use a smaller file.</td></tr>
+  <tr><td>This course cannot be deleted. Please archive it instead.</td><td>The course is published or had orders/access: <span class="ui">Archive</span>.</td></tr>
+  <tr><td>This lesson cannot be deleted. Hide it instead.</td><td>Use <span class="ui">Hide</span>.</td></tr>
+  <tr><td>There is no registered user with this email address.</td><td>The customer must register first.</td></tr>
+  <tr><td>The subscription could not be ended at Stripe, so nothing has changed.</td><td>Try again later; nothing was changed.</td></tr>
+  <tr><td>This payment is no longer waiting for review.</td><td>It has already been processed; reload the page.</td></tr>
+  <tr><td>A backup is already running. / The reconciliation is already running.</td><td>Wait a moment and reload the page.</td></tr>
+  <tr><td>Could not connect to the server.</td><td>Check the internet connection and try again.</td></tr>
+  <tr><td>You do not have permission.</td><td>Sign in with the admin account.</td></tr>
+</table>
+<h3>Emails you receive as the operator</h3>
+<ul>
+  <li>notifications about sales and payments to review,</li>
+  <li>an email for every withdrawal declaration (chapter 7),</li>
+  <li>warnings about Stripe reconciliation, backup, sales pause and security events concerning admin access.</li>
+</ul>
+<p>Which addresses these emails go to is determined by the setup. For technical questions, for new admin accounts and for everything concerning the setup, contact your technical support (installation manual).</p>
+
+</main>
+</body>
+</html>

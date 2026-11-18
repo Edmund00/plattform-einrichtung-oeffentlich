@@ -1,0 +1,14 @@
+node_modules/
+daten/*.json
+.env
+logs/
+*.db
+*.db-wal
+*.db-shm
+
+# zusaetzlich (Schulungsplattform)
+.env.*
+daten/
+uploads/
+.playwright-mcp/
+*.log

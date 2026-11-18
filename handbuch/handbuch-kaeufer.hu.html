@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<title>Kézikönyv vásárlóknak</title>
+<!-- Kaeufer-Handbuch, magyar változat (Uebersetzung 1:1 aus dem DE-Master handbuch-kaeufer.de.html; UI-Begriffe aus texte/hu.json).
+     PDF bauen: node tools/handbuch-bauen.mjs --sprache=hu (Bilder in bilder-hu/ + PDF) oder zusaetzlich --nur-pdf.
+     Version, Stand und Software-Commit setzt das Bauskript ein (data-feld), ebenso die Seitenzahlen im Inhaltsverzeichnis (data-seite). -->
+<style>
+@font-face{font-family:'Jost';font-weight:300 700;src:url(../public/fonts/jost-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+2000-206F,U+20AC}
+@font-face{font-family:'Jost';font-weight:300 700;src:url(../public/fonts/jost-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA,U+1E00-1EFF}
+@font-face{font-family:'Cormorant Garamond';font-weight:400 700;src:url(../public/fonts/cormorant-garamond-normal-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+2000-206F,U+20AC}
+@font-face{font-family:'Cormorant Garamond';font-weight:400 700;src:url(../public/fonts/cormorant-garamond-normal-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA,U+1E00-1EFF}
+:root{--gold:#d4a843;--gold-d:#a87c2a;--gold-t:#7f5c1c;--ink:#211a0e;--soft:#7d7362;--line:#e7ddc9;--ivory:#faf6ee;--night:#0d0a05}
+@page{size:A4}
+*{box-sizing:border-box}
+html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{margin:0;font-family:'Jost',Arial,sans-serif;font-weight:400;font-size:10.5pt;line-height:1.55;color:var(--ink);background:#fff}
+h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;line-height:1.15;color:var(--ink)}
+h2.kapitel{font-size:25pt;margin:0 0 6mm;padding-bottom:3mm;border-bottom:2px solid var(--gold);break-before:page;break-after:avoid}
+h2.kapitel .nr{color:var(--gold-d);margin-right:1.8mm}
+h3{font-size:15pt;margin:7mm 0 2mm;break-after:avoid}
+p{margin:0 0 3mm;orphans:3;widows:3}
+ol,ul{margin:0 0 4mm;padding-left:6mm}
+/* kurze Listen (bis 8 Eintraege) nicht ueber den Seitenumbruch trennen; der einleitende Satz bleibt bei der Liste */
+ol:not(:has(> li:nth-child(9))),ul:not(:has(> li:nth-child(9))){break-inside:avoid}
+p:has(+ ol),p:has(+ ul){break-after:avoid}
+li{margin:0 0 1.5mm}
+strong{font-weight:600}
+.ui{font-weight:600;color:var(--gold-t)}
+figure{margin:4mm 0 6mm;break-inside:avoid;text-align:center}
+figure img{max-width:100%;max-height:100mm;width:auto;border:1px solid var(--line);border-radius:3mm;box-shadow:0 2mm 5mm -3mm rgba(33,26,14,.35)}
+figure img.schmal{max-width:62%}
+figure img.mittel{max-width:80%}
+figure img.hoch{max-height:215mm}
+figure img.lang{max-height:225mm}
+.zwei figure img{max-height:70mm}
+figcaption{font-size:8.5pt;color:var(--soft);margin-top:2mm}
+.hinweis{border-left:4px solid var(--gold);background:var(--ivory);padding:3mm 4mm;margin:4mm 0;border-radius:0 2mm 2mm 0;break-inside:avoid}
+.hinweis strong:first-child{display:block;margin-bottom:1mm}
+table{width:100%;border-collapse:collapse;margin:3mm 0 5mm;font-size:9.5pt;break-inside:auto}
+th,td{text-align:left;vertical-align:top;padding:2mm 3mm;border-bottom:1px solid var(--line)}
+th{background:var(--ivory);font-weight:600}
+tr{break-inside:avoid}
+table{break-inside:avoid}
+/* Deckblatt */
+.deckblatt{height:258mm;display:flex;flex-direction:column;justify-content:space-between;background:var(--night);color:#faf6ee;border-radius:4mm;padding:22mm 18mm}
+.deckblatt .marke{display:flex;align-items:center;gap:5mm;font-family:Arial,sans-serif;font-weight:700;font-size:18pt;max-width:100%;min-width:0}
+/* lange Markennamen: Logo schrumpft in der Breite (Seitenverhaeltnis bleibt), nichts wird rechts abgeschnitten */
+.deckblatt .marke img{display:block;height:24mm;width:auto;max-width:100%;min-width:0;object-fit:contain;object-position:left center}
+.deckblatt h1{color:#faf6ee;font-size:44pt;margin:0 0 6mm}
+.deckblatt .unter{color:#e8c777;font-size:15pt;margin:0}
+.deckblatt .linie{width:28mm;height:3px;background:var(--gold);margin:0 0 8mm}
+.deckblatt .stand{font-size:9pt;color:#b8ad94;line-height:1.7}
+/* Inhaltsverzeichnis */
+.inhalt{break-before:page}
+.inhalt h2{font-size:25pt;margin:0 0 8mm;padding-bottom:3mm;border-bottom:2px solid var(--gold)}
+.inhalt ol{list-style:none;padding:0}
+.inhalt li{margin:0 0 3mm;font-size:12pt}
+.inhalt a{display:flex;align-items:baseline;color:var(--ink);text-decoration:none}
+.inhalt a .nr{width:9mm;color:var(--gold-t);font-weight:600}
+.inhalt a .fueller{flex:1;border-bottom:1px dotted var(--soft);margin:0 2mm;transform:translateY(-1mm)}
+.inhalt a .s{min-width:8mm;text-align:right}
+.zwei{display:block}
+.zwei figure{flex:1}
+</style>
+</head>
+<body>
+<main>
+
+<section class="deckblatt">
+  <div class="marke"><img src="bilder-hu/marke-logo-vertikal.svg" alt="A Példa Akadémia logója"></div>
+  <div>
+    <div class="linie"></div>
+    <h1>Kézikönyv vásárlóknak</h1>
+    <p class="unter">Előadások keresése, vásárlása és használata – lépésről lépésre</p>
+  </div>
+  <div class="stand">
+    Verzió <span data-feld="version">–</span> · Kiadás dátuma: <span data-feld="stand">–</span> · Szoftver-commit <span data-feld="commit">–</span><br>
+    Ez a kézikönyv az előadásplatformot a vásárlók szemszögéből mutatja be. Az ábrák a kitalált „Példa Akadémia” platformot mutatják kitalált előadásokkal és adatokkal.
+  </div>
+</section>
+
+<section class="inhalt">
+  <h2>Tartalomjegyzék</h2>
+  <ol>
+    <li><a href="#k0"><span class="nr">★</span>Gyors kezdés öt lépésben<span class="fueller"></span><span class="s" data-seite="k0"></span></a></li>
+    <li><a href="#k1"><span class="nr">1</span>Áttekintés<span class="fueller"></span><span class="s" data-seite="k1"></span></a></li>
+    <li><a href="#k2"><span class="nr">2</span>Regisztráció és az e-mail-cím megerősítése<span class="fueller"></span><span class="s" data-seite="k2"></span></a></li>
+    <li><a href="#k3"><span class="nr">3</span>Belépés és jelszó<span class="fueller"></span><span class="s" data-seite="k3"></span></a></li>
+    <li><a href="#k4"><span class="nr">4</span>Előadások keresése és kiválasztása<span class="fueller"></span><span class="s" data-seite="k4"></span></a></li>
+    <li><a href="#k5"><span class="nr">5</span>Előadás vásárlása<span class="fueller"></span><span class="s" data-seite="k5"></span></a></li>
+    <li><a href="#k6"><span class="nr">6</span>Előadások és leckék használata<span class="fueller"></span><span class="s" data-seite="k6"></span></a></li>
+    <li><a href="#k7"><span class="nr">7</span>Fiókom, rendelések és bizonylatok<span class="fueller"></span><span class="s" data-seite="k7"></span></a></li>
+    <li><a href="#k8"><span class="nr">8</span>Előfizetés kezelése és lemondása<span class="fueller"></span><span class="s" data-seite="k8"></span></a></li>
+    <li><a href="#k9"><span class="nr">9</span>Elállás és visszatérítés<span class="fueller"></span><span class="s" data-seite="k9"></span></a></li>
+    <li><a href="#k10"><span class="nr">10</span>Adatvédelem és a fiók törlése<span class="fueller"></span><span class="s" data-seite="k10"></span></a></li>
+    <li><a href="#k11"><span class="nr">11</span>Segítség és kapcsolat<span class="fueller"></span><span class="s" data-seite="k11"></span></a></li>
+  </ol>
+</section>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k0"><span class="nr">★</span> Gyors kezdés öt lépésben</h2>
+<ol>
+  <li><strong>Fiók létrehozása:</strong> Kattints fent a <span class="ui">Regisztráció</span> menüpontra, és add meg az e-mail-címedet és egy jelszót (legalább 8 karakter). Jelöld be a feltételek elfogadását (2. fejezet).</li>
+  <li><strong>E-mail-cím megerősítése:</strong> Nyisd meg a megerősítő e-mailben kapott hivatkozást. Megerősített cím nélkül nem lehet vásárolni (2. fejezet).</li>
+  <li><strong>Előadás kiválasztása:</strong> Nyiss meg egy előadást az előadások listájában, és olvasd el a leírást, a leckéket és az árat (4. fejezet).</li>
+  <li><strong>Vásárlás:</strong> Jelöld be a hozzájárulást, kattints a vásárlás gombra, és fizess a Stripe fizetési oldalán (5. fejezet).</li>
+  <li><strong>Tanulás:</strong> Az előadásaidat az <span class="ui">Előadásaim</span> menüpont alatt találod (6. fejezet). Segítséget a 11. fejezetben kapsz.</li>
+</ol>
+<div class="hinweis"><strong>Jó tudni</strong>A 9. fejezetből megtudod, hogyan dolgozza fel a platform az elállási nyilatkozatot, és hogyan történik a visszatérítés. A törvényes fogyasztói jogaidat ez nem érinti.</div>
+
+<h2 class="kapitel" id="k1"><span class="nr">1</span> Áttekintés</h2>
+<p>Az előadásplatformon online előadásokat vásárolsz, és közvetlenül a böngészőben használod őket. Egy előadás leckékből áll, amelyek szöveget, videót, PDF-dokumentumot vagy hanganyagot tartalmaznak. Vásárlás után az előadásaidat az <span class="ui">Előadásaim</span> menüpont alatt találod, amíg a hozzáférésed fennáll, és be vagy jelentkezve.</p>
+<h3>Amire szükséged van</h3>
+<ul>
+  <li>egy korszerű webböngésző (számítógép, táblagép vagy okostelefon),</li>
+  <li>egy saját e-mail-cím, amelyhez hozzáférsz,</li>
+  <li>fizetős előadásokhoz egy fizetési mód, amelyet a fizetési oldal felkínál (például bankkártya).</li>
+</ul>
+<h3>A fejléc</h3>
+<p>Minden oldal tetején megtalálod a menüt. Vendégként az <span class="ui">Előadások</span>, a <span class="ui">Belépés</span> és a <span class="ui">Regisztráció</span> menüpontot látod. Belépés után megjelenik az <span class="ui">Előadásaim</span>, a <span class="ui">Fiókom</span> és a <span class="ui">Kilépés</span>.</p>
+<figure role="group"><img src="bilder-hu/02-kopfzeile.png" alt="A platform fejléce: balra a logó, jobbra az Előadások, Belépés és Regisztráció menüpont, mellettük az EN, DE és HU nyelvválasztó."><figcaption>1. ábra – Fejléc a menüvel és a nyelvválasztással</figcaption></figure>
+<h3>Nyelv kiválasztása</h3>
+<p>A fejléc jobb oldalán választod ki a nyelvet: <span class="ui">EN</span> (angol), <span class="ui">DE</span> (német) vagy <span class="ui">HU</span> (magyar). A platform megjegyzi a választásodat ebben a böngészőben, és ha be vagy jelentkezve, a fiókodban is. Ezután az oldal a kiválasztott nyelven töltődik be újra.</p>
+<div class="hinweis"><strong>Jó tudni</strong>A kézikönyv ábrái példa-előadásokat mutatnak. A platformodon az előadások neve, ára és tartalma ettől eltérhet.</div>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k2"><span class="nr">2</span> Regisztráció és az e-mail-cím megerősítése</h2>
+<p>Előadások vásárlásához fiókra van szükséged. Az előadások listáját és az előadások oldalait fiók nélkül is megnézheted.</p>
+<h3>Fiók létrehozása</h3>
+<ol>
+  <li>Kattints a fejlécben a <span class="ui">Regisztráció</span> menüpontra.</li>
+  <li>Add meg az <strong>e-mail-címedet</strong> és egy legalább 8 karakteres <strong>jelszót</strong>. A jelszómezőben lévő szem ikonnal a jelszót rövid időre megjelenítheted.</li>
+  <li>Olvasd el a <strong>részvételi feltételeket</strong> és az <strong>adatvédelmi tájékoztatót</strong> (hivatkozások az űrlapon), és jelöld be a négyzetet. A jelölés nélkül nem lehet regisztrálni.</li>
+  <li>Kattints a <span class="ui">Regisztráció</span> gombra.</li>
+</ol>
+<figure role="group"><img class="mittel" src="bilder-hu/05-registrierung.png" alt="Regisztrációs űrlap az e-mail-cím és a jelszó mezővel, a részvételi feltételek és az adatvédelmi tájékoztató jelölőnégyzetével és a Regisztráció gombbal."><figcaption>2. ábra – Regisztrációs űrlap</figcaption></figure>
+<p>A regisztráció után azonnal be vagy jelentkezve. Az oldal tetején megjelenik egy figyelmeztetés, hogy még meg kell erősítened az e-mail-címedet. Ha a címhez már tartozik fiók, a platform ezt jelzi, és felkínálja az <span class="ui">Elfelejtetted a jelszavad?</span> hivatkozást.</p>
+<figure role="group"><img src="bilder-hu/06-nach-registrierung.png" alt="Az oldal közvetlenül a regisztráció után: felül értesítés, hogy az e-mail-címet még meg kell erősítened, és egy gomb a megerősítő e-mail újraküldéséhez."><figcaption>3. ábra – A regisztráció után: figyelmeztetés az e-mail-cím megerősítéséről</figcaption></figure>
+<h3>Az e-mail-cím megerősítése</h3>
+<p>Kapsz egy e-mailt a <span class="ui">Megerősítem az e-mail-címemet</span> gombbal. A hivatkozás 24 óráig érvényes, és csak egyszer használható.</p>
+<div class="zwei">
+  <figure role="group"><img src="bilder-hu/07-mail-bestaetigung.png" alt="A platform megerősítő e-mailje üdvözléssel, az e-mail-cím megerősítésére szolgáló gombbal és azzal a tudnivalóval, hogy a link 24 óráig érvényes."><figcaption>4. ábra – Megerősítő e-mail</figcaption></figure>
+  <figure role="group"><img src="bilder-hu/09-email-bestaetigt.png" alt="Üzenet a megerősítő linkre kattintás után: az e-mail-cím megerősítése sikerült."><figcaption>5. ábra – Sikeres megerősítés</figcaption></figure>
+</div>
+<p>Nem kaptál e-mailt? Nézd meg a levélszemét mappát. Az oldal tetején lévő figyelmeztetésben a <span class="ui">Megerősítő e-mail újraküldése</span> gombbal új e-mailt kérhetsz. Az új hivatkozás felváltja a régit.</p>
+<div class="hinweis"><strong>Fontos</strong>Megerősített e-mail-cím nélkül nem vásárolhatsz előadást, ingyeneset sem. Ilyenkor a vásárlás gombra kattintva ez a figyelmeztetés jelenik meg: „Erősítsd meg az e-mail-címedet a vásárláshoz.”</div>
+<figure role="group"><img src="bilder-hu/08-hinweis-bestaetigen.png" alt="Egy előadás vásárlási doboza azzal az értesítéssel, hogy vásárlás előtt meg kell erősítened az e-mail-címedet; vásárlási kísérlet megerősítetlen címmel."><figcaption>6. ábra – Vásárlási kísérlet megerősített e-mail-cím nélkül</figcaption></figure>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k3"><span class="nr">3</span> Belépés és jelszó</h2>
+<h3>Belépés</h3>
+<ol>
+  <li>Kattints a <span class="ui">Belépés</span> menüpontra.</li>
+  <li>Add meg az e-mail-címedet és a jelszavadat, majd kattints a <span class="ui">Belépés</span> gombra.</li>
+</ol>
+<figure role="group"><img class="mittel" src="bilder-hu/10-anmeldung.png" alt="Belépési űrlap az e-mail-cím és a jelszó mezővel, a Belépés gombbal és az Elfelejtetted a jelszavad? linkkel."><figcaption>7. ábra – Belépés</figcaption></figure>
+<p>Ha éppen egy előadást akartál megvásárolni vagy megnyitni, a platform belépés után visszavisz oda.</p>
+<ul>
+  <li><strong>Több eszköz:</strong> Az egyidejű belépések száma korlátozott. Ha egy további eszközön lépsz be, a legrégebbi munkamenet véget érhet. Ott egyszerűen lépj be újra.</li>
+  <li><strong>Túl sok sikertelen próbálkozás:</strong> Túl sok hibás megadás után a platform átmenetileg letiltja a belépést („Túl sok próbálkozás. Kérlek, próbáld újra később.”). Ilyenkor várj egy kicsit, vagy állítsd vissza a jelszavadat.</li>
+  <li><strong>Kilépés:</strong> Kattints a fejlécben a <span class="ui">Kilépés</span> menüpontra, különösen közösen használt eszközökön.</li>
+</ul>
+<h3>Elfelejtett jelszó</h3>
+<ol>
+  <li>Kattints a belépési űrlapon az <span class="ui">Elfelejtetted a jelszavad?</span> hivatkozásra.</li>
+  <li>Add meg az e-mail-címedet, és kattints a <span class="ui">Hivatkozás kérése</span> gombra. Biztonsági okokból a platform nem árulja el, hogy tartozik-e fiók a címhez.</li>
+  <li>Nyisd meg az e-mailben kapott hivatkozást. <strong>30 percig</strong> érvényes, és csak egyszer használható.</li>
+  <li>Add meg kétszer az új jelszót, és kattints a <span class="ui">Jelszó visszaállítása</span> gombra. Ezután az új jelszóval lépsz be. Közben minden korábbi belépés megszűnik.</li>
+</ol>
+<div class="zwei">
+  <figure role="group"><img src="bilder-hu/11-passwort-vergessen.png" alt="Elfelejtett jelszó űrlap: mező az e-mail-címhez és gomb a visszaállító link kéréséhez."><figcaption>8. ábra – Hivatkozás kérése</figcaption></figure>
+  <figure role="group"><img src="bilder-hu/13-passwort-neu.png" alt="Új jelszó megadására szolgáló űrlap: az új jelszót kétszer kell beírni, majd a Jelszó visszaállítása gombbal menteni."><figcaption>9. ábra – Új jelszó megadása</figcaption></figure>
+</div>
+<h3>Jelszó módosítása</h3>
+<p>Belépve a jelszavadat a <span class="ui">Fiókom</span> → <span class="ui">Jelszó módosítása</span> alatt módosíthatod (az <span class="ui">Előadásaim</span> oldalon is van rá hivatkozás): add meg a jelenlegi jelszót, kétszer az új jelszót, majd <span class="ui">Jelszó mentése</span>.</p>
+<figure role="group"><img class="mittel" style="max-height:50mm" src="bilder-hu/35-passwort-aendern.png" alt="Jelszó módosítása űrlap a fiókban: mező a jelenlegi jelszóhoz, kétszer az új jelszóhoz, és a Jelszó mentése gomb."><figcaption>10. ábra – Jelszó módosítása</figcaption></figure>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k4"><span class="nr">4</span> Előadások keresése és kiválasztása</h2>
+<h3>Az előadások listája</h3>
+<p>A kezdőoldal (<span class="ui">Előadások</span>) az összes kínált előadást mutatja borítóképpel, rövid leírással és árral. A már megvásárolt előadásokon a <span class="ui">Megvásárolva</span> jelölés áll, és közvetlenül a <span class="ui">Megnyitás</span> gombbal nyithatók meg. A <span class="ui">Megnézem</span> gombbal az előadás oldalára jutsz.</p>
+<figure role="group"><img src="bilder-hu/01-startseite.png" alt="Kezdőlap az előadások listájával: kártyák borítóképpel, rövid leírással és árral, valamint a Megnézem gombbal, megvásárolt előadásnál a Megnyitás gombbal."><figcaption>11. ábra – Az előadások listája (kezdőoldal)</figcaption></figure>
+<h3>Az előadás oldala</h3>
+<p>Az előadás oldalán mindent megtalálsz, amire a döntéshez szükséged van:</p>
+<ul>
+  <li>borítókép vagy <strong>előadásbemutató</strong> videó (ha a szolgáltató feltöltött ilyet),</li>
+  <li>a <strong>leírás</strong> és <strong>A szolgáltató</strong> doboz egy kapcsolattartási címmel a vásárlás előtti kérdésekhez,</li>
+  <li><strong>Mit fogsz megtanulni</strong>: az előadás tanulási céljai,</li>
+  <li><strong>Leckék</strong>: az összes lecke címmel, szakaszokra bontva. Vásárlás előtt a <span class="ui">Vásárlás után elérhető</span> jelölés áll rajtuk,</li>
+  <li>jobb oldalon (okostelefonon a bemutatóvideó alatt) a <strong>vásárlási doboz</strong> az árral és a vásárlás gombbal.</li>
+</ul>
+<figure role="group"><img class="hoch" src="bilder-hu/03-kursseite.png" alt="Előadásoldal: balra a borítókép, a leírás, a szolgáltató, a tanulási célok és a leckék a Vásárlás után elérhető jelöléssel, jobbra a vásárlási doboz árral és vásárlás gombbal."><figcaption>12. ábra – Az előadás oldala</figcaption></figure>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k5"><span class="nr">5</span> Előadás vásárlása</h2>
+<p>Egy előadás kínálható <strong>egyszeri vásárlásként</strong>, <strong>előfizetésként</strong> vagy <strong>ingyenesen</strong>. Hogy mi érhető el, azt a vásárlási dobozban látod. Minden vásárlás feltétele: be vagy jelentkezve, és megerősítetted az e-mail-címedet (lásd 2. fejezet).</p>
+<h3>1. lépés: Hozzájárulás megadása</h3>
+<p>Fizetős előadásoknál a vásárlás gomb először le van tiltva. Előbb jelöld be a négyzetet:</p>
+<p><em>„Kifejezetten kérem a szolgáltatás azonnali megkezdését, és tudomásul veszem, hogy ezzel – a tartalom megnyitása után – elveszítem az elállási jogomat.”</em></p>
+<p>Ez az a szöveg, amelyet a platform ezen a ponton megjelenít. A jogi következményeket a szolgáltató elállási tájékoztatója ismerteti.</p>
+<p>Csak ezután válik aktívvá a <span class="ui">Megvásárlom</span> (illetve az <span class="ui">Előfizetek</span>) gomb. A platform elmenti a hozzájárulásod időpontját. Hogy ennek milyen következménye van egy későbbi elállásra, azt a 9. fejezet írja le. A vásárlás gomb alatt egy hivatkozás vezet az elállási jogról szóló tájékoztatáshoz.</p>
+<div class="zwei">
+  <figure role="group"><img src="bilder-hu/14-kaufkasten-vorher.png" alt="Vásárlási doboz árral, a tartalom felsorolásával és a még be nem jelölt hozzájárulással az azonnali kezdéshez; a Megvásárlom gomb halvány és nem kattintható."><figcaption>13. ábra – A vásárlás gomb le van tiltva</figcaption></figure>
+  <figure role="group"><img src="bilder-hu/15-kaufkasten-zustimmung.png" alt="Ugyanaz a vásárlási doboz bejelölt hozzájárulással; a Megvásárlom gomb most már aktív."><figcaption>14. ábra – Négyzet bejelölve, a vásárlás gomb aktív</figcaption></figure>
+</div>
+<h3>2. lépés: Fizetés</h3>
+<ol>
+  <li>Kattints a <span class="ui">Megvásárlom</span> gombra. Megjelenik az „Átirányítunk a fizetéshez…” üzenet.</li>
+  <li>A <strong>Stripe</strong> fizetési szolgáltató biztonságos fizetési oldalára jutsz. Ott adod meg a fizetési adataidat. A kártyaadataidat az előadásplatform nem látja és nem tárolja.</li>
+  <li>A fizetési oldalon <strong>számlázási címet</strong> kell megadni. Céges vásárlók ezen felül <strong>adószámot</strong> is megadhatnak (nem kötelező).</li>
+  <li>Hagyd jóvá a fizetést. Ezután a Stripe visszavezet az előadásplatformra.</li>
+</ol>
+<div class="hinweis"><strong>Megjegyzés</strong>A fizetési oldalt a Stripe jeleníti meg, ebben a kézikönyvben nem szerepel ábrán. Hogy ott milyen fizetési módok jelennek meg, az a szolgáltató beállításaitól függ. Pontosan azt az árat fizeted abban a pénznemben, amely az előadás oldalán áll.</div>
+<h3>3. lépés: Visszaigazolás</h3>
+<p>Visszatérés után a platform ezt mutatja: „Köszönjük! Ellenőrizzük a fizetést…”. A hozzáférés csak akkor jön létre, amikor a Stripe megerősítette a fizetést. Ez többnyire csak néhány másodperc. Amint a fizetés beérkezett, megjelenik a <span class="ui">Megnyitás</span> gomb.</p>
+<div class="zwei">
+  <figure role="group"><img src="bilder-hu/16-zahlung-wird-geprueft.png" alt="Előadásoldal a fizetési oldalról való visszatérés után azzal az üzenettel, hogy a fizetés ellenőrzése folyamatban van."><figcaption>15. ábra – A fizetés ellenőrzése folyamatban</figcaption></figure>
+  <figure role="group"><img src="bilder-hu/17-zahlung-eingegangen.png" alt="Előadásoldal a fizetés visszaigazolása után: értesítés a beérkezett fizetésről és a Megnyitás gomb."><figcaption>16. ábra – A fizetés beérkezett</figcaption></figure>
+</div>
+<p>Ha az ellenőrzés tovább tart, megjelenik egy figyelmeztetés, hogy később nézz vissza az <span class="ui">Előadásaim</span> oldalon. Nem kell újra fizetned.</p>
+<p>Ezen felül kapsz egy <strong>e-mailes vásárlási visszaigazolást</strong> az előadással, az összeggel, a dátummal, a rendelésszámmal, a szolgáltató adataival, a hozzájárulásod időpontjával, egy gombbal az előadáshoz, egy utalással a fizetési bizonylatra és az elállási tájékoztatóval.</p>
+<figure role="group"><img class="lang" src="bilder-hu/18-mail-kauf.png" alt="Vásárlási visszaigazoló e-mail az előadással, összeggel, dátummal, rendelésszámmal, a szolgáltató adataival, a hozzájárulás időpontjával, gombbal az előadáshoz és az elállási tájékoztatóval."><figcaption>17. ábra – Vásárlási visszaigazolás e-mailben</figcaption></figure>
+<h3>Megszakított fizetés</h3>
+<p>Ha a fizetési oldalon megszakítod a folyamatot, a platform ezt mutatja: „A fizetés megszakadt”. A <span class="ui">Rendeléseim</span> oldalon ellenőrizheted, történt-e fizetés. A <span class="ui">Vissza az előadáshoz</span> gombbal újra megpróbálhatod.</p>
+<figure role="group"><img class="mittel" src="bilder-hu/19-zahlung-abgebrochen.png" alt="Előadásoldal azzal az üzenettel, hogy a fizetés megszakadt és nem történt levonás, valamint a Vissza az előadáshoz gombbal."><figcaption>18. ábra – Megszakított fizetés</figcaption></figure>
+<h3>Előfizetés</h3>
+<p>Ha a szolgáltató egy előadást előfizetésként is kínál, a vásárlási dobozban ezen felül az <span class="ui">Előfizetek</span> gomb is megjelenik az árral és az időszakkal (havi vagy éves). A négyzet bejelölése itt is kötelező. Az előfizetés automatikusan megújul, amíg le nem mondod (8. fejezet). Egy előadáshoz egyszerre mindig csak egy előfizetés futhat.</p>
+<h3>Ingyenes előadások</h3>
+<p>Ingyenes előadásoknál az <span class="ui">Ingyenes hozzáférés</span> gomb látható. Egy kattintás elég: nincs fizetési oldal, az előadás azonnal elérhetővé válik. A szolgáltató közvetlenül is adhat neked ingyenes hozzáférést egy előadáshoz. Ilyenkor a „Hozzáférést kaptál” e-mailt kapod, és az előadás megjelenik az <span class="ui">Előadásaim</span> alatt.</p>
+<div class="zwei">
+  <figure role="group"><img src="bilder-hu/20-kaufkasten-abo.png" alt="Egy egyszeri vásárlással és előfizetéssel is elérhető előadás vásárlási doboza: egyszeri ár, hozzájárulási jelölőnégyzet, a Megvásárlom gomb, alatta pedig az Előfizetek gomb a havi díjjal."><figcaption>19. ábra – Vásárlási doboz egyszeri vásárlással és előfizetéssel</figcaption></figure>
+  <figure role="group"><img src="bilder-hu/21-kaufkasten-kostenlos.png" alt="Ingyenes előadás vásárlási doboza ingyenes árral és az Ingyenes hozzáférés gombbal, amely fizetési oldal nélkül azonnal elérhetővé teszi az előadást."><figcaption>20. ábra – Ingyenes előadás</figcaption></figure>
+</div>
+<div class="hinweis"><strong>Lehetséges üzenetek vásárláskor</strong>„Ehhez az előadáshoz már hozzáférsz.” – az előadás már a fiókodban van. „Ehhez az előadáshoz már van futó előfizetésed.” – előbb mondd le az előfizetést, vagy fordulj a szolgáltatóhoz. „Az értékesítés átmenetileg szünetel.” – a szolgáltató rövid időre leállította az új vásárlásokat; próbáld újra később.</div>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k6"><span class="nr">6</span> Előadások és leckék használata</h2>
+<h3>Előadásaim</h3>
+<p>Az <span class="ui">Előadásaim</span> oldalon minden olyan előadás szerepel, amelyhez hozzáférésed van, a <span class="ui">Hozzáférés aktív</span> jelöléssel. Előfizetéses előadásoknál egy második mező mutatja az előfizetés állapotát: <strong>Aktív</strong>, <strong>Lemondva</strong>, <strong>Fizetésre vár</strong> vagy <strong>Megszűnt</strong>. Fent találod az <span class="ui">Előfizetésem kezelése</span> és a <span class="ui">Jelszó módosítása</span> gombot.</p>
+<figure role="group"><img class="hoch" src="bilder-hu/23-meine-kurse.png" alt="Előadásaim oldal: megvásárolt előadások a Hozzáférés aktív jelöléssel, előfizetéses előadásoknál az előfizetés állapotával, felül az Előfizetésem kezelése és a Jelszó módosítása gomb."><figcaption>21. ábra – Előadásaim</figcaption></figure>
+<h3>Az előadás áttekintése</h3>
+<p>A <span class="ui">Megnyitás</span> gombbal az előadás áttekintő oldalára jutsz. Minden lecke mutatja a címét és a típusát (szöveg, videó, PDF, hang). A <span class="ui">Megnyitás</span> gombbal indítod a leckét.</p>
+<figure role="group"><img src="bilder-hu/24-kursuebersicht.png" alt="Az előadás áttekintése megnyitás után: a leckék szakaszonként, mindegyik címmel, típussal (szöveg, videó, PDF) és Megnyitás gombbal."><figcaption>22. ábra – Az előadás áttekintése a leckékkel</figcaption></figure>
+<h3>Leckék</h3>
+<p>Minden lecke végén az <span class="ui">Előző lecke</span> és a <span class="ui">Következő lecke</span> gomb vezet végig az előadáson; a <span class="ui">Vissza</span> gomb az előadás áttekintéséhez visz.</p>
+<ul>
+  <li><strong>Szöveg:</strong> A tartalom közvetlenül az oldalon jelenik meg.</li>
+  <li><strong>Videó és hang:</strong> Lejátszás a platform lejátszójában. A szolgáltató beállításaitól függően egy videó egy csatlakoztatott videószolgáltatáson keresztül is futhat.</li>
+  <li><strong>PDF:</strong> A dokumentum saját nézetben jelenik meg. A nyilakkal lapozol, a <span class="ui">−</span> és a <span class="ui">+</span> gombbal kicsinyíted és nagyítod a nézetet.</li>
+</ul>
+<figure role="group"><img src="bilder-hu/25-lektion-text.png" alt="Egy előadás első szöveges leckéje címmel és szöveggel, alatta a Következő lecke és a Vissza gomb."><figcaption>23. ábra – Szöveges lecke</figcaption></figure>
+<figure role="group"><img src="bilder-hu/26-lektion-video.png" alt="Videós lecke beágyazott lejátszóval; a videó fölött vízjelként a vásárló e-mail-címe látható."><figcaption>24. ábra – Videólecke a rávetített e-mail-címmel</figcaption></figure>
+<figure role="group"><img src="bilder-hu/27-lektion-pdf.png" alt="PDF-lecke a beépített dokumentumnézetben, lapozó nyilakkal, valamint a − és + gombbal a kicsinyítéshez és nagyításhoz."><figcaption>25. ábra – PDF-lecke</figcaption></figure>
+<div class="hinweis"><strong>A tartalmak védelme</strong>A tartalmak kizárólag személyes megtekintésre szolgálnak. A videók és a PDF-ek csak a platformon nézhetők meg, letöltésük nem lehetséges. Kivételt jelentenek a kifejezetten letöltésre kínált fájlok: ilyen termékeknél a leckében megjelenik a <span class="ui">PDF letöltése</span> gomb (26. ábra). Ez csak érvényes hozzáféréssel érhető el. A platform a videókra és a PDF-ekre vízjelként rávetíti az e-mail-címedet. A továbbadás és a felvétel nem megengedett.</div>
+<figure role="group"><img src="bilder-hu/42-lektion-download.png" alt="Lecke letölthető fájllal: a lecke szövege, alatta a PDF letöltése gomb."><figcaption>26. ábra – Lecke letölthető fájllal</figcaption></figure>
+<p>Ha egy fájl éppen nem tölthető be, ez jelenik meg: „A fájlt most nem sikerült betölteni. Kérlek, próbáld újra később.” Rövid idő múlva töltsd újra az oldalt.</p>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k7"><span class="nr">7</span> Fiókom, rendelések és bizonylatok</h2>
+<p>A <span class="ui">Fiókom</span> oldalon találod az adataidat, az összes rendelésedet és a fiókod beállításait.</p>
+<figure role="group"><img src="bilder-hu/28-konto-oben.png" alt="A Fiókom oldal felső része a fiókadatokkal és a Rendeléseim lista elejével."><figcaption>27. ábra – Fiókom</figcaption></figure>
+<h3>Rendeléseim</h3>
+<p>Minden rendelés mutatja a rendelésszámot, a dátumot, az előadást, az összeget, a típust (<strong>Egyszeri vásárlás</strong> vagy <strong>Előfizetés</strong>) és az állapotot:</p>
+<table>
+  <tr><th scope="col">Állapot</th><th scope="col">Jelentés</th></tr>
+  <tr><td>Fizetve</td><td>A fizetés megerősítve, az előadás elérhető.</td></tr>
+  <tr><td>Ellenőrzés alatt</td><td>A fizetési folyamat ellenőrzése még tart. Addig az előadás nem érhető el.</td></tr>
+  <tr><td>Visszatérítve</td><td>Az összeget teljes egészében visszatérítették. Az ebből a vásárlásból eredő hozzáférés megszűnt.</td></tr>
+  <tr><td>Időszak végére lemondva</td><td>Az előfizetés le van mondva, és a kifizetett időszak végével megszűnik.</td></tr>
+</table>
+<p>A rendeléstől függően ezek a gombok érhetők el:</p>
+<ul>
+  <li><span class="ui">Megnyitás</span> – az előadáshoz,</li>
+  <li><span class="ui">Fizetési bizonylat</span> – új ablakban megnyitja a fizetési bizonylatot a Stripe fizetési szolgáltatónál. Ott megnézheted és elmentheted. A fizetési bizonylat nem számla,</li>
+  <li><span class="ui">Elállás a szerződéstől</span> – lásd 9. fejezet,</li>
+  <li>előfizetéseknél az <span class="ui">Előfizetés lemondása</span> és az <span class="ui">Előfizetésem kezelése</span> – lásd 8. fejezet.</li>
+</ul>
+<figure role="group"><img src="bilder-hu/29-bestellung-einmal.png" alt="Egyszeri vásárlás rendelése rendelésszámmal, dátummal, előadással, összeggel, típussal és Fizetve állapottal, valamint a Megnyitás, a Fizetési bizonylat és az Elállás a szerződéstől gombbal."><figcaption>28. ábra – Rendelés (egyszeri vásárlás)</figcaption></figure>
+<h3>E-mail-cím módosítása</h3>
+<ol>
+  <li>Az <span class="ui">E-mail-cím módosítása</span> részben add meg az új címet és a jelenlegi jelszavadat.</li>
+  <li>Kattints a <span class="ui">Megerősítő levél küldése</span> gombra. A megerősítés az <strong>új</strong> címre megy; a hivatkozás 24 óráig érvényes.</li>
+  <li>Nyisd meg a hivatkozást. Ezután az új cím érvényes, és újra be kell lépned. A régi cím biztonsági értesítést kap.</li>
+</ol>
+<figure role="group"><img src="bilder-hu/33-konto-email-aendern.png" alt="E-mail-cím módosítása űrlap az új cím és a jelenlegi jelszó mezőjével, valamint a Megerősítő levél küldése gombbal."><figcaption>29. ábra – E-mail-cím módosítása</figcaption></figure>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k8"><span class="nr">8</span> Előfizetés kezelése és lemondása</h2>
+<p>Ha egy előadásra előfizetésed van, az a <span class="ui">Fiókom</span> → <span class="ui">Rendeléseim</span> alatt <strong>Előfizetés</strong> típussal szerepel.</p>
+<figure role="group"><img src="bilder-hu/30-bestellung-abo.png" alt="Futó előfizetéses rendelés a Rendeléseim alatt: típusa Előfizetés, állapota Fizetve, valamint a Megnyitás, a Fizetési bizonylat, az Elállás a szerződéstől, az Előfizetés lemondása és az Előfizetésem kezelése gomb."><figcaption>30. ábra – Rendelés futó előfizetéssel</figcaption></figure>
+<h3>Előfizetés lemondása</h3>
+<ol>
+  <li>Kattints az előfizetéses rendelésnél az <span class="ui">Előfizetés lemondása</span> gombra. (Az <span class="ui">Előadásaim</span> oldalon az <span class="ui">Előfizetés lemondása</span> hivatkozás is ide vezet.)</li>
+  <li>A Stripe ügyfélportáljára jutsz, és ott megerősíted a lemondást.</li>
+  <li>Ezután visszatérsz a <span class="ui">Fiókom</span> oldalra, és ezt látod: „Az előfizetésed lemondását rögzítettük.”</li>
+</ol>
+<p>A lemondás után a rendelésnél ez áll: „Lemondva. A hozzáférésed eddig tart: …”. A már kifizetett időszak végéig tovább használhatod az előadást; ezt követően az előfizetés már nem újul meg; a már keletkezett követeléseket ez nem érinti.</p>
+<h3>Előfizetésem kezelése</h3>
+<p>Az <span class="ui">Előfizetésem kezelése</span> gomb megnyitja a Stripe ügyfélportálját. Hogy ott milyen lehetőségek érhetők el (például a fizetési mód módosítása vagy a számlák megtekintése), az a szolgáltató beállításaitól függ. Az ügyfélportált és a lemondási oldalt a Stripe jeleníti meg, itt nem szerepelnek ábrán.</p>
+<div class="hinweis"><strong>Fizetésre vár</strong>Ha egy előfizetési díjat nem sikerült beszedni, az <span class="ui">Előadásaim</span> oldalon ez áll: „Fizetésre vár”. Ilyenkor ellenőrizd a fizetési módodat az ügyfélportálon.</div>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k9"><span class="nr">9</span> Elállás és visszatérítés</h2>
+<p>Ez a fejezet azt írja le, hogyan dolgozza fel a platform technikailag az elállási nyilatkozatot. Nem jogi tanácsadás. Az irányadó a szolgáltató elállási tájékoztatója és részvételi feltételei (hivatkozások a láblécben és a vásárlási visszaigazolásban). A törvényes fogyasztói jogaidat ez nem érinti.</p>
+<h3>Elállás bejelentése</h3>
+<ol>
+  <li>Nyisd meg a <span class="ui">Fiókom</span> oldalt, és keresd meg a rendelést a <span class="ui">Rendeléseim</span> alatt.</li>
+  <li>Kattints az <span class="ui">Elállás a szerződéstől</span> gombra. A platform megmutatja az előadást, az összeget és a rendelés dátumát.</li>
+  <li>Kattints a <span class="ui">Tovább a megerősítéshez</span> gombra.</li>
+  <li>Erősítsd meg a nyilatkozatot – „Kijelentem, hogy elállok a fent megjelölt szerződéstől.” – az <span class="ui">Elállás megerősítése</span> gombbal.</li>
+</ol>
+<div class="zwei">
+  <figure role="group"><img src="bilder-hu/37-widerruf-schritt1.png" alt="Elállás 1. lépés: a platform megmutatja az előadást, az összeget és a rendelés dátumát, valamint a Tovább a megerősítéshez gombot."><figcaption>31. ábra – 1. lépés</figcaption></figure>
+  <figure role="group"><img src="bilder-hu/38-widerruf-schritt2.png" alt="Elállás 2. lépés: a fent megnevezett szerződéstől való elállásról szóló nyilatkozat és az Elállás megerősítése gomb."><figcaption>32. ábra – 2. lépés: megerősítés</figcaption></figure>
+</div>
+<p>Az <span class="ui">Elállás a szerződéstől</span> hivatkozást minden oldal láblécében és a vásárlási visszaigazolásban is megtalálod. Az elállást e-mailben is bejelentheted a szolgáltatónak.</p>
+<h3>Mit tesz ezután a platform</h3>
+<p>A platform dátummal és időponttal rögzíti a nyilatkozatodat, és automatikusan ellenőrzi:</p>
+<table>
+  <tr><th scope="col">Ellenőrzés</th><th scope="col">Eredmény</th></tr>
+  <tr><td>A rendelés az elállási határidőn belül van? (a szoftver alapbeállítása: a rendeléstől számított 14 nap)</td><td>A platform alapértelmezés szerint 14 napos időszakot ellenőriz. Ha a nyilatkozatot automatikusan elutasítja, a törvényes jogaid megvizsgálása érdekében a szolgáltatóhoz fordulhatsz.</td></tr>
+  <tr><td>Vásárláskor hozzájárultál az azonnali teljesítéshez (négyzet), <strong>és</strong> ezután megnyitottad az előadás egy leckéjét?</td><td>Ebben az esetben a platform a beállított szabályai szerint automatikusan elutasítja az elállást.</td></tr>
+  <tr><td>Előfizetés</td><td>Automatikus elállás csak az előfizetés első fizetésénél lehetséges.</td></tr>
+  <tr><td>Minden feltétel teljesül</td><td>A platform automatikusan elindítja a teljes visszatérítést a Stripe-on keresztül ugyanarra a fizetési eszközre. Az előadáshoz való hozzáférés megszűnik; az előfizetés megszűnik.</td></tr>
+</table>
+<p><strong>Fontos:</strong> A táblázat azt írja le, hogyan dönt a platform a beállított szabályok alapján. Törvényes igények ettől függetlenül is fennállhatnak. A szerződési feltételekről a szolgáltató elállási tájékoztatójában és részvételi feltételeiben tájékozódhatsz. A törvényes fogyasztói jogaidat ez nem érinti.</p>
+<p>Az eredményt azonnal látod az oldal tetején és a rendelésnél. Ezen felül e-mailt is kapsz. A jóváírás bankodtól függően néhány napig is eltarthat.</p>
+<figure role="group"><img src="bilder-hu/39-widerruf-meldung.png" alt="Üzenet az oldal tetején az elállás után: az elállást rögzítettük, a visszatérítés folyamatban van."><figcaption>33. ábra – Elállás rögzítve, visszatérítés folyamatban</figcaption></figure>
+<figure role="group"><img src="bilder-hu/40-bestellung-nach-widerruf.png" alt="Ugyanaz a rendelés az elállás után: Visszatérítve állapot és Elállás rögzítve jelölés; a gombok, köztük az elállás gomb, már nem láthatók."><figcaption>34. ábra – A rendelés az elállás után</figcaption></figure>
+<div class="hinweis"><strong>Elutasítás vagy hiba esetén</strong>A platform megnevezi az okot, és az ügyfélszolgálathoz irányít. Ha egy visszatérítést technikai okból nem sikerült végrehajtani, az elállás ettől még rögzítve van, és a szolgáltató értesítést kap. A nyilatkozatot nem kell újra elküldened.</div>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k10"><span class="nr">10</span> Adatvédelem és a fiók törlése</h2>
+<h3>Adataim kérése</h3>
+<p>A <span class="ui">Fiókom</span> → <span class="ui">Adataim kérése</span> alatt az <span class="ui">Adatok letöltése</span> gombbal letölthetsz egy fájlt (JSON), amely a platformon tárolt személyes adataidat tartalmazza: fiókadatok, rendelések, hozzáférések, hozzájárulások és elállási nyilatkozatok.</p>
+<figure role="group"><img src="bilder-hu/32-konto-daten-anfordern.png" alt="Adataim kérése szakasz a fiókban rövid magyarázattal és az Adatok letöltése gombbal."><figcaption>35. ábra – Adataim kérése</figcaption></figure>
+<h3>Fiók törlése</h3>
+<ol>
+  <li>A <span class="ui">Fiók törlése</span> részben add meg a jelenlegi jelszavadat.</li>
+  <li>Kattints a <span class="ui">Fiókom végleges törlése</span> gombra, és erősítsd meg a rákérdezést.</li>
+</ol>
+<figure role="group"><img src="bilder-hu/34-konto-loeschen.png" alt="Fiók törlése szakasz figyelmeztetéssel, a jelenlegi jelszó mezőjével és a Fiókom végleges törlése gombbal."><figcaption>36. ábra – Fiók törlése</figcaption></figure>
+<ul>
+  <li>A törlés <strong>végleges</strong>. Az összes előadáshoz való hozzáférésed megszűnik, és a platform kiléptet.</li>
+  <li>Bizonyos rendelési és elszámolási adatok törvényes megőrzési kötelezettség miatt megmaradhatnak. Részletek a szolgáltató adatvédelmi tájékoztatójában.</li>
+  <li>Ha még fut egy előfizetés, a törlés nem lehetséges („Előbb mondd le az előfizetésedet.”). A lemondás után törölheted a fiókot.</li>
+</ul>
+<p>Hogy milyen adatokat milyen célból kezelnek, azt a szolgáltató <strong>adatvédelmi tájékoztatója</strong> tartalmazza (hivatkozás a láblécben).</p>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k11"><span class="nr">11</span> Segítség és kapcsolat</h2>
+<h3>Így éred el a szolgáltatót</h3>
+<ul>
+  <li><strong>Vásárlás előtt:</strong> minden előadás oldalán <strong>A szolgáltató</strong> dobozban áll egy e-mail-cím a kérdésekhez.</li>
+  <li><strong>Vásárlás után:</strong> a vásárlási visszaigazolás a „Tudnivalók” részben megadja a kérdésekhez használható címet.</li>
+  <li><strong>Jogi tudnivalók:</strong> Minden oldal láblécében megtalálod az <span class="ui">Impresszum</span>, az <span class="ui">Adatvédelem</span>, a <span class="ui">Részvételi feltételek</span>, az <span class="ui">Elállás a szerződéstől</span> és az <span class="ui">Elállási tájékoztató</span> hivatkozást.</li>
+</ul>
+<figure role="group"><img src="bilder-hu/41-fusszeile.png" alt="Minden oldal lábléce a logóval és az Impresszum, Adatvédelem, Részvételi feltételek, Elállás a szerződéstől és Elállási tájékoztató linkkel."><figcaption>37. ábra – Lábléc a jogi tudnivalókkal</figcaption></figure>
+<h3>Gyakori üzenetek</h3>
+<table>
+  <tr><th scope="col">Üzenet</th><th scope="col">Mit tehetsz</th></tr>
+  <tr><td>Nem kaptál e-mailes vásárlási visszaigazolást, vagy az előadás nem érhető el</td><td>Nézd meg a levélszemét mappát, és ellenőrizd a rendelés állapotát a „Rendeléseim” alatt. Ne indíts második vásárlást. Ha az előadás továbbra sem érhető el, írj arra az e-mail-címre, amely „A szolgáltató” dobozban szerepel, és add meg a rendelésszámodat.</td></tr>
+  <tr><td>Erősítsd meg az e-mail-címedet a vásárláshoz.</td><td>Nyisd meg a megerősítő e-mailben lévő hivatkozást, vagy kérj új e-mailt (2. fejezet).</td></tr>
+  <tr><td>Túl sok próbálkozás. Kérlek, próbáld újra később.</td><td>Várj egy kicsit; ha elfelejtetted a jelszavadat, kérd a hivatkozást (3. fejezet).</td></tr>
+  <tr><td>Még ellenőrizzük a fizetést.</td><td>Később nézz vissza az „Előadásaim” oldalon. Ne fizess újra.</td></tr>
+  <tr><td>A fizetés megszakadt</td><td>Ellenőrizd a „Rendeléseim” alatt, hogy rögzítettek-e fizetést. Ha a fizetés állapota nem egyértelmű, ne indíts újabb vásárlást; kétség esetén fordulj a szolgáltatóhoz.</td></tr>
+  <tr><td>Az értékesítés átmenetileg szünetel.</td><td>Próbáld újra később. A már megvásárolt előadások továbbra is használhatók.</td></tr>
+  <tr><td>A fájlt most nem sikerült betölteni.</td><td>Rövid idő múlva töltsd újra az oldalt.</td></tr>
+  <tr><td>Nem sikerült kapcsolódni a szerverhez.</td><td>Ellenőrizd az internetkapcsolatot, és próbáld újra.</td></tr>
+  <tr><td>A hivatkozás érvénytelen vagy lejárt.</td><td>Kérj új hivatkozást (megerősítés: 24 óráig, jelszó: 30 percig érvényes).</td></tr>
+</table>
+
+</main>
+</body>
+</html>

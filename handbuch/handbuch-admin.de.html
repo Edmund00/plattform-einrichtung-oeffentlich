@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Handbuch für den Admin-Bereich</title>
+<!-- Quelle des Admin-Handbuchs (Master-Fassung Deutsch, Zielgruppe: Betreiberin/Betreiber im taeglichen Einsatz). PDF bauen: node tools/handbuch-admin-bauen.mjs (Bilder + PDF) oder --nur-pdf.
+     Jede Aussage ist gegen die Software geprueft: public/admin/admin.js, routes-kurse.mjs, routes-bestellungen.mjs, routes-ereignisse.mjs, routes-abgleich.mjs,
+     routes-sicherung.mjs, routes-verkauf.mjs, routes-kurspaket.mjs, routes-ellallas.mjs, zahlung.mjs, abo.mjs, erstattung-regeln.mjs, texte/de.json.
+     Belege fuer "Auswirkungen von Aenderungen": tools/selbsttest-verwaltung.mjs (Archiv Z. 91-98 und 145-159, Preisaenderung Z. 384), tools/selbsttest-abo.mjs (Z. 107-113).
+     Bewusst NICHT enthalten (gehoert ins Installationshandbuch): Einrichtung, Umgebungsvariablen, Schluessel, Zahlungs-/Video-/Mail-Dienste, Agent-Anbindung, Notfallzugang.
+     Version, Stand und Software-Commit setzt das Bauskript ein (data-feld), ebenso die Seitenzahlen im Inhaltsverzeichnis (data-seite). -->
+<style>
+@font-face{font-family:'Jost';font-weight:300 700;src:url(../public/fonts/jost-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+2000-206F,U+20AC}
+@font-face{font-family:'Jost';font-weight:300 700;src:url(../public/fonts/jost-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA,U+1E00-1EFF}
+@font-face{font-family:'Cormorant Garamond';font-weight:400 700;src:url(../public/fonts/cormorant-garamond-normal-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+2000-206F,U+20AC}
+@font-face{font-family:'Cormorant Garamond';font-weight:400 700;src:url(../public/fonts/cormorant-garamond-normal-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA,U+1E00-1EFF}
+:root{--gold:#d4a843;--gold-d:#a87c2a;--gold-t:#7f5c1c;--ink:#211a0e;--soft:#7d7362;--line:#e7ddc9;--ivory:#faf6ee;--night:#0d0a05}
+@page{size:A4}
+*{box-sizing:border-box}
+html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{margin:0;font-family:'Jost',Arial,sans-serif;font-weight:400;font-size:10.5pt;line-height:1.55;color:var(--ink);background:#fff}
+h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;line-height:1.15;color:var(--ink)}
+h2.kapitel{font-size:25pt;margin:0 0 6mm;padding-bottom:3mm;border-bottom:2px solid var(--gold);break-before:page;break-after:avoid}
+h2.kapitel .nr{color:var(--gold-d);margin-right:1.8mm}
+h3{font-size:15pt;margin:7mm 0 2mm;break-after:avoid}
+p{margin:0 0 3mm;orphans:3;widows:3}
+ol,ul{margin:0 0 4mm;padding-left:6mm}
+li{margin:0 0 1.5mm;orphans:2;widows:2}
+strong{font-weight:600}
+.ui{font-weight:600;color:var(--gold-t)}
+figure{margin:4mm 0 6mm;break-inside:avoid;text-align:center}
+figure img{max-width:100%;max-height:88mm;width:auto;border:1px solid var(--line);border-radius:3mm;box-shadow:0 2mm 5mm -3mm rgba(33,26,14,.35)}
+figure img.schmal{max-width:62%}
+figure img.mittel{max-width:80%}
+figure img.klein{max-height:55mm}
+figure img.hoch{max-height:215mm}
+figcaption{font-size:8.5pt;color:var(--soft);margin-top:2mm}
+.hinweis{border-left:4px solid var(--gold);background:var(--ivory);padding:3mm 4mm;margin:4mm 0;border-radius:0 2mm 2mm 0;break-inside:avoid}
+.hinweis strong:first-child{display:block;margin-bottom:1mm}
+.recht{border-left-color:#a33a2a}
+table{width:100%;border-collapse:collapse;margin:3mm 0 5mm;font-size:9.5pt}
+th,td{text-align:left;vertical-align:top;padding:2mm 3mm;border-bottom:1px solid var(--line)}
+th{background:var(--ivory);font-weight:600}
+tr{break-inside:avoid}
+.eng th,.eng td{padding:1.3mm 3mm}
+table{break-inside:avoid}
+table.lang{break-inside:auto}
+.deckblatt{height:258mm;display:flex;flex-direction:column;justify-content:space-between;gap:8mm;background:var(--night);color:#faf6ee;border-radius:4mm;padding:22mm 18mm;overflow:hidden}
+.deckblatt>*{min-width:0;max-width:100%}
+.deckblatt .marke img{display:block;width:auto;height:auto;max-height:24mm;max-width:100%}
+.deckblatt h1{color:#faf6ee;font-size:44pt;margin:0 0 6mm;overflow-wrap:break-word;hyphens:auto}
+.deckblatt .unter{color:#e8c777;font-size:15pt;margin:0;overflow-wrap:break-word}
+.deckblatt .linie{width:28mm;height:3px;background:var(--gold);margin:0 0 8mm}
+.deckblatt .stand{font-size:9pt;color:#b8ad94;line-height:1.7;overflow-wrap:anywhere}
+.inhalt{break-before:page}
+.inhalt h2{font-size:25pt;margin:0 0 8mm;padding-bottom:3mm;border-bottom:2px solid var(--gold)}
+.inhalt ol{list-style:none;padding:0}
+.inhalt li{margin:0 0 2.6mm;font-size:12pt}
+.inhalt a{display:flex;align-items:baseline;color:var(--ink);text-decoration:none}
+.inhalt a .nr{width:9mm;color:var(--gold-t);font-weight:600}
+.inhalt a .fueller{flex:1;border-bottom:1px dotted var(--soft);margin:0 2mm;transform:translateY(-1mm)}
+.inhalt a .s{min-width:8mm;text-align:right}
+</style>
+</head>
+<body>
+<main>
+
+<section class="deckblatt">
+  <div class="marke"><img src="bilder-admin/marke-logo-vertikal.svg" alt="Logo der Beispiel-Akademie"></div>
+  <div>
+    <div class="linie"></div>
+    <h1>Handbuch für den Admin-Bereich</h1>
+    <p class="unter">Kurse, Bestellungen und Zugänge verwalten – für den täglichen Betrieb</p>
+  </div>
+  <div class="stand">
+    Version <span data-feld="version">–</span> · Stand <span data-feld="stand">–</span> · Software-Commit <span data-feld="commit">–</span><br>
+    Dieses Handbuch beschreibt die Bedienung der Kursplattform aus Sicht der Betreiberin bzw. des Betreibers. Einrichtung und Technik stehen im separaten Installationshandbuch.
+    Abbildungen zeigen Beispielkurse und Beispielkonten mit erfundenen Daten.
+  </div>
+</section>
+
+<section class="inhalt">
+  <h2>Inhaltsverzeichnis</h2>
+  <ol>
+    <li><a href="#k0"><span class="nr">★</span>Schnellstart in sechs Schritten<span class="fueller"></span><span class="s" data-seite="k0"></span></a></li>
+    <li><a href="#k1"><span class="nr">1</span>Anmeldung im Admin-Bereich<span class="fueller"></span><span class="s" data-seite="k1"></span></a></li>
+    <li><a href="#k2"><span class="nr">2</span>Die Übersicht<span class="fueller"></span><span class="s" data-seite="k2"></span></a></li>
+    <li><a href="#k3"><span class="nr">3</span>Kurse anlegen und bearbeiten<span class="fueller"></span><span class="s" data-seite="k3"></span></a></li>
+    <li><a href="#k4"><span class="nr">4</span>Lektionen und Medien<span class="fueller"></span><span class="s" data-seite="k4"></span></a></li>
+    <li><a href="#k5"><span class="nr">5</span>Veröffentlichen, Archivieren, Löschen<span class="fueller"></span><span class="s" data-seite="k5"></span></a></li>
+    <li><a href="#k6"><span class="nr">6</span>Bestellungen und Zugänge<span class="fueller"></span><span class="s" data-seite="k6"></span></a></li>
+    <li><a href="#k7"><span class="nr">7</span>Erstattungen und Widerruf<span class="fueller"></span><span class="s" data-seite="k7"></span></a></li>
+    <li><a href="#k8"><span class="nr">8</span>Kunden und Konten<span class="fueller"></span><span class="s" data-seite="k8"></span></a></li>
+    <li><a href="#k9"><span class="nr">9</span>Ereignisse und Protokolle<span class="fueller"></span><span class="s" data-seite="k9"></span></a></li>
+    <li><a href="#k10"><span class="nr">10</span>Verkauf pausieren<span class="fueller"></span><span class="s" data-seite="k10"></span></a></li>
+    <li><a href="#k11"><span class="nr">11</span>Datensicherung<span class="fueller"></span><span class="s" data-seite="k11"></span></a></li>
+    <li><a href="#k12"><span class="nr">12</span>Ein typischer Ablauf<span class="fueller"></span><span class="s" data-seite="k12"></span></a></li>
+    <li><a href="#k13"><span class="nr">13</span>Auswirkungen von Änderungen<span class="fueller"></span><span class="s" data-seite="k13"></span></a></li>
+    <li><a href="#k14"><span class="nr">14</span>Funktionen im Admin-Bereich<span class="fueller"></span><span class="s" data-seite="k14"></span></a></li>
+    <li><a href="#k15"><span class="nr">15</span>Hilfe und häufige Meldungen<span class="fueller"></span><span class="s" data-seite="k15"></span></a></li>
+  </ol>
+</section>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k0"><span class="nr">★</span> Schnellstart in sechs Schritten</h2>
+<ol>
+  <li><strong>Anmelden:</strong> Öffne die Admin-Adresse, die du bei der Einrichtung erhalten hast, und melde dich mit deinem Admin-Konto an (Kapitel 1).</li>
+  <li><strong>Kurs anlegen:</strong> Klicke auf <span class="ui">Neuer Kurs</span>, gib Titel, Beschreibung, Währung und Preis ein und klicke auf <span class="ui">Speichern</span>. Der Kurs ist jetzt ein <strong>Entwurf</strong> und für Kunden unsichtbar (Kapitel 3).</li>
+  <li><strong>Lektionen hinzufügen:</strong> Lege unter <span class="ui">Neue Lektion hinzufügen</span> Text-, Video-, PDF- oder Audiolektionen an und lade bei Bedarf die Datei hoch (Kapitel 4).</li>
+  <li><strong>Vorschau gestalten:</strong> Titelbild hochladen und unter <span class="ui">Das lernst du</span> die Lernziele eintragen (Kapitel 3).</li>
+  <li><strong>Veröffentlichen:</strong> Klicke auf <span class="ui">Fertig</span> und bestätige mit <span class="ui">Ja</span>. Ab jetzt ist der Kurs für alle sichtbar und kaufbar (Kapitel 5).</li>
+  <li><strong>Täglich prüfen:</strong> Auf der Übersicht stehen Kennzahlen, <span class="ui">Zu prüfende Zahlungen</span> und alle Bestellungen und Ereignisse (Kapitel 2, 6 und 9).</li>
+</ol>
+<div class="hinweis"><strong>Gut zu wissen</strong>Der Admin-Bereich kennt genau eine Rolle: <strong>Admin</strong>. Jedes Admin-Konto darf alle hier beschriebenen Funktionen nutzen. Admin-Konten werden bei der Einrichtung angelegt (Installationshandbuch), nicht im Admin-Bereich.</div>
+
+<div class="hinweis"><strong>Sprache</strong>Der Admin-Bereich erscheint in der Sprache, die du auf der Kundenseite der Plattform gewählt hast (EN, DE oder HU in der Kopfzeile). Datumsangaben folgen der gewählten Sprache (Deutsch zum Beispiel 12.11.2026). Uhrzeiten zeigt der Admin-Bereich immer in der Zeitzone Budapest.</div>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k1"><span class="nr">1</span> Anmeldung im Admin-Bereich</h2>
+<p>Der Admin-Bereich ist eine eigene Seite deiner Plattform. Öffne die Admin-Adresse, die du bei der Einrichtung erhalten hast, und melde dich mit der E-Mail-Adresse und dem Passwort deines Admin-Kontos an.</p>
+<ol>
+  <li>Gib <span class="ui">E-Mail-Adresse</span> und <span class="ui">Passwort</span> ein. Mit dem Augen-Symbol kannst du das Passwort kurz anzeigen.</li>
+  <li>Klicke auf <span class="ui">Anmelden</span>. Danach siehst du die Übersicht <strong>Meine Kurse</strong>.</li>
+</ol>
+<figure role="group"><img class="mittel" style="max-height:62mm" src="bilder-admin/a02-anmeldung.png" alt="Anmeldeseite des Admin-Bereichs mit den Feldern E-Mail-Adresse und Passwort, dem Augen-Symbol zum Anzeigen des Passworts und dem Knopf Anmelden."><figcaption>Abb. 1 – Anmeldung im Admin-Bereich</figcaption></figure>
+<ul>
+  <li><strong>Falsche Angaben:</strong> Die Plattform meldet „Falsche E-Mail-Adresse oder falsches Passwort.“ Jeder Versuch wird im Protokoll <span class="ui">Admin-Anmeldungen</span> festgehalten (Kapitel 9).</li>
+  <li><strong>Zu viele Fehlversuche:</strong> Die Anmeldung wird vorübergehend gesperrt („Zu viele Versuche. Bitte warte 15 Minuten und versuche es dann erneut.“).</li>
+  <li><strong>Passwort vergessen:</strong> Der Link <span class="ui">Passwort vergessen?</span> unter dem Formular führt zur allgemeinen Seite zum Zurücksetzen des Passworts. Du erhältst einen Link per E-Mail.</li>
+  <li><strong>Kunden-Konten:</strong> Wer sich mit einem normalen Kundenkonto anmeldet, sieht nur „Du hast keine Berechtigung.“</li>
+  <li><strong>Abmelden:</strong> Oben rechts auf jeder Admin-Seite steht <span class="ui">Abmelden</span>.</li>
+</ul>
+<figure role="group"><img class="mittel" style="max-height:38mm" src="bilder-admin/a01-anmeldung-fehler.png" alt="Anmeldeformular mit einer Fehlermeldung nach falscher E-Mail-Adresse oder falschem Passwort."><figcaption>Abb. 2 – Meldung bei falschen Anmeldedaten</figcaption></figure>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k2"><span class="nr">2</span> Die Übersicht</h2>
+<p>Nach der Anmeldung siehst du die Übersicht <strong>Meine Kurse</strong>. Von oben nach unten findest du: Kennzahlen, die Hauptknöpfe, alle Kurse, die zu prüfenden Zahlungen, die offenen Widerrufe, die Liste <strong>Bestellungen und Ereignisse</strong> und ganz unten die Werkzeuge.</p>
+<figure role="group"><img class="hoch" style="max-height:200mm" src="bilder-admin/a03-uebersicht.png" alt="Die ganze Übersichtsseite des Admin-Bereichs von oben nach unten: Kennzahlen, Hauptknöpfe, Kursliste, zu prüfende Zahlungen, offene Widerrufe, Bestellungen und Ereignisse und die Werkzeuge."><figcaption>Abb. 3 – Übersicht (ganze Seite ohne Werkzeugleiste)</figcaption></figure>
+<figure role="group"><img src="bilder-admin/a03b-uebersicht-oben.png" alt="Oberer Ausschnitt der Übersicht mit den Kennzahlen, den Hauptknöpfen und der Liste der Kurse."><figcaption>Abb. 3a – Ausschnitt: Kennzahlen, Hauptknöpfe und Kursliste</figcaption></figure>
+<figure role="group"><img style="max-height:55mm" src="bilder-admin/a03c-ereignisse-tabelle.png" alt="Ausschnitt der Übersicht mit der Tabelle der neuesten Bestellungen und Ereignisse: Zeit, Ereignis, Kurs, Betrag, Kunde und Status, etwa Bezahlt, Erstattet oder In Prüfung."><figcaption>Abb. 3b – Ausschnitt: die neuesten Bestellungen und Ereignisse</figcaption></figure>
+<h3>Kennzahlen</h3>
+<figure role="group"><img style="max-height:32mm" src="bilder-admin/a04-kennzahlen.png" alt="Sechs Kennzahl-Kacheln: Umsatz brutto, Bestellungen, Aktive Teilnehmer, Erstattungen, Offene Prüfungen (hervorgehoben) und Veröffentlichte Kurse."><figcaption>Abb. 4 – Kennzahlen</figcaption></figure>
+<table>
+  <tr><th scope="col">Kennzahl</th><th scope="col">Was gezählt wird</th></tr>
+  <tr><td>Umsatz brutto</td><td>Summe der bezahlten Bestellungen, je Währung. Erstattete Bestellungen zählen nicht mit. Gebühren des Zahlungsdienstleisters sind nicht abgezogen.</td></tr>
+  <tr><td>Bestellungen</td><td>Anzahl der Bestellungen mit Status „bezahlt“ (kostenlose Kurse erzeugen keine Bestellung).</td></tr>
+  <tr><td>Aktive Teilnehmer</td><td>Anzahl der Konten mit mindestens einem gültigen Zugang zu einem Kurs.</td></tr>
+  <tr><td>Erstattungen</td><td>Anzahl der Bestellungen mit Status „erstattet“.</td></tr>
+  <tr><td>Offene Prüfungen</td><td>Zu prüfende Zahlungen plus Widerrufe, deren Erstattung noch läuft oder nicht geklappt hat. Die Zahl entspricht den Einträgen in den Kästen <strong>Zu prüfende Zahlungen</strong> und <strong>Offene Widerrufe</strong>. Ist die Zahl größer als 0, ist das Feld farbig hervorgehoben.</td></tr>
+  <tr><td>Veröffentlichte Kurse</td><td>Anzahl der Kurse mit Status „Veröffentlicht“.</td></tr>
+</table>
+<h3>Hauptknöpfe und Kursliste</h3>
+<p><span class="ui">Neuer Kurs</span> legt einen Kurs an (Kapitel 3). <span class="ui">Verkauf</span> öffnet die Seite zum Pausieren des Verkaufs (Kapitel 10). Darunter stehen alle Kurse, der neueste zuerst, mit Status (<strong>Entwurf</strong>, <strong>Veröffentlicht</strong> oder <strong>Archiviert</strong>), Preis und Anzahl der Lektionen. Mit <span class="ui">Öffnen</span> gelangst du zur Kursseite.</p>
+<figure role="group"><img style="max-height:16mm" src="bilder-admin/a05-hauptknoepfe.png" alt="Leiste mit den beiden Hauptknöpfen der Übersicht: Neuer Kurs und Verkauf."><figcaption>Abb. 5 – Hauptknöpfe</figcaption></figure>
+<figure role="group"><img style="max-height:24mm" src="bilder-admin/a06-kurskarte.png" alt="Ein Kurs in der Kursliste mit Titel, Status, Preis, Anzahl der Lektionen und dem Knopf Öffnen."><figcaption>Abb. 6 – Ein Kurs in der Liste</figcaption></figure>
+<h3>Werkzeuge</h3>
+<p>Am Ende der Seite stehen die Werkzeuge, unter anderem <span class="ui">Kurspaket importieren</span> (Kapitel 3), <span class="ui">Stripe-Abgleich</span> und <span class="ui">Admin-Anmeldungen</span> (Kapitel 9) sowie <span class="ui">Datensicherung</span> (Kapitel 11).</p>
+<figure role="group"><img style="max-height:16mm" src="bilder-admin/a09-werkzeuge.png" alt="Ausschnitt der Werkzeuge am Ende der Übersicht mit den Knöpfen Kurspaket importieren, Stripe-Abgleich und Datensicherung."><figcaption>Abb. 7 – Werkzeuge (Ausschnitt)</figcaption></figure>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k3"><span class="nr">3</span> Kurse anlegen und bearbeiten</h2>
+<h3>Neuen Kurs anlegen</h3>
+<ol>
+  <li>Klicke auf der Übersicht auf <span class="ui">Neuer Kurs</span>.</li>
+  <li>Fülle die Felder aus:
+    <ul>
+      <li><strong>Titel</strong> (Pflicht, bis 200 Zeichen) und <strong>Beschreibung</strong> (bis 5000 Zeichen),</li>
+      <li><strong>Währung</strong>: HUF (Ft) oder EUR (€). <em>Die Währung kann später nicht mehr geändert werden.</em></li>
+      <li><strong>Preis</strong> für den Einmalkauf: bei <strong>EUR</strong> mit höchstens zwei Nachkommastellen, mit Komma oder Punkt (zum Beispiel 19,99 oder 19.99); bei <strong>HUF</strong> nur ganze Forint (zum Beispiel 19900). Das leere Feld zeigt ein Beispiel (EUR 49,00, HUF 19900). <strong>0</strong> bedeutet: kostenloser Kurs.</li>
+      <li><strong>Abopreis</strong> (leer lassen: kein Abo) und <strong>Abrechnungszeitraum</strong> (Monatlich oder Jährlich).</li>
+    </ul></li>
+  <li>Klicke auf <span class="ui">Speichern</span>. Die Plattform meldet „Der Kurs ist angelegt. Füge jetzt Lektionen hinzu.“</li>
+</ol>
+<figure role="group"><img class="mittel" src="bilder-admin/a13-neuer-kurs.png" alt="Formular Neuer Kurs mit Feldern für Titel, Beschreibung, Währung, Preis, Abopreis und Abrechnungszeitraum und dem Knopf Speichern."><figcaption>Abb. 8 – Formular „Neuer Kurs“</figcaption></figure>
+<p>Der neue Kurs ist ein <strong>Entwurf</strong>: Kunden sehen ihn nicht und können ihn nicht kaufen, bis du ihn veröffentlichst (Kapitel 5).</p>
+<figure role="group"><img src="bilder-admin/a14-kurs-entwurf.png" alt="Kursseite eines neu angelegten Kurses mit dem Status Entwurf und der Meldung, dass jetzt Lektionen hinzugefügt werden können."><figcaption>Abb. 9 – Neuer Kurs im Status „Entwurf“</figcaption></figure>
+<h3>Regeln für Preise</h3>
+<ul>
+  <li><strong>Einmalkauf und Abo:</strong> Ein Kurs kann einen Einmalpreis und zusätzlich einen Abopreis haben. Kunden sehen dann beide Möglichkeiten.</li>
+  <li><strong>Abo:</strong> Abopreis und Zeitraum gehören zusammen. Der Abopreis muss größer als 0 sein.</li>
+  <li><strong>Kostenlos:</strong> Ein Kurs mit Preis 0 kann kein Abo haben („Für einen kostenlosen Kurs kann kein Abo angelegt werden.“).</li>
+  <li><strong>Euro:</strong> Höchstens zwei Nachkommastellen, ohne Tausenderpunkte und ohne Währungszeichen (19,99 und 19.99 sind gleichwertig).</li>
+  <li><strong>Forint:</strong> Bei HUF sind nur ganze Forint erlaubt.</li>
+</ul>
+<h3>Kursdaten bearbeiten</h3>
+<p>Auf der Kursseite öffnest du mit <span class="ui">Kursdaten bearbeiten</span> dasselbe Formular. Titel, Beschreibung, Preis, Abopreis und Zeitraum lassen sich jederzeit ändern; das Feld Währung ist gesperrt. <span class="ui">Speichern</span> übernimmt die Änderung sofort. Was eine Preisänderung für Käufer bedeutet, steht in Kapitel 13.</p>
+<figure role="group"><img class="mittel" src="bilder-admin/a21b-kursdaten-abo.png" alt="Formular Kursdaten bearbeiten eines Kurses mit Abo: Titel, Beschreibung, Preis, Abopreis und Zeitraum, das Feld Währung ist gesperrt."><figcaption>Abb. 10 – Kursdaten eines Kurses mit Abo</figcaption></figure>
+<h3>Vorschau: Titelbild, Trailer und „Das lernst du“</h3>
+<p>Im Kasten <strong>Vorschau</strong> gestaltest du, was Interessenten auf der Kursseite sehen:</p>
+<ul>
+  <li><strong>Titelbild:</strong> JPEG, PNG oder WebP, höchstens 2 MB. <span class="ui">Ersetzen</span> tauscht es nach Rückfrage aus, <span class="ui">Löschen</span> entfernt es.</li>
+  <li><strong>Trailer-Video:</strong> MP4 oder WebM, höchstens 30 MB. Der Trailer ist <strong>öffentlich und nicht geschützt</strong>. Lade dort nur Werbematerial hoch, nie Kursinhalte.</li>
+  <li><strong>Das lernst du:</strong> die Lernziele, eine pro Zeile (höchstens 8 Zeilen mit je 120 Zeichen). Mit <span class="ui">Speichern</span> übernehmen.</li>
+</ul>
+<figure role="group"><img src="bilder-admin/a20-vorschau.png" alt="Bereich Vorschau eines Kurses mit hochgeladenem Titelbild und den Lernzielen unter Das lernst du."><figcaption>Abb. 11 – Vorschau mit Titelbild und Lernzielen</figcaption></figure>
+<h3>Kurspaket importieren und exportieren</h3>
+<p>Ein <strong>Kurspaket</strong> ist ein Textpaket mit Kursdaten und Lektionstexten. Unter <span class="ui">Kurspaket importieren</span> fügst du ein solches Paket ein, klickst auf <span class="ui">Prüfen</span>, siehst das Ergebnis (Titel, Anzahl der Lektionen, Preis, Hinweise) und legst mit <span class="ui">Entwurf anlegen</span> einen neuen <strong>Entwurf</strong> an. Videos und PDFs sind nicht enthalten; sie lädst du danach hoch. Ein Paket hat 1 bis 40 Lektionen und höchstens 300 KB; es kann höchstens 50 Entwürfe gleichzeitig geben. Wird dasselbe Paket ein zweites Mal importiert, öffnet die Plattform den vorhandenen Entwurf. Auf der Kursseite erzeugt <span class="ui">Kurspaket exportieren</span> ein Paket zum Kopieren – nur für Kurse in Forint.</p>
+<figure role="group"><img class="mittel klein" src="bilder-admin/a35-kurspaket.png" alt="Werkzeug Kurspaket importieren mit einem Textfeld zum Einfügen des Pakets und den Knöpfen Prüfen und Entwurf anlegen."><figcaption>Abb. 12 – Kurspaket importieren</figcaption></figure>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k4"><span class="nr">4</span> Lektionen und Medien</h2>
+<h3>Neue Lektion hinzufügen</h3>
+<ol>
+  <li>Öffne den Kurs und scrolle zu <span class="ui">Neue Lektion hinzufügen</span>.</li>
+  <li>Trage <strong>Abschnitt</strong> (zum Beispiel „Grundlagen“, optional), <strong>Titel der Lektion</strong> (Pflicht) und die <strong>Art</strong> ein: Text, Video, PDF oder Audio.</li>
+  <li>Im Feld <strong>Text</strong> steht der Lektionstext (bis 8000 Zeichen). Bei Video, PDF und Audio ist er die Beschreibung zur Datei.</li>
+  <li>Klicke auf <span class="ui">Lektion hinzufügen</span>. Die Lektion kommt ans Ende der Liste.</li>
+</ol>
+<figure role="group"><img class="mittel" src="bilder-admin/a15-lektion-neu.png" alt="Formular Neue Lektion hinzufügen mit Art Text, Titel, Abschnitt und dem Feld für den Lektionstext sowie dem Knopf Lektion hinzufügen."><figcaption>Abb. 13 – Neue Textlektion</figcaption></figure>
+<p>Bei Video, PDF und Audio erscheint der Hinweis „Die Datei kannst du hochladen, nachdem die Lektion angelegt ist.“</p>
+<figure role="group"><img class="mittel" src="bilder-admin/a16-lektion-neu-video.png" alt="Dasselbe Formular mit der Art Video und dem Hinweis, dass die Datei nach dem Anlegen der Lektion hochgeladen wird."><figcaption>Abb. 14 – Neue Videolektion</figcaption></figure>
+<div class="hinweis"><strong>Neue Lektion in einem veröffentlichten Kurs</strong>In einem <strong>Entwurf</strong> ist eine neue Lektion sichtbar, sobald du den Kurs veröffentlichst. Ist der Kurs bereits <strong>veröffentlicht</strong> oder <strong>archiviert</strong>, legt die Plattform eine neue Lektion zunächst <strong>ausgeblendet</strong> an, damit Käufer keine unfertigen Inhalte sehen. Über dem Formular steht dann ein entsprechender Hinweis, und nach dem Anlegen meldet die Plattform „Die Lektion wurde hinzugefügt und ist noch ausgeblendet. Mit „Einblenden“ wird sie für Teilnehmer sichtbar.“ Wenn die Lektion fertig ist, klickst du in der Lektionsliste auf <span class="ui">Einblenden</span>.</div>
+<figure role="group"><img src="bilder-admin/a18b-lektion-neu-ausgeblendet.png" alt="Hinweis über dem Lektionsformular in einem veröffentlichten Kurs: Die neue Lektion ist noch ausgeblendet und wird mit Einblenden sichtbar."><figcaption>Abb. 15 – Neue Lektion in einem veröffentlichten Kurs: Hinweis über dem Formular</figcaption></figure>
+<h3>Dateien hochladen</h3>
+<p>In der Lektion klickst du auf <span class="ui">Datei hochladen</span> und wählst die Datei. Ein Fortschrittsbalken zeigt den Upload, danach erscheinen Dateiname und Größe.</p>
+<table>
+  <tr><th scope="col">Art</th><th scope="col">Erlaubte Dateien</th></tr>
+  <tr><td>Video</td><td>.mp4, .webm</td></tr>
+  <tr><td>PDF</td><td>.pdf</td></tr>
+  <tr><td>Audio</td><td>.mp3, .m4a, .ogg</td></tr>
+</table>
+<ul>
+  <li>Je Lektion gibt es eine Datei. Ein erneuter Upload <strong>ersetzt</strong> die alte Datei.</li>
+  <li><span class="ui">Datei löschen</span> entfernt die Datei nach Rückfrage endgültig.</li>
+  <li>Die zulässige Dateigröße ist eingestellt; ist eine Datei zu groß, meldet die Plattform „Die Datei ist zu groß. Höchstens … MB sind erlaubt.“</li>
+  <li>Solange eine Datei an der Lektion hängt, kann ihre Art nicht geändert werden.</li>
+</ul>
+<figure role="group"><img src="bilder-admin/a17-lektion-datei.png" alt="Videolektion mit hochgeladener Datei (Name und Größe), den Knöpfen Datei hochladen und Datei löschen sowie Nach oben, Nach unten, Ausblenden, Bearbeiten und Lektion löschen."><figcaption>Abb. 16 – Videolektion mit hochgeladener Datei</figcaption></figure>
+<h3>Reihenfolge, Ausblenden, Bearbeiten, Löschen</h3>
+<ul>
+  <li><span class="ui">▲ Nach oben</span> / <span class="ui">▼ Nach unten</span> verschieben eine Lektion um eine Stelle („Die Reihenfolge wurde geändert.“).</li>
+  <li><span class="ui">Ausblenden</span> versteckt eine Lektion vor Käufern; sie wird blass mit „Ausgeblendet“ angezeigt. <span class="ui">Einblenden</span> macht sie wieder sichtbar.</li>
+  <li><span class="ui">Bearbeiten</span> öffnet unten auf der Seite ein Formular für Titel, Abschnitt und Text.</li>
+  <li><span class="ui">Lektion löschen</span> erscheint nur, solange der Kurs ein Entwurf oder die Lektion ausgeblendet ist. Die Lektion und ihre Datei werden endgültig gelöscht.</li>
+</ul>
+<figure role="group"><img class="hoch" style="max-height:105mm" src="bilder-admin/a18-lektionsliste.png" alt="Lektionsliste eines Kurses; eine Lektion ist als ausgeblendet markiert, daneben Knöpfe zum Verschieben, Bearbeiten, Einblenden und Löschen."><figcaption>Abb. 17 – Lektionsliste mit ausgeblendeter Lektion</figcaption></figure>
+<figure role="group"><img class="mittel" style="max-height:45mm" src="bilder-admin/a19-lektion-bearbeiten.png" alt="Formular zum Bearbeiten einer Lektion mit Titel, Abschnitt und Text und dem Knopf Speichern."><figcaption>Abb. 18 – Lektion bearbeiten</figcaption></figure>
+<div class="hinweis"><strong>Schutz der Inhalte</strong>Käufer sehen Videos und PDFs nur auf der Plattform; ein Herunterladen ist nicht vorgesehen. Ausgenommen sind Dateien, die ausdrücklich zum Download angeboten werden. Ältere Lektionen der Art „Datei“ zeigt der Admin-Bereich mit dem Hinweis, dass sie in das PDF-Format umgewandelt werden müssen.</div>
+
+<div class="hinweis"><strong>Videospeicher</strong>Ist für die Plattform ein externer Videodienst eingerichtet, erscheint auf der Übersicht (Kapitel 2) zusätzlich der Kasten <strong>Videospeicher</strong> mit dem Stand offener Löschaufträge. Ohne diese Einrichtung (wie in den Abbildungen) fehlt der Kasten.</div>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k5"><span class="nr">5</span> Veröffentlichen, Archivieren, Löschen</h2>
+<p>Ein Kurs hat einen von drei Zuständen:</p>
+<table>
+  <tr><th scope="col">Status</th><th scope="col">Für Kunden</th><th scope="col">Mögliche Schritte</th></tr>
+  <tr><td>Entwurf</td><td>unsichtbar, nicht kaufbar</td><td>Veröffentlichen (<span class="ui">Fertig</span>), Löschen</td></tr>
+  <tr><td>Veröffentlicht</td><td>in der Kursliste, kaufbar</td><td>Archivieren</td></tr>
+  <tr><td>Archiviert</td><td>nicht mehr in der Kursliste, nicht kaufbar; Käufer mit gültigem Zugang können den Kurs weiter öffnen</td><td>erneut veröffentlichen (<span class="ui">Fertig</span>)</td></tr>
+</table>
+<h3>Veröffentlichen</h3>
+<ol>
+  <li>Klicke unten auf der Kursseite auf <span class="ui">Fertig</span>.</li>
+  <li>Die Rückfrage „Sicher? Der Kurs ist danach für alle sichtbar.“ erscheint. Hat der Kurs keine sichtbare Lektion, warnt die Plattform zusätzlich, dass Kunden einen leeren Kurs bekämen.</li>
+  <li>Bestätige mit <span class="ui">Ja</span>. Meldung: „Fertig! Der Kurs ist veröffentlicht.“</li>
+</ol>
+<figure role="group"><img class="mittel klein" src="bilder-admin/a23-veroeffentlichen-frage.png" alt="Rückfrage „Sicher?“ vor dem Veröffentlichen: Der Kurs ist danach für alle sichtbar; Knöpfe Ja und Abbrechen."><figcaption>Abb. 19 – Rückfrage vor dem Veröffentlichen</figcaption></figure>
+<figure role="group"><img src="bilder-admin/a24-kurs-veroeffentlicht.png" alt="Kursseite nach dem Veröffentlichen mit der Meldung „Fertig! Der Kurs ist veröffentlicht.“ und dem Status Veröffentlicht."><figcaption>Abb. 20 – Veröffentlichter Kurs</figcaption></figure>
+<h3>Archivieren</h3>
+<p>Ein veröffentlichter Kurs hat den Knopf <span class="ui">Archivieren</span>. Nach der Rückfrage „Diesen Kurs archivieren? Bestehende Teilnehmer behalten ihren Zugang.“ verschwindet der Kurs aus der Kursliste und kann nicht mehr gekauft werden. Mit <span class="ui">Fertig</span> kannst du ihn später wieder veröffentlichen.</p>
+<figure role="group"><img class="mittel klein" src="bilder-admin/a25-archivieren-frage.png" alt="Rückfrage vor dem Archivieren: Bestehende Teilnehmer behalten ihren Zugang; Antwortknöpfe Ja und Abbrechen."><figcaption>Abb. 21 – Rückfrage vor dem Archivieren</figcaption></figure>
+<h3>Löschen</h3>
+<p><span class="ui">Kurs löschen</span> gibt es nur bei einem <strong>Entwurf</strong>, der noch nie Bestellungen, Zugänge oder Abos hatte. Gelöscht werden der Kurs, alle Lektionen und alle Dateien – endgültig. In allen anderen Fällen meldet die Plattform „Dieser Kurs kann nicht gelöscht werden. Bitte archiviere ihn stattdessen.“</p>
+<figure role="group"><img class="mittel klein" src="bilder-admin/a22-aktionen-entwurf.png" alt="Der Knopf Kurs löschen, der nur bei einem Kurs im Status Entwurf erscheint."><figcaption>Abb. 22 – Löschen ist nur bei einem Entwurf möglich</figcaption></figure>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k6"><span class="nr">6</span> Bestellungen und Zugänge</h2>
+<p>Bezahlte Käufe laufen automatisch: Bestätigt der Zahlungsdienstleister Stripe eine Zahlung, legt die Plattform die Bestellung an, schaltet den Kurs frei und sendet dem Kunden die Kaufbestätigung. Du musst dafür nichts tun. Eingreifen musst du nur bei den <strong>zu prüfenden Zahlungen</strong>.</p>
+<h3>Zu prüfende Zahlungen</h3>
+<p>Passt eine eingegangene Zahlung nicht zu den Kursdaten, schaltet die Plattform <strong>keinen</strong> Zugang frei, sondern legt die Bestellung im Kasten <strong>Zu prüfende Zahlungen</strong> ab und benachrichtigt dich per E-Mail. Angezeigt werden Kurs, Kunde, Betrag, Zeitpunkt und Grund.</p>
+<figure role="group"><img class="mittel" style="max-height:45mm" src="bilder-admin/a07-pruefen.png" alt="Kasten Zu prüfende Zahlungen mit einer Zahlung: Kurs, Kunde, Betrag, Zeitpunkt und Grund sowie die Knöpfe Bestätigen und Ablehnen."><figcaption>Abb. 23 – Eine zu prüfende Zahlung</figcaption></figure>
+<table>
+  <tr><th scope="col">Grund (Anzeige)</th><th scope="col">Typischer Anlass</th></tr>
+  <tr><td>Der gezahlte Betrag oder die Währung passt nicht zum aktuellen Kurspreis.</td><td>Der Preis wurde geändert, während ein Kunde schon auf der Zahlungsseite war (Kapitel 13).</td></tr>
+  <tr><td>Der Abrechnungszeitraum des Abos passt nicht zur aktuellen Einstellung des Kurses.</td><td>Der Abo-Zeitraum wurde geändert.</td></tr>
+  <tr><td>Für diesen Kurs gab es bereits einen gültigen Kauf oder ein laufendes Abo …</td><td>Doppelte Zahlung; kein zusätzlicher Zugang.</td></tr>
+  <tr><td>Der zahlende Stripe-Kunde passt nicht zum Benutzer. / Den Kurs bzw. den Benutzer gibt es nicht mehr.</td><td>Zuordnung unklar.</td></tr>
+</table>
+<p>Prüfe die Zahlung zuerst im Stripe-Konto. Dann:</p>
+<div class="hinweis recht"><strong>Achtung vor dem Bestätigen</strong>Nur bestätigen, wenn Zahlung, Betrag, Währung und Käuferzuordnung in Stripe geprüft wurden. Die Bestätigung erteilt sofort einen dauerhaften Zugang.</div>
+<ul>
+  <li><span class="ui">Bestätigen</span>: Der Kunde erhält einen dauerhaften Zugang und die Kaufbestätigung per E-Mail. Läuft für ihn ein Abo zu diesem Kurs, wird es bei Stripe beendet. Zahlungen für ein Abo lassen sich nicht hier bestätigen („Ein Abo kann erst nach einer von Stripe bestätigten Zahlung aktiviert werden.“).</li>
+  <li><span class="ui">Ablehnen</span>: Kein Zugang. Das Geld bleibt zunächst eingegangen – eine Erstattung nimmst du <strong>in Stripe</strong> vor. Bei einer Abo-Zahlung wird das Abo bei Stripe beendet.</li>
+</ul>
+<figure role="group"><img class="mittel" style="max-height:30mm" src="bilder-admin/a10-pruefen-frage.png" alt="Rückfrage beim Bestätigen einer zu prüfenden Zahlung mit den Antwortknöpfen Ja und Abbrechen."><figcaption>Abb. 24 – Rückfrage beim Bestätigen</figcaption></figure>
+<figure role="group"><img class="mittel" style="max-height:30mm" src="bilder-admin/a11-pruefen-erledigt.png" alt="Kasten Zu prüfende Zahlungen ohne Einträge: Es ist keine Zahlung mehr zu prüfen."><figcaption>Abb. 25 – Keine Zahlung mehr zu prüfen</figcaption></figure>
+<h3>Zugänge eines Kurses</h3>
+<p>Auf jeder Kursseite listet der Kasten <strong>Zugänge</strong> alle Konten mit Zugang: E-Mail-Adresse, Datum und Herkunft (<strong>Zahlung</strong>, <strong>Abo</strong> mit „Zugang bis“, oder <strong>Kostenloser Zugang</strong>). „Kostenloser Zugang“ steht bei Zugängen, die du erteilt hast, und bei Zugängen zu kostenlosen Kursen.</p>
+<figure role="group"><img class="mittel" style="max-height:42mm" src="bilder-admin/a27-zugaenge.png" alt="Liste der Zugänge eines Kurses mit E-Mail-Adresse, Datum und Herkunft (hier Kostenloser Zugang und Zahlung), je mit dem Knopf Zugang entziehen, darunter das Feld zum Erteilen eines Zugangs."><figcaption>Abb. 26 – Zugänge eines Kurses</figcaption></figure>
+<h3>Zugang erteilen</h3>
+<ol>
+  <li>Trage unter <span class="ui">E-Mail-Adresse eines registrierten Benutzers</span> die Adresse ein. Das Konto muss bereits existieren; sonst meldet die Plattform „Mit dieser E-Mail-Adresse gibt es keinen registrierten Benutzer.“</li>
+  <li>Klicke auf <span class="ui">Zugang erteilen</span>. Der Zugang ist dauerhaft (Herkunft „Kostenloser Zugang“).</li>
+</ol>
+<p>Hat das Konto bereits einen Abo-Zugang, wird dieser in einen dauerhaften Zugang umgewandelt und das laufende Abo zuerst bei Stripe beendet. Klappt das Beenden bei Stripe nicht, ändert sich nichts.</p>
+<p><strong>E-Mail an den Kunden:</strong> Nach dem Erteilen erhält der Kunde automatisch eine kurze E-Mail in der Sprache seines Kontos. Sie teilt ihm mit, dass er kostenlosen Zugang zu dem Kurs erhalten hat, nennt den Kurstitel und enthält einen Link zu seinen Kursen. Konten, die inzwischen gelöscht wurden, erhalten keine E-Mail.</p>
+<figure role="group"><img class="mittel" style="max-height:42mm" src="bilder-admin/a26-zugang-erteilen.png" alt="Formular Zugang erteilen mit dem Feld E-Mail-Adresse eines registrierten Benutzers und dem Knopf Zugang erteilen."><figcaption>Abb. 27 – Zugang erteilen</figcaption></figure>
+<h3>Zugang entziehen</h3>
+<p><span class="ui">Zugang entziehen</span> neben einem Eintrag fragt nach: „Den Zugang wirklich entziehen? Die Bestellung bleibt bestehen. Bei einem Abo wird es sofort bei Stripe beendet; das Geld wird nicht automatisch erstattet.“ Nach <span class="ui">Ja</span> kann der Kunde den Kurs nicht mehr öffnen. Eine Erstattung nimmst du bei Bedarf in Stripe vor.</p>
+<figure role="group"><img class="mittel" style="max-height:32mm" src="bilder-admin/a28-zugang-entziehen-frage.png" alt="Rückfrage vor dem Entziehen eines Zugangs mit dem Hinweis, dass ein Abo sofort bei Stripe beendet und das Geld nicht automatisch erstattet wird."><figcaption>Abb. 28 – Rückfrage vor dem Entziehen</figcaption></figure>
+<h3>Abos eines Kurses</h3>
+<p>Bei Kursen mit Abo zeigt der Kasten <strong>Abos</strong> jedes Abo mit E-Mail-Adresse, Status (<strong>Aktiv</strong>, <strong>Zahlung ausstehend</strong>, <strong>Gekündigt</strong>, <strong>Beendet</strong>), dem Ende des bezahlten Zeitraums und gegebenenfalls „Endet am Ende des bezahlten Zeitraums“. Kündigen können Kunden selbst; der Admin-Bereich hat keinen eigenen Kündigungsknopf. Ein Abo beendet aus dem Admin-Bereich heraus nur <span class="ui">Zugang entziehen</span>.</p>
+<figure role="group"><img class="mittel" style="max-height:34mm" src="bilder-admin/a29-abos.png" alt="Liste mit drei Abos, je mit Kunden-E-Mail, Status und Datum: Zahlung ausstehend, Gekündigt mit dem Vermerk „Endet am Ende des bezahlten Zeitraums“ und Aktiv."><figcaption>Abb. 29 – Abos eines Kurses: aktiv, gekündigt zum Periodenende, Zahlung ausstehend</figcaption></figure>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k7"><span class="nr">7</span> Erstattungen und Widerruf</h2>
+<div class="hinweis recht"><strong>Rechtlicher Hinweis</strong>Dieses Kapitel beschreibt nur, wie die Software arbeitet. Es ist keine Empfehlung und keine Rechtsberatung. Die hinterlegten Regeln sind vor Verwendung im Echtgeldbetrieb rechtlich prüfen zu lassen.</div>
+<h3>Erstattungen</h3>
+<p>Der Admin-Bereich hat keinen Erstattungsknopf. Erstattungen nimmst du im Stripe-Konto vor. Stripe meldet sie der Plattform, und die Plattform bucht sie automatisch:</p>
+<table>
+  <tr><th scope="col">Erstattung in Stripe</th><th scope="col">Folge auf der Plattform</th></tr>
+  <tr><td>vollständig</td><td>Bestellung „erstattet“, der Zugang aus dieser Zahlung endet (ein kostenloser Zugang bleibt), Ereignis „Erstattung“.</td></tr>
+  <tr><td>teilweise</td><td>Wird bei der Bestellung vermerkt; der Zugang bleibt bestehen.</td></tr>
+  <tr><td>Rückbuchung durch die Bank des Kunden</td><td>Bestellung wird zu einer zu prüfenden Zahlung, der Zugang wird entzogen.</td></tr>
+</table>
+<p>Findet der Stripe-Abgleich (Kapitel 9) eine Erstattung, die nicht vollständig verbucht ist, bietet er <span class="ui">Erstattung nachträglich verbuchen</span> an.</p>
+<h3>Widerruf durch Kunden</h3>
+<p>Kunden erklären einen Widerruf selbst in ihrem Konto. Die Plattform entscheidet automatisch nach Regeln, die <strong>in der Software hinterlegt</strong> sind. Im Admin-Bereich lassen sich diese Regeln <strong>nicht</strong> einstellen; eine Änderung ist eine Änderung der Software.</p>
+<table>
+  <tr><th scope="col">Hinterlegte Regel</th><th scope="col">Ergebnis</th></tr>
+  <tr><td>Frist (Standardeinstellung der Software: 14 Tage ab Bestellung)</td><td>Die Plattform prüft standardmäßig einen Zeitraum von 14 Tagen; später eingehende Erklärungen lehnt sie automatisch ab. Gesetzliche Ansprüche können unabhängig davon bestehen.</td></tr>
+  <tr><td>Der Kunde hat beim Kauf dem sofortigen Beginn zugestimmt (Häkchen) und danach Inhalte des Kurses geöffnet</td><td>automatische Ablehnung</td></tr>
+  <tr><td>Abo</td><td>automatischer Widerruf nur für die erste Zahlung eines Abos</td></tr>
+  <tr><td>alle Bedingungen erfüllt</td><td>automatische Vollerstattung über Stripe, der Zugang endet, ein Abo wird beendet</td></tr>
+</table>
+<p>Zu jeder Widerrufserklärung erhältst du eine E-Mail mit Kurs, Kunde, Bestellnummer, Betrag, Zeitpunkt und Ergebnis. Klappt die Erstattung technisch nicht, steht das in der E-Mail („… die Erstattung hat aber nicht geklappt. Bitte prüfe es in Stripe und erstatte bei Bedarf manuell.“), der Fall erscheint im Kasten <strong>Offene Widerrufe</strong>, und die Kennzahl <strong>Offene Prüfungen</strong> zählt ihn mit. Bei einer automatischen Ablehnung prüfe die Erklärung einschließlich möglicher gesetzlicher Ansprüche; hole im Zweifel rechtliche Beratung ein.</p>
+<figure role="group"><img class="mittel" style="max-height:60mm" src="bilder-admin/a36-mail-widerruf.png" alt="E-Mail an den Betreiber nach einem Widerruf: Kurs, E-Mail-Adresse des Benutzers, Bestellnummer, Betrag, Zeitpunkt des Eingangs und Ergebnis der automatischen Erstattung."><figcaption>Abb. 30 – E-Mail an den Betreiber nach einem Widerruf</figcaption></figure>
+<h3>Offene Widerrufe</h3>
+<p>Auf der Übersicht zeigt der Kasten <strong>Offene Widerrufe</strong> alle Widerrufe, deren Erstattung noch bearbeitet wird oder nicht geklappt hat – der neueste zuerst. Jeder Eintrag nennt Kurs, E-Mail-Adresse des Kunden, Bestellnummer, Betrag, Zeitpunkt und den Stand („Die Widerrufserklärung wird bearbeitet.“ oder „… die Erstattung hat aber nicht geklappt …“). Diese Einträge zählen in der Kennzahl <strong>Offene Prüfungen</strong> mit; ohne offenen Widerruf steht dort „Kein offener Widerruf.“</p>
+<figure role="group"><img class="schmal" src="bilder-admin/a07b-widerrufe.png" alt="Kasten Offene Widerrufe mit einem Eintrag: Kurs, Kunde, Bestellnummer, Betrag, Zeit und der Hinweis, dass die Erstattung nicht geklappt hat und in Stripe zu prüfen ist."><figcaption>Abb. 31 – Offene Widerrufe: Erstattung nicht geklappt</figcaption></figure>
+<ul>
+  <li>Die Liste dient nur zur Ansicht; es gibt dort keine Knöpfe. Prüfe jeden Eintrag in Stripe und erstatte bei Bedarf manuell.</li>
+  <li>Einen Widerruf „in Bearbeitung“ bearbeitet die Plattform automatisch weiter: Ist die Erstattung erfolgt, verschwindet er aus der Liste; gelingt sie nicht, wechselt er auf „nicht geklappt“.</li>
+  <li>Ein Eintrag „nicht geklappt“ bleibt in der Liste und in der Kennzahl stehen, auch nachdem du in Stripe erstattet hast. Notiere dir erledigte Fälle; bei Fragen hilft deine technische Betreuung.</li>
+  <li>Abgeschlossene Widerrufe (erstattet oder abgelehnt) erscheinen nicht in dieser Liste. Du erkennst sie an der E-Mail, an der Kennzahl <strong>Erstattungen</strong> und in der Liste <strong>Bestellungen und Ereignisse</strong> (Ereignistyp „Erstattung“).</li>
+</ul>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k8"><span class="nr">8</span> Kunden und Konten</h2>
+<p>Kunden legen ihr Konto selbst an und verwalten es selbst (E-Mail-Adresse, Passwort, Datenauskunft, Löschen). Der Admin-Bereich hat <strong>keine Kundenliste</strong> und keine Möglichkeit, Kundenkonten anzulegen, zu ändern, zu sperren oder zu löschen.</p>
+<p>Was du als Betreiber zu Kunden siehst und tun kannst:</p>
+<ul>
+  <li><strong>Bestellungen und Ereignisse</strong>: Registrierungen, bestätigte E-Mail-Adressen, Käufe, Abos, Erstattungen und gelöschte Konten, mit Suche nach E-Mail-Adresse (Kapitel 9).</li>
+  <li><strong>Zugänge</strong> und <strong>Abos</strong> je Kurs, Zugang erteilen und entziehen (Kapitel 6).</li>
+  <li><strong>Zu prüfende Zahlungen</strong> mit E-Mail-Adresse des Kunden (Kapitel 6).</li>
+</ul>
+<div class="hinweis"><strong>Datenschutz</strong>Exporte der Ereignisliste enthalten E-Mail-Adressen. Speichere und teile sie nur, soweit du das darfst.</div>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k9"><span class="nr">9</span> Ereignisse und Protokolle</h2>
+<h3>Bestellungen und Ereignisse</h3>
+<p>Auf der Übersicht steht die Liste aller Ereignisse, das neueste zuerst, 50 je Seite (<span class="ui">Zurück</span> / <span class="ui">Weiter</span>). Jede Zeile zeigt Zeitpunkt (Budapest), Ereignis, Kurs, Betrag, Kunde und Status.</p>
+<figure role="group"><img src="bilder-admin/a08-ereignisse.png" alt="Tabelle Bestellungen und Ereignisse mit Zeitpunkt, Ereignis, Kurs, Betrag, Kunde und Status, darunter die Knöpfe Zurück und Weiter."><figcaption>Abb. 32 – Bestellungen und Ereignisse</figcaption></figure>
+<table>
+  <tr><th scope="col">Ereignis</th><th scope="col">Mögliche Status</th></tr>
+  <tr><td>Registrierung, E-Mail bestätigt</td><td>Registriert, Bestätigt</td></tr>
+  <tr><td>Kauf</td><td>Bezahlt, Kostenlos, In Prüfung</td></tr>
+  <tr><td>Erstattung</td><td>Erstattet, Teilweise erstattet, Erstattung fehlgeschlagen; bei Rückbuchungen: Bankanfrage, Bestrittene Zahlung, Streit gewonnen, Streit verloren</td></tr>
+  <tr><td>Abo gestartet, Abo gekündigt, Abo beendet</td><td>Bezahlt, In Prüfung, Beendet</td></tr>
+  <tr><td>Konto gelöscht</td><td>–</td></tr>
+</table>
+<p><strong>Filtern:</strong> Ereignistyp, Startdatum, Enddatum und E-Mail-Adresse des Kunden wählen und <span class="ui">Filtern</span> klicken. <strong>Exportieren:</strong> <span class="ui">CSV herunterladen</span> bzw. <span class="ui">JSON herunterladen</span> speichert die gefilterten Ereignisse (höchstens 10 000 Zeilen) als Datei. Ereignisse werden nach einer Aufbewahrungsfrist automatisch gelöscht (Standardeinstellung der Software: 730 Tage). Die erforderlichen Aufbewahrungsfristen muss der Betreiber rechtlich prüfen lassen.</p>
+<figure role="group"><img src="bilder-admin/a12-ereignisse-filter.png" alt="Dieselbe Tabelle, nach dem Ereignistyp Erstattung gefiltert, mit den Knöpfen Filtern, CSV herunterladen und JSON herunterladen."><figcaption>Abb. 33 – Gefiltert nach „Erstattung“</figcaption></figure>
+<h3>Stripe-Abgleich</h3>
+<p>Der Abgleich vergleicht die Bestellungen der Plattform mit den Daten im Stripe-Konto (Zeitraum: die letzten 35 Tage). Er läuft automatisch; mit <span class="ui">Jetzt abgleichen</span> startest du ihn sofort. Die Seite zeigt den letzten Abgleich, die gefundenen Abweichungen und die früheren Abgleiche. Bei einer Abweichung erhältst du eine E-Mail.</p>
+<figure role="group"><img src="bilder-admin/a30-abgleich.png" alt="Seite Stripe-Abgleich mit dem letzten Abgleich ohne Abweichungen, der Liste früherer Abgleiche und dem Knopf Jetzt abgleichen."><figcaption>Abb. 34 – Stripe-Abgleich ohne Befund</figcaption></figure>
+<table>
+  <tr><th scope="col">Mögliche Abweichung</th><th scope="col">Was zu tun ist</th></tr>
+  <tr><td>Laut Stripe wurde bezahlt, aber auf der Plattform gibt es keine Bestellung.</td><td>In Stripe prüfen; die Bestellung kann nur nach manueller Prüfung wiederhergestellt werden.</td></tr>
+  <tr><td>Die Plattform markiert als bezahlt, aber in Stripe gibt es keine bestätigte Zahlung.</td><td>In Stripe prüfen.</td></tr>
+  <tr><td>Die Stripe-Erstattung ist auf der Plattform nicht vollständig verbucht.</td><td><span class="ui">Erstattung nachträglich verbuchen</span> (Bestellung und Zugang können sich ändern).</td></tr>
+  <tr><td>Bestrittene Zahlung (Rückbuchung), Bestellung steht noch als bezahlt.</td><td>In Stripe prüfen und den Zugang entziehen.</td></tr>
+  <tr><td>Ein bereits beendetes Abo lief in Stripe noch.</td><td>Nichts – die Plattform hat es nachträglich beendet.</td></tr>
+</table>
+<p>Hinweis der Seite: Zustellfehler der Stripe-Benachrichtigungen zeigt dieser Abgleich nicht an; du findest sie im Stripe-Dashboard.</p>
+<h3>Admin-Anmeldungen</h3>
+<p>Das Protokoll zeigt die letzten 100 Anmeldeversuche am Admin-Bereich mit Zeitpunkt, Ergebnis (zum Beispiel „Anmeldung erfolgreich“, „Anmeldung fehlgeschlagen“, „Vorübergehend gesperrt“), gekürzter E-Mail-Adresse und gekürzter Netzadresse. Unerwartete Einträge sind ein Grund, das Passwort zu ändern und die technische Betreuung zu informieren.</p>
+<figure role="group"><img class="mittel klein" src="bilder-admin/a31-admin-anmeldungen.png" alt="Liste der Admin-Anmeldungen mit Zeitpunkt, Ergebnis, gekürzter E-Mail-Adresse und gekürzter Netzadresse."><figcaption>Abb. 35 – Admin-Anmeldungen</figcaption></figure>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k10"><span class="nr">10</span> Verkauf pausieren</h2>
+<p>Mit dem Knopf <span class="ui">Verkauf</span> auf der Übersicht stoppst du vorübergehend alle <strong>neuen kostenpflichtigen</strong> Käufe (Einmalkauf und Abo), zum Beispiel während Kurse überarbeitet werden.</p>
+<ol>
+  <li>Trage eine <strong>Begründung</strong> ein (1 bis 200 Zeichen).</li>
+  <li>Klicke auf <span class="ui">Verkauf pausieren</span> und bestätige mit <span class="ui">Ja</span>.</li>
+  <li>Zum Fortsetzen klickst du auf <span class="ui">Verkauf fortsetzen</span> und bestätigst.</li>
+</ol>
+<figure role="group"><img class="klein" src="bilder-admin/a33-verkauf-laeuft.png" alt="Seite Verkauf im Zustand Verkauf läuft mit dem Feld für eine Begründung und dem Knopf Verkauf pausieren."><figcaption>Abb. 36 – Der Verkauf läuft</figcaption></figure>
+<figure role="group"><img class="klein" src="bilder-admin/a34-verkauf-pausiert.png" alt="Seite Verkauf im Zustand pausiert mit der eingetragenen Begründung und dem Knopf Verkauf fortsetzen."><figcaption>Abb. 37 – Der Verkauf ist pausiert</figcaption></figure>
+<ul>
+  <li>Kunden, die kaufen wollen, sehen „Der Verkauf ist vorübergehend pausiert. Bitte sieh später wieder nach.“</li>
+  <li>Bereits gekaufte Kurse bleiben nutzbar, laufende Abos laufen weiter.</li>
+  <li>Kostenlose Kurse können auch während der Pause freigeschaltet werden.</li>
+  <li>Bereits geöffnete Zahlungsseiten von Stripe sind noch bis zu 24 Stunden nutzbar; diese Zahlungen werden weiterhin verarbeitet.</li>
+  <li>Die Seite zeigt Beginn, Begründung und wer pausiert hat, darunter die letzten 50 Verkaufsereignisse.</li>
+  <li>Ist die Verkaufspause technisch vorgegeben, kontaktiere deine technische Betreuung.</li>
+</ul>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k11"><span class="nr">11</span> Datensicherung</h2>
+<p>Unter <span class="ui">Datensicherung</span> (Werkzeuge) siehst du, ob die Datensicherung aktiv ist, wann die letzte erfolgreiche Sicherung lief und die Liste der letzten Sicherungen (Zeitpunkt, Art, Ergebnis, Dateiname, lokaler und externer Speicher).</p>
+<ul>
+  <li>Die Plattform sichert automatisch (beim Start und danach regelmäßig). Diese Einträge heißen „automatisch“.</li>
+  <li><span class="ui">Jetzt sichern</span> erstellt sofort eine zusätzliche Sicherung („manuell“). Läuft bereits eine, meldet die Plattform das.</li>
+  <li><span class="ui">Letzte Sicherung herunterladen</span> speichert die letzte erfolgreiche Sicherung als verschlüsselte Datei. Öffnen und Zurückspielen sind Aufgabe der technischen Betreuung. Verschlüsselte Sicherungsdateien sicher aufbewahren und nicht unbefugt weitergeben.</li>
+  <li>„Die Datensicherung ist ausgeschaltet“ bedeutet: sie wurde bei der Einrichtung nicht aktiviert. Wende dich dann an die technische Betreuung.</li>
+  <li>Bei Problemen mit der Sicherung verschickt die Plattform eine Warn-E-Mail an die eingerichteten Adressen.</li>
+</ul>
+<figure role="group"><img src="bilder-admin/a32-sicherung.png" alt="Seite Datensicherung mit dem Stand der letzten Sicherung und den Knöpfen Jetzt sichern und Letzte Sicherung herunterladen."><figcaption>Abb. 38 – Datensicherung</figcaption></figure>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k12"><span class="nr">12</span> Ein typischer Ablauf</h2>
+<p>So entsteht ein neuer Kurs vom ersten Klick bis zur ersten Bestellung – am Beispiel „Erfolgreich verhandeln“ aus den Abbildungen.</p>
+<table>
+  <tr><th scope="col">Schritt</th><th scope="col">Was du tust</th><th scope="col">Ergebnis</th></tr>
+  <tr><td>1. Kurs erstellen</td><td><span class="ui">Neuer Kurs</span>: Titel, Beschreibung, Währung EUR, Preis 149,00, <span class="ui">Speichern</span></td><td>Entwurf, für Kunden unsichtbar (Abb. 8, 9)</td></tr>
+  <tr><td>2. Lektionen anlegen</td><td>Vier Lektionen anlegen (Text, Video, PDF, Text); die Bonus-Lektion ausblenden</td><td>Lektionsliste (Abb. 17)</td></tr>
+  <tr><td>3. Medien hochladen</td><td>Video und PDF über <span class="ui">Datei hochladen</span></td><td>Dateiname und Größe erscheinen (Abb. 16)</td></tr>
+  <tr><td>4. Vorschau</td><td>Titelbild und „Das lernst du“</td><td>Kursseite für Interessenten vollständig (Abb. 11)</td></tr>
+  <tr><td>5. Preis prüfen</td><td><span class="ui">Kursdaten bearbeiten</span>: Preis, ggf. Abopreis und Zeitraum</td><td>Preis vor der Veröffentlichung sorgfältig prüfen (Kapitel 13)</td></tr>
+  <tr><td>6. Veröffentlichen</td><td><span class="ui">Fertig</span> → <span class="ui">Ja</span></td><td>Kurs sichtbar und kaufbar (Abb. 20)</td></tr>
+  <tr><td>7. Bestellung prüfen</td><td>Übersicht: Kennzahlen, Liste „Bestellungen und Ereignisse“, ggf. <span class="ui">Zu prüfende Zahlungen</span></td><td>Bezahlte Käufe sind automatisch freigeschaltet (Abb. 32)</td></tr>
+  <tr><td>8. Zugang verwalten</td><td>Kursseite → <strong>Zugänge</strong>: bei Bedarf Zugang erteilen oder entziehen</td><td>Abb. 26–28</td></tr>
+</table>
+<div class="hinweis"><strong>Tipp</strong>Lege Preis und Abo fest, <strong>bevor</strong> du veröffentlichst. Preisänderungen während laufender Zahlungen führen zu zu prüfenden Zahlungen (Kapitel 13).</div>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k13"><span class="nr">13</span> Auswirkungen von Änderungen</h2>
+<p>Die folgende Tabelle beschreibt, was eine Änderung für bestehende Käufer und laufende Zahlungen bedeutet.</p>
+<table class="eng lang">
+  <tr><th scope="col">Änderung</th><th scope="col">Auswirkung</th></tr>
+  <tr><td>Einmalpreis ändern</td><td>Bestehende Bestellungen und Zugänge bleiben unverändert. Neue Käufe zahlen den neuen Preis. Wer die Zahlungsseite <strong>vor</strong> der Änderung geöffnet hat und danach zum alten Preis bezahlt, erhält keinen automatischen Zugang: die Zahlung landet bei den zu prüfenden Zahlungen („Betrag oder Währung passt nicht“).</td></tr>
+  <tr><td>Abopreis ändern</td><td>Laufende Abos werden von Stripe weiter zum <strong>bisherigen</strong> Preis verlängert; diese Verlängerungen erkennt die Plattform als gültig, der Zugang bleibt. Neue Abos zahlen den neuen Preis.</td></tr>
+  <tr><td>Abo-Zeitraum ändern</td><td>Eine neue Abo-Zahlung, deren Zeitraum nicht zur aktuellen Einstellung passt, kommt zu den zu prüfenden Zahlungen.</td></tr>
+  <tr><td>Abo abschalten (Abopreis leeren)</td><td>Neue Abos sind nicht mehr möglich. Laufende Abos werden weiter verlängert, sofern der Betrag schon früher für dieses Abo bezahlt wurde.</td></tr>
+  <tr><td>Währung</td><td>Nach dem Anlegen nicht änderbar.</td></tr>
+  <tr><td>Titel, Beschreibung, Lektionstexte ändern</td><td>Sofort für alle sichtbar, auch für Käufer.</td></tr>
+  <tr><td>Neue Lektion</td><td>Im Entwurf sichtbar, sobald der Kurs veröffentlicht wird. In einem veröffentlichten oder archivierten Kurs entsteht sie <strong>ausgeblendet</strong>; Käufer sehen sie erst nach <span class="ui">Einblenden</span>.</td></tr>
+  <tr><td>Lektion ausblenden</td><td>Käufer sehen die Lektion nicht mehr; Bestellungen und Zugänge bleiben.</td></tr>
+  <tr><td>Datei ersetzen oder löschen</td><td>Die alte Datei ist sofort weg; Käufer sehen nur noch die neue (bzw. keine) Datei.</td></tr>
+  <tr><td>Kurs archivieren</td><td>Nicht mehr in der Kursliste, nicht mehr kaufbar. Käufer mit gültigem Zugang öffnen den Kurs weiter. Eine Zahlung, die vor dem Archivieren begonnen wurde, schaltet den Zugang trotzdem frei. Erneutes Veröffentlichen ist möglich.</td></tr>
+  <tr><td>Kurs löschen</td><td>Nur bei Entwürfen ohne Bestellungen, Zugänge und Abos. Endgültig, mit allen Lektionen und Dateien.</td></tr>
+  <tr><td>Lektion löschen</td><td>Nur in Entwürfen oder bei ausgeblendeten Lektionen. Endgültig, mit Datei.</td></tr>
+  <tr><td>Zugang erteilen</td><td>Dauerhafter Zugang; der Kunde erhält eine E-Mail. Ein laufendes Abo des Kunden für diesen Kurs wird bei Stripe beendet.</td></tr>
+  <tr><td>Zugang entziehen</td><td>Der Kunde verliert den Zugang sofort. Die Bestellung bleibt bestehen, ein Abo wird bei Stripe beendet, es wird nichts automatisch erstattet.</td></tr>
+  <tr><td>Verkauf pausieren</td><td>Keine neuen kostenpflichtigen Käufe; kostenlose Freischaltungen bleiben möglich, bestehende Zugänge und Abos bleiben (Kapitel 10).</td></tr>
+</table>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k14"><span class="nr">14</span> Funktionen im Admin-Bereich</h2>
+<p>Übersicht aller Funktionen und was sie verändern. Es gibt eine einzige Rolle (Admin); alle Funktionen stehen jedem Admin-Konto zur Verfügung.</p>
+<table class="eng lang">
+  <tr><th scope="col">Funktion</th><th scope="col">Inhalte</th><th scope="col">Bestellungen</th><th scope="col">Zugänge</th></tr>
+  <tr><td>Kurs anlegen, Kursdaten bearbeiten, Vorschau</td><td>ja</td><td>–</td><td>–</td></tr>
+  <tr><td>Lektion anlegen, bearbeiten, verschieben, ein-/ausblenden, löschen</td><td>ja</td><td>–</td><td>–</td></tr>
+  <tr><td>Datei hochladen, ersetzen, löschen</td><td>ja</td><td>–</td><td>–</td></tr>
+  <tr><td>Kurspaket importieren / exportieren</td><td>neuer Entwurf / nur lesen</td><td>–</td><td>–</td></tr>
+  <tr><td>Veröffentlichen, Archivieren</td><td>Sichtbarkeit</td><td>–</td><td>–</td></tr>
+  <tr><td>Kurs löschen (nur Entwurf)</td><td>ja, endgültig</td><td>–</td><td>–</td></tr>
+  <tr><td>Zu prüfende Zahlung bestätigen</td><td>–</td><td>Status „bezahlt“</td><td>Zugang wird erteilt</td></tr>
+  <tr><td>Zu prüfende Zahlung ablehnen</td><td>–</td><td>Status „abgelehnt“</td><td>kein Zugang</td></tr>
+  <tr><td>Zugang erteilen / entziehen</td><td>–</td><td>unverändert</td><td>ja (Abo wird ggf. bei Stripe beendet)</td></tr>
+  <tr><td>Erstattung nachträglich verbuchen (Abgleich)</td><td>–</td><td>ja</td><td>kann sich ändern</td></tr>
+  <tr><td>Verkauf pausieren / fortsetzen</td><td>–</td><td>keine neuen Käufe</td><td>–</td></tr>
+  <tr><td>Ereignisse ansehen und exportieren, offene Widerrufe ansehen, Abgleich starten, Admin-Anmeldungen ansehen</td><td>–</td><td>nur lesen</td><td>nur lesen</td></tr>
+  <tr><td>Datensicherung starten und herunterladen</td><td>–</td><td>–</td><td>–</td></tr>
+</table>
+<p>Erstattungen, Kündigungen von Abos und Änderungen an Zahlungen selbst erfolgen nicht im Admin-Bereich, sondern im Stripe-Konto bzw. durch die Kunden.</p>
+
+<!-- ======================================================================== -->
+<h2 class="kapitel" id="k15"><span class="nr">15</span> Hilfe und häufige Meldungen</h2>
+<table class="eng lang">
+  <tr><th scope="col">Meldung</th><th scope="col">Bedeutung und was du tun kannst</th></tr>
+  <tr><td>Bitte gib den Preis als ganze Zahl an, zum Beispiel 39900.</td><td>Kurs in HUF: nur ganze Forint, ohne Komma und ohne Währungszeichen.</td></tr>
+  <tr><td>Bitte gib den Preis mit höchstens zwei Nachkommastellen an, zum Beispiel 49,00.</td><td>Kurs in EUR: höchstens zwei Stellen nach Komma oder Punkt, ohne Tausenderpunkte und ohne Währungszeichen.</td></tr>
+  <tr><td>Gib für das Abo Preis und Zeitraum gemeinsam an, oder lass beides leer.</td><td>Abopreis ergänzen oder leeren.</td></tr>
+  <tr><td>Für einen kostenlosen Kurs kann kein Abo angelegt werden.</td><td>Preis festlegen oder Abopreis löschen.</td></tr>
+  <tr><td>Die Art der Lektion kann nicht geändert werden, solange eine Datei dazugehört.</td><td>Datei zuerst löschen oder neue Lektion anlegen.</td></tr>
+  <tr><td>Die Datei ist zu groß.</td><td>Kleinere Datei verwenden.</td></tr>
+  <tr><td>Dieser Kurs kann nicht gelöscht werden. Bitte archiviere ihn stattdessen.</td><td>Der Kurs ist veröffentlicht oder hatte Bestellungen/Zugänge: <span class="ui">Archivieren</span>.</td></tr>
+  <tr><td>Diese Lektion kann nicht gelöscht werden. Blende sie stattdessen aus.</td><td><span class="ui">Ausblenden</span> verwenden.</td></tr>
+  <tr><td>Mit dieser E-Mail-Adresse gibt es keinen registrierten Benutzer.</td><td>Der Kunde muss sich zuerst registrieren.</td></tr>
+  <tr><td>Das Abo konnte bei Stripe nicht beendet werden, deshalb hat sich nichts geändert.</td><td>Später erneut versuchen; nichts wurde verändert.</td></tr>
+  <tr><td>Diese Zahlung wartet nicht mehr auf Prüfung.</td><td>Sie wurde bereits bearbeitet; Seite neu laden.</td></tr>
+  <tr><td>Es läuft bereits eine Sicherung. / Der Abgleich läuft bereits.</td><td>Kurz warten und die Seite neu laden.</td></tr>
+  <tr><td>Die Verbindung zum Server hat nicht geklappt.</td><td>Internetverbindung prüfen und erneut versuchen.</td></tr>
+  <tr><td>Du hast keine Berechtigung.</td><td>Mit dem Admin-Konto anmelden.</td></tr>
+</table>
+<h3>E-Mails, die du als Betreiber erhältst</h3>
+<ul>
+  <li>Hinweise zu Verkäufen und zu prüfenden Zahlungen,</li>
+  <li>eine E-Mail zu jeder Widerrufserklärung (Kapitel 7),</li>
+  <li>Warnungen zu Stripe-Abgleich, Datensicherung, Verkaufspause und Sicherheitsereignissen beim Admin-Zugang.</li>
+</ul>
+<p>An welche Adressen diese E-Mails gehen, legt die Einrichtung fest. Bei technischen Fragen, für neue Admin-Konten und für alles, was die Einrichtung betrifft, wende dich an deine technische Betreuung (Installationshandbuch).</p>
+
+</main>
+</body>
+</html>

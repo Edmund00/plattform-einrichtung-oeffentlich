@@ -1,0 +1,59 @@
+# Render Blueprint fuer den "Deploy to Render"-Knopf (Weg 1: Code sichtbar, Kunde betreibt selbst).
+# Quelle: PROJEKTE/PLAN-VERKAUF-RENDER-BUNNY-KNOPF-2026-11-18.md Abschnitt 1.4-1.6 (Projektzentrale-Repo).
+# Zwei Punkte, die der Plan als "noch zu klaeren" markiert hatte, sind jetzt anhand des echten Codes geklaert:
+# - DB_DATEI/DATEI_ORDNER default in konfig.mjs auf RELATIVE Pfade ('daten/lern-app.db', 'daten/dateien') --
+#   die muessen explizit auf den Festplatten-Mount zeigen, sonst verliert der Kunde seine Daten bei jedem Neustart.
+# - BASE_URL bewusst sync:false (Kunde traegt die von Render zugewiesene Adresse selbst ein), NICHT fromService:
+#   konfig.mjs verlangt ein vollstaendiges Schema (https://...), eine blosse Host-Angabe wuerde die Pruefung nicht bestehen.
+# RESEND_API_KEY/MAIL_FROM nach ChatGPT-Pruefung Nr 289 ergaenzt (P1: "Resend-Schluessel getrennt erfassen",
+# nicht nur Stripe+Bunny) -- beide OPTIONAL (konfig.mjs: ohne RESEND_API_KEY startet die App trotzdem,
+# nur Mailversand ist aus; MAIL_FROM ist generisch pro Kunde/Domain, nicht an Edmunds Domain gebunden,
+# im Code bestaetigt -- kein hartcodierter Domainname gefunden).
+# WIEDERGABE_GEHEIMNIS NACHGETRAGEN (18.11.2026, durch echten Testklick gefunden): docs/UMGEBUNG.md Zeile 60
+# nennt sie als Pflichtvariable in Produktion ("Mindestens NODE_ENV, BASE_URL, STRIPE_SECRET_KEY,
+# STRIPE_WEBHOOK_SECRET, WIEDERGABE_GEHEIMNIS und DB_DATEI"), war aber nicht in render.yaml -- der echte
+# Deploy-Versuch brach deshalb beim Start ab ("WIEDERGABE_GEHEIMNIS fehlt oder ist zu kurz"). generateValue
+# wie EINSTELLUNGEN_SCHLUESSEL, da der Kunde diesen Wert nie selbst braucht/sehen soll (konfig.mjs: "Nie in
+# Dateien oder im Chat speichern oder anzeigen").
+services:
+  - type: web
+    runtime: node
+    name: meine-marke
+    plan: starter
+    region: frankfurt
+    buildCommand: npm ci
+    startCommand: node server.mjs
+    autoDeployTrigger: 'off'
+    disk:
+      name: daten
+      mountPath: /opt/render/project/daten
+      sizeGB: 1
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DB_DATEI
+        value: /opt/render/project/daten/lern-app.db
+      - key: DATEI_ORDNER
+        value: /opt/render/project/daten/dateien
+      - key: EINSTELLUNGEN_SCHLUESSEL
+        generateValue: true
+      - key: WIEDERGABE_GEHEIMNIS
+        generateValue: true
+      - key: BASE_URL
+        sync: false
+      - key: ADMIN_ERLAUBT
+        sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: BUNNY_STREAM_BIBLIOTHEK_ID
+        sync: false
+      - key: BUNNY_STREAM_API_KEY
+        sync: false
+      - key: BUNNY_STREAM_TOKEN_KEY
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: MAIL_FROM
+        sync: false

@@ -1,0 +1,270 @@
+/* Gemeinsame Farben, Schriftfamilien, Karten und Buttons – lokal. */
+@import url('/kunde.css');
+#app{max-width:1060px;min-height:100vh;margin:0 auto;padding:0 22px 86px}
+#app>.kopf{margin:0 -22px 42px;padding:0 22px;display:flex;align-items:center;justify-content:space-between;gap:18px;min-height:70px;flex-wrap:wrap}
+#app>.kopf h1{font-size:clamp(26px,3vw,36px);margin:0 auto 0 0}
+.admin-marke{display:inline-flex;align-items:center;min-width:0;max-width:min(100%,400px)}
+.admin-marke img{width:auto;height:44px;max-width:min(100%,400px);object-fit:contain}
+#app>.meldung{margin-top:20px}
+#app>.karte,#app>form.karte,#app>details.karte{max-width:100%}
+#app>.karte:not(.formular-kartya){padding:28px}
+#app>.karte:focus-within{border-color:var(--gold)}
+#app .karte h2,#app .karte h3{margin-bottom:12px}
+#app>.karte .knopf{margin-top:10px}
+#app>.karte[role="alertdialog"],#app .karte[role="alertdialog"]{border:2px solid var(--gold);box-shadow:var(--shadow);max-width:650px;margin:22px auto}
+#app .knopf.hell{background:transparent;color:var(--ink);border-color:var(--ink)}
+#app .knopf.rot{background:transparent;color:var(--err-text);border-color:var(--err-border)}
+#app .knopf.rot:hover{background:var(--err-bg);color:var(--err-text);box-shadow:none}
+#app .knopf.gruen{background:var(--grad);color:var(--knopf-text)}
+#app .knopf.gross{min-height:56px;font-size:13px;max-width:480px}
+.nagy{font-family:var(--font-head);font-size:24px;font-weight:600}
+.plakette{display:inline-flex;align-items:center;justify-content:center;max-width:100%;border:1px solid var(--gold);border-radius:30px;padding:4px 12px;color:var(--ink);font-size:10.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase}
+.plakette.gruen{background:var(--ok-bg);border-color:var(--ok-border);color:var(--ok-text)}
+.plakette.grau{background:var(--ivory);color:var(--text-second)}
+.lecken{display:flex;flex-direction:column;list-style:none;padding:0;margin:0 0 26px;gap:12px}
+.lecke{display:block;min-width:0;padding:22px 24px;border:1px solid var(--line);border-radius:18px;background:var(--white);overflow-wrap:anywhere}
+.lecke:focus-within{border-color:var(--gold)}
+.lecke.rejtett{background:var(--ivory);border-style:dashed}
+.lecke-szoveg{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.lecke-szoveg strong{font-family:var(--font-head);font-size:24px;font-weight:600;line-height:1.2}
+.lecke-gombok{display:flex;flex-wrap:wrap;gap:8px}
+.lecke-gombok .knopf{flex:0 1 auto}
+.fajl{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:12px 0}
+.fajl progress{width:100%;height:14px;accent-color:var(--gold-d)}
+.fajl label.knopf{cursor:pointer}
+.versteckt{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden}
+label.knopf:focus-within{outline:3px solid var(--focus);outline-offset:3px}
+summary{cursor:pointer;font-weight:600;display:flex;align-items:center;min-height:44px;color:var(--ink)}
+details.karte>form{margin-top:18px}
+#app form{max-width:680px;margin-left:auto;margin-right:auto}
+#app form .knopf{max-width:100%}
+#app .feld{margin:0 0 18px}
+#app label.widerruf-geprueft{display:flex;align-items:flex-start;gap:12px;min-height:44px;line-height:1.5}
+#app textarea{min-height:115px;resize:vertical}
+#app h2{margin-top:28px}
+#app>.karte .zeile{margin:8px 0}
+.kesz-bereich{margin-top:24px}
+.meldung.ok,.meldung.rot{position:relative;top:auto}
+@media(max-width:559px){
+ #app{padding:0 14px 56px}
+ #app>.kopf{margin:0 -14px 28px;padding:6px 14px 0;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:42px auto;column-gap:12px;row-gap:0;align-items:center}
+ #app>.kopf .admin-marke{grid-column:1/-1;grid-row:1;justify-self:center;min-width:0}
+ .admin-marke img{height:36px;max-width:100%;object-fit:contain}
+ #app>.kopf h1{grid-column:1;grid-row:2;min-width:0;overflow-wrap:anywhere;font-size:clamp(20px,5.5vw,24px);line-height:1.2;margin:0;padding:8px 0}
+ #app>.kopf>.knopf{grid-column:2;grid-row:2;justify-self:end;min-height:44px;padding:8px 12px;font-size:12px;letter-spacing:.08em}
+ #app>.kopf h1:last-child{grid-column:1/-1;text-align:center}
+ #app>.karte:not(.formular-kartya){padding:20px}
+ .lecke{padding:18px}
+ .lecke-gombok .knopf{font-size:10.5px;letter-spacing:.08em}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
+
+/* Scheibe 12: Nur Admin-Erklaervideo, gleiche Karten und lokale Farben. */
+.admin-fej-akciok{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap}
+#app>.karte.admin-video-bereich{width:100%;max-width:720px;margin:0 auto 28px;padding:26px;min-width:0}
+.admin-video-bereich h2{margin:0 0 8px;font-size:clamp(29px,3.4vw,42px)}
+.admin-video-hinweis{margin:0 0 18px;color:var(--text-second)}
+.admin-video{display:block;width:100%;height:auto;aspect-ratio:16/9;max-width:100%;border-radius:12px;background:var(--night);object-fit:contain}
+@media(max-width:559px){
+ #app>.kopf .admin-fej-akciok{grid-column:2;grid-row:2;justify-self:end;gap:6px;flex-wrap:wrap}
+ #app>.kopf .admin-fej-akciok .knopf{font-size:11px;letter-spacing:.04em;min-height:44px;padding:8px 10px}
+ #app>.karte.admin-video-bereich{max-width:100%;padding:18px;margin-bottom:22px}
+ .admin-video-bereich h2{font-size:30px}
+}
+
+/* Scheibe 13 */
+.admin-vorschau{max-width:100%;overflow-wrap:anywhere}
+.admin-vorschau-bild,.admin-vorschau-video{display:block;width:min(100%,560px);height:auto;aspect-ratio:16/9;object-fit:cover;border-radius:12px;background:var(--ivory);border:1px solid var(--line);margin:14px 0}
+.admin-vorschau-video{background:var(--night)}
+.admin-vorschau .fajl{align-items:center;gap:12px}
+.admin-vorschau input[type=file]{max-width:100%}
+
+/* Scheibe 15: Datensparsame Ereignisliste, mobil ohne Quer-Scrollen. */
+.ereignis-bereich{min-width:0;max-width:100%;overflow-wrap:anywhere}
+.ereignis-filter{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr));gap:14px;align-items:end}
+.ereignis-filter .feld{min-width:0}
+.ereignis-export,.ereignis-navigation{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:20px 0}
+.ereignis-navigation{justify-content:center}
+.ereignis-karte{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:16px 20px;margin:10px 0;min-width:0}
+.ereignis-karte p{margin:4px 0;overflow-wrap:anywhere}
+.ereignis-titel{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;color:var(--ink)}
+.ereignis-titel strong{color:var(--gold-d)}
+@media(max-width:559px){.ereignis-karte{padding:14px}.ereignis-export .knopf{flex:1 1 130px}.ereignis-navigation .knopf{min-height:44px}}
+
+/* Scheibe 30: identische Mindest-Tippflaeche im Admin. */
+#app .jelszo-auge{min-height:44px;min-width:44px}
+
+/* Scheibe 31: große Kurs-Texte sicher ohne Überlauf einfügen und kopieren. */
+.kurspaket-text{width:100%;max-width:100%;min-width:0;min-height:230px;resize:vertical;overflow-wrap:anywhere;white-space:pre-wrap}
+.kurspaket-import{max-width:100%;min-width:0}
+.kurspaket-import .knopf{min-height:44px;max-width:100%}
+
+.sprachwahl{display:flex;gap:2px;align-items:center;margin-left:14px}.sprachwahl button{border:1px solid transparent;background:none;min-height:44px;min-width:44px;padding:0 8px;color:var(--ink);font:600 12px var(--font-body);letter-spacing:.06em;cursor:pointer;border-radius:8px}.sprachwahl button:hover{text-decoration:underline}.sprachwahl button.aktiv{border-color:var(--gold-d);cursor:default}
+.kpi-reihe{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:0 0 18px}
+.kpi{background:var(--white);border:1px solid var(--kpi-border);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:4px}
+.kpi-wert{font:700 24px/1.1 var(--font-head,serif);color:var(--kpi-val)}
+.kpi-titel{font-size:13px;color:var(--kpi-label)}
+.kpi-warn{border-color:var(--warn-border);background:var(--warn-bg)}
+.admin-haupt{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin:0 0 20px}
+.admin-haupt .knopf{margin:0}
+.admin-werkzeuge{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:26px 0 0;padding-top:16px;border-top:1px solid var(--line)}
+.admin-werkzeuge .knopf{margin:0}
+.ereignis-tabelle-box{overflow-x:auto;background:var(--white);border:1px solid var(--line);border-radius:14px;margin:10px 0}
+.ereignis-tabelle{width:100%;border-collapse:collapse;font-size:14px}
+.ereignis-tabelle th{text-align:left;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink);padding:10px 12px;border-bottom:1px solid var(--gold-d);white-space:nowrap}
+.ereignis-tabelle td{padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
+.ereignis-tabelle tr:last-child td{border-bottom:0}
+.ereignis-tabelle .nowrap{white-space:nowrap}.ereignis-tabelle .rechts{text-align:right}.ereignis-tabelle .umbruch{overflow-wrap:anywhere}
+.ereignis-tabelle strong{color:var(--gold-d);font-weight:600}
+
+.ereignis-tabelle .plakette{white-space:nowrap;padding:3px 10px;font-size:10px}
+#app>.kurskarte{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:2px 18px;padding:14px 22px;margin:10px 0}#app>.kurskarte .zeile{grid-column:1;grid-row:1;justify-content:flex-start;gap:14px}#app>.kurskarte h2{font-size:22px;margin:0}#app>.kurskarte>p{grid-column:1;grid-row:2;margin:0}#app>.kurskarte>.knopf{grid-column:2;grid-row:1/3;margin:0;align-self:center}@media(max-width:559px){#app>.kurskarte{grid-template-columns:1fr}#app>.kurskarte>.knopf{grid-column:1;grid-row:auto;margin-top:8px}}
+
+/* B5: schmale Bildschirme: jedes Ereignis als kompakte Karte (Datum, Typ, Betrag, Status zuerst); Desktop-Tabelle unveraendert */
+@media(max-width:640px){
+ .ereignis-tabelle-box{overflow:visible;background:transparent;border:0}
+ .ereignis-tabelle,.ereignis-tabelle tbody,.ereignis-tabelle tr,.ereignis-tabelle td{display:block;width:100%}
+ .ereignis-tabelle thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+ .ereignis-tabelle tr{display:flex;flex-wrap:wrap;gap:4px 12px;background:var(--white);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:10px 0}
+ .ereignis-tabelle td{border:0;padding:0;overflow-wrap:normal;word-break:normal;hyphens:auto}
+ .ereignis-tabelle td::before{content:attr(data-label);display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--label-muted);margin-bottom:1px}
+ .ereignis-tabelle td[data-label]:nth-child(1){order:1;flex:1 1 100%;font-weight:600}
+ .ereignis-tabelle td:nth-child(2){order:2;flex:1 1 45%}
+ .ereignis-tabelle td:nth-child(4){order:3;flex:1 1 45%;text-align:left}
+ .ereignis-tabelle td:nth-child(6){order:4;flex:1 1 100%;margin-top:2px}
+ .ereignis-tabelle td:nth-child(3){order:5;flex:1 1 100%}
+ .ereignis-tabelle td:nth-child(5){order:6;flex:1 1 100%;overflow-wrap:anywhere;font-size:13px}
+ .ereignis-tabelle .plakette{font-size:12px}
+}
+
+/* B5: Kennzahlen: lesbarere Beschriftungen */
+.kpi-titel{font-size:14px;font-weight:600;color:var(--kpi-title)}
+.kpi-hilfe{font-size:12.5px;line-height:1.35;color:var(--kpi-help)}
+.kpi-wert{overflow-wrap:anywhere}
+.plakette{font-size:12px}
+
+/* B7: Ereigniskarten kompakter, Export-Knoepfe gross und einzeilig */
+@media(max-width:640px){
+ .ereignis-tabelle tr{gap:2px 10px;padding:8px 12px;margin:6px 0;border-radius:12px}
+ .ereignis-tabelle td::before{font-size:11px;margin-bottom:0;line-height:1.2}
+ .ereignis-tabelle td{line-height:1.3;font-size:14px}
+ .ereignis-tabelle td[data-label]:nth-child(1){font-size:13.5px}
+ .ereignis-tabelle td:nth-child(6){margin-top:0}
+ .ereignis-export{flex-wrap:nowrap;gap:10px;margin:14px 0}
+ .ereignis-export .knopf{flex:1 1 0;min-height:52px;font-size:15px;white-space:nowrap;padding:0 12px}
+}
+@media(max-width:640px){
+ .ereignis-tabelle td::before{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+ .ereignis-tabelle td{position:relative}
+ .ereignis-tabelle td[data-label]:nth-child(1){order:1;flex:1 1 100%;font-size:12.5px;color:var(--label-muted);font-weight:500}
+ .ereignis-tabelle td:nth-child(2){order:2;flex:1 1 0;min-width:0}
+ .ereignis-tabelle td:nth-child(4){order:3;flex:0 0 auto;margin-left:auto;font-weight:600}
+ .ereignis-tabelle td:nth-child(6){order:4;flex:1 1 100%}
+ .ereignis-tabelle td:nth-child(3){order:5;flex:1 1 100%}
+ .ereignis-tabelle td:nth-child(5){order:6;flex:1 1 100%;font-size:12.5px;color:var(--label-muted)}
+ .ereignis-tabelle tr{gap:1px 10px;padding:8px 12px}
+}
+@media(max-width:640px){.ereignis-export .knopf{min-width:0;letter-spacing:.02em;text-transform:none;font-size:15px;padding:0 6px}}
+
+/* B9: Demo-Banner */
+.demo-banner{margin:0;padding:10px 16px;text-align:center;font-weight:600;background:var(--warn-bg);border-bottom:2px solid var(--warn-border);color:var(--kpi-title);position:sticky;top:0;z-index:20}
+
+/* B9: festes Abstands-System (Variablen), gleiche Werte wie kunde.css */
+:root{--sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-5:24px;--sp-6:32px;--sp-7:48px;--radius-m:14px;--radius-l:18px;--kpi-border:#eadfc4;--kpi-val:#1a1405;--kpi-label:#6b5a2b;--warn-border:#d98c1f;--warn-bg:#fff6e5;--label-muted:#4a4f57;--kpi-title:#4a3d14;--kpi-help:#5b5230;--gold-m:#8e702d;--knopf-text:#000000}
+.kpi-reihe{gap:var(--sp-3);margin:0 0 var(--sp-5)}
+.kpi{padding:var(--sp-3) var(--sp-4);border-radius:var(--radius-m);gap:var(--sp-1)}
+.ereignis-bereich{padding:var(--sp-5)}
+.ereignis-filter{gap:var(--sp-4)}
+.ereignis-export,.ereignis-navigation{gap:var(--sp-3);margin:var(--sp-5) 0}
+@media(max-width:640px){.ereignis-bereich{padding:var(--sp-4)}.ereignis-export,.ereignis-navigation{margin:var(--sp-4) 0}}
+
+.marke-muster { background:var(--ivory);color:var(--ink);padding:1rem; }
+.marke-muster-kopf { background:var(--night);color:var(--text-on-dark);padding:1rem;display:flex;gap:1rem;align-items:center; }
+.marke-mail-vorschau { width:100%;height:40rem;border:1px solid var(--line); }
+.marke-gesamtvorschau [hidden] { display:none; }
+
+.marke-gesamtvorschau { --grad:linear-gradient(135deg,var(--gold),var(--gold-m)); }
+
+/* S1: Shop-Hero in der bestehenden Markenvorschau */
+.marke-muster .hero{position:relative;isolation:isolate;background:var(--black);color:var(--text-on-dark);text-align:center;padding:64px 20px;overflow-wrap:anywhere}
+.marke-muster .hero-belso{position:relative;max-width:1060px;margin:auto;min-width:0}
+.marke-muster .hero h3{font-size:clamp(26px,4vw,42px);margin:0 auto;max-width:21ch;color:inherit}
+.marke-muster .hero .lead{font-size:18px;max-width:54ch;margin:24px auto 0;color:inherit}
+.marke-muster .hero-banner{min-height:300px;display:grid;place-items:center}
+.marke-muster .hero-banner-bild{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-1}
+.marke-muster .hero-banner .hero-belso{background:var(--hero-overlay);color:var(--text-on-dark);padding:24px;max-width:100%;box-sizing:border-box}
+.marke-startseite fieldset{min-width:0;margin:20px 0;border:1px solid var(--line);padding:16px}
+.marke-startseite input{max-width:100%;box-sizing:border-box}
+.marke-startseite :focus-visible,.marke-gesamtvorschau :focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+@media(max-width:600px){.marke-muster .hero{padding:40px 12px}.marke-muster .hero-banner .hero-belso{padding:20px 12px}}
+
+/* K1: shared controls come from kunde.css. */
+.k1-kategorien .k1-feld{flex-basis:240px}
+.k1-seiten{margin-block:20px}
+
+.s2-admin{overflow-wrap:anywhere}
+.s2-admin .knopf{max-width:100%;white-space:normal}
+
+/* E4a: Einrichtungsassistent */
+:root{--einr-text:var(--ink);--einr-linie:var(--line);--einr-akzent:var(--ink);--einr-flaeche:var(--white)}
+.einr-kopf,.einr-liste,.einr-navigation{max-width:680px;overflow-wrap:anywhere}
+.einr-kopf{margin:24px 0}
+.einr-kopf h1{margin:8px 0 20px;line-height:1.25}
+.einr-fortschritt{display:block;width:100%;max-width:680px;height:16px;accent-color:var(--einr-akzent);background:var(--einr-linie);border:0;border-radius:8px;overflow:hidden}
+.einr-fortschritt::-webkit-progress-bar{background:var(--einr-linie)}
+.einr-fortschritt::-webkit-progress-value{background:var(--einr-akzent)}
+.einr-fortschritt::-moz-progress-bar{background:var(--einr-akzent)}
+.einr-liste{padding-left:28px}
+.einr-liste li{padding:12px 0;border-bottom:1px solid var(--einr-linie)}
+.einr-status{display:block;color:var(--einr-text);font-weight:500}
+.feldhilfe{color:var(--einr-text);font-size:1rem;overflow-wrap:anywhere}
+.einr-navigation{display:flex;flex-wrap:wrap;gap:12px 24px;margin:24px 0}
+.einr-navigation a{padding:8px 0}
+.einr-navigation a:focus-visible,.einr-liste a:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+.einr-logo{max-height:80px}
+#app .einr-kopf~form .knopf{max-width:100%;white-space:normal;overflow-wrap:anywhere;margin:8px 0}
+#stripe-webhook-adresse{overflow-wrap:anywhere}
+
+/* E4b: Fehlertexte und Navigation passen auch auf schmale Bildschirme. */
+.einr-fehlerseite{max-width:680px;min-width:0;overflow-wrap:anywhere;color:var(--einr-text)}
+
+.einr-abschluss{min-width:0;overflow-wrap:anywhere;color:var(--ink)}
+.einr-abschluss-aktionen:not([hidden]){display:flex;flex-direction:column;align-items:flex-start;gap:var(--sp-4)}
+.einr-abschluss-aktionen .knopf{box-sizing:border-box;max-width:100%;white-space:normal}
+
+/* E5: Aufklappbare Einrichtungshilfe */
+.einr-anleitung{box-sizing:border-box;max-width:100%;min-width:0;margin:var(--sp-4) 0;padding:var(--sp-3);color:var(--ink);background:var(--white);border:1px solid var(--einr-linie);border-radius:var(--radius-m);overflow-wrap:anywhere}
+.einr-anleitung summary{box-sizing:border-box;min-height:48px;padding:var(--sp-3) 0;font-weight:600;cursor:pointer;line-height:1.5}
+.einr-anleitung summary:focus-visible,.einr-anleitung a:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.einr-anleitung ol{padding-left:var(--sp-5);line-height:1.6}
+.einr-anleitung li{margin:var(--sp-3) 0}
+.einr-anleitung a{color:var(--ink);text-decoration:underline}
+
+.einr-naechste{min-width:0;color:var(--ink);background:var(--white);overflow-wrap:anywhere}
+.einr-naechste ul{display:flex;flex-wrap:wrap;gap:var(--sp-3);padding:0;list-style:none}
+.einr-naechste li{min-width:0;max-width:100%}
+.einr-naechste .knopf{box-sizing:border-box;min-height:48px;max-width:100%;white-space:normal;overflow-wrap:anywhere}
+.einr-naechste :focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+
+/* P1: Eindeutige Aktionen und getrennte Abschlussprüfungen. */
+#app .knopf-sekundaer,#app .einr-textlink{box-sizing:border-box;min-height:48px;max-width:100%;padding:12px 16px;font:inherit;font-size:1rem;white-space:normal;overflow-wrap:anywhere;cursor:pointer;color:var(--ink);background:var(--white);border:1px solid var(--line);border-radius:var(--radius-m)}
+#app .einr-textlink{border:0;background:transparent;text-decoration:underline}
+#app .knopf-sekundaer:focus-visible,#app .einr-textlink:focus-visible,.einr-pruefliste a:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+.einr-anleitung{max-width:680px;font-size:1rem}
+.einr-anleitung summary{display:list-item;font-weight:400}
+.einr-anleitung-block{border-left:3px solid var(--einr-linie);padding:var(--sp-3);margin-block:var(--sp-4)}
+.einr-pruefliste{max-width:680px;min-width:0;overflow-wrap:anywhere;margin-block:var(--sp-5);color:var(--ink)}
+.einr-pruefliste ul{list-style:none;padding:0}
+.einr-pruefliste li{box-sizing:border-box;padding:var(--sp-4);margin-block:var(--sp-3);border:1px solid var(--line);border-radius:var(--radius-m)}
+.einr-pruefliste .bericht-rot{border:3px solid var(--warn-border);background:var(--warn-bg)}
+.einr-pruefstatus{display:block;font-size:1.125rem;margin-bottom:var(--sp-2)}
+.einr-pruefliste a{display:inline-flex;align-items:center;box-sizing:border-box;min-height:48px;padding:var(--sp-3);color:var(--ink)}
+/* P2 (18.11.2026): schmale Spalte im breiten #app bisher linksbuendig, grosse Leerflaeche rechts -- jetzt zentriert. */
+.einr-kopf,.einr-liste,.einr-navigation,.einr-fehlerseite,.einr-abschluss,.einr-anleitung,.einr-pruefliste{margin-left:auto;margin-right:auto}
+.einr-optional li{border:0;border-bottom:1px solid var(--line)}
+.einr-optional .einr-pruefstatus{font-size:1rem;font-weight:400}
+
+/* L1: begrenzte Listen, bedienbar auch auf schmalen Bildschirmen. */
+.liste-zeilen{min-width:0;max-width:100%;overflow-wrap:anywhere}
+#app .liste-mehr{min-height:48px;max-width:100%;white-space:normal;overflow-wrap:anywhere}
+#app .liste-mehr:focus-visible,.liste-zeilen>[tabindex="-1"]:focus{outline:2px solid var(--ink);outline-offset:3px}
