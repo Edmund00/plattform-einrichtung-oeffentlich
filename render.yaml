@@ -3,8 +3,12 @@
 # Zwei Punkte, die der Plan als "noch zu klaeren" markiert hatte, sind jetzt anhand des echten Codes geklaert:
 # - DB_DATEI/DATEI_ORDNER default in konfig.mjs auf RELATIVE Pfade ('daten/lern-app.db', 'daten/dateien') --
 #   die muessen explizit auf den Festplatten-Mount zeigen, sonst verliert der Kunde seine Daten bei jedem Neustart.
-# - BASE_URL bewusst sync:false (Kunde traegt die von Render zugewiesene Adresse selbst ein), NICHT fromService:
-#   konfig.mjs verlangt ein vollstaendiges Schema (https://...), eine blosse Host-Angabe wuerde die Pruefung nicht bestehen.
+# - F-321-FIX (19.11.2026, nach echtem Live-Test): BASE_URL ist HIER NICHT MEHR ALS FELD vorhanden. Der Kunde musste
+#   die Adresse vorher raten; Render weist bei Namenskollision aber eine ANDERE Adresse zu, der Login scheiterte dann
+#   mit 403 (P14-Origin-Pruefung), ohne erkennbaren Grund fuer den Kunden. konfig.mjs liest jetzt automatisch
+#   RENDER_EXTERNAL_URL (von Render fuer jeden Web-Dienst automatisch gesetzt, render.com/docs/environment-variables,
+#   19.11.2026 geprueft) -- BASE_URL bleibt im Code nur noch Rueckfall fuer Fremd-Hosting oder eine spaeter eigene
+#   Domain, wird dann ueber den Einrichtungsassistenten/die Admin-Verwaltung gesetzt, nicht mehr im Blueprint-Formular.
 # RESEND_API_KEY/MAIL_FROM nach ChatGPT-Pruefung Nr 289 ergaenzt (P1: "Resend-Schluessel getrennt erfassen",
 # nicht nur Stripe+Bunny) -- beide OPTIONAL (konfig.mjs: ohne RESEND_API_KEY startet die App trotzdem,
 # nur Mailversand ist aus; MAIL_FROM ist generisch pro Kunde/Domain, nicht an Edmunds Domain gebunden,
@@ -53,7 +57,5 @@ services:
         generateValue: true
       - key: EINRICHTUNGSMODUS
         value: '1'
-      - key: BASE_URL
-        sync: false
       - key: ADMIN_ERLAUBT
         sync: false

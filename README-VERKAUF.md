@@ -1,17 +1,22 @@
 # Eigene Kopie auf Render.com einrichten
 
 Dieser Knopf erstellt eine eigene, unabhängige Kopie dieser Plattform in deinem eigenen Render-Konto.
+Der Knopf zeigt auf die ÖFFENTLICHE Verkaufskopie `Edmund00/plattform-einrichtung-oeffentlich` (Stand
+c17b29a, ein einziger Commit, ohne unsere interne Entwicklungsgeschichte) — das echte Entwickler-Repo
+bleibt privat. Syntax wörtlich aus Renders eigener "Deploy to Render"-Doku (Beleg: Abschnitt 1.2 des Plans).
 
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Edmund00/plattform-einrichtung-oeffentlich)
 
-Render fragt dich beim Erstellen nur nach zwei eigenen Werten: `BASE_URL` (deine von Render zugewiesene
-Adresse) und `ADMIN_ERLAUBT` (deine Admin-E-Mail-Adresse). Stripe, Bunny und Resend trägst du NICHT hier
-ein, sondern erst später, bequem im Browser (siehe unten) — bewusst so eingerichtet, damit deine Kopie
-nach dem Deploy erst einmal in einem geschützten Einrichtungsmodus startet.
+Render fragt dich beim Erstellen nur nach einem eigenen Wert: `ADMIN_ERLAUBT` (deine Admin-E-Mail-Adresse).
+Stripe, Bunny und Resend trägst du NICHT hier ein, sondern erst später, bequem im Browser (siehe unten) —
+bewusst so eingerichtet, damit deine Kopie nach dem Deploy erst einmal in einem geschützten Einrichtungsmodus
+startet. Deine Adresse ermittelt deine Kopie seit dem 19.11.2026 automatisch (Render stellt sie selbst
+bereit) — du musst nichts raten oder eintragen.
 
 **Tipp vor dem Klick:** Wähle im Blueprint-Formular selbst einen Namen für deinen Dienst — daraus ergibt
 sich deine Adresse: `https://<dein-name>.onrender.com`. Ist der Name schon vergeben, wählt Render
-automatisch eine andere Adresse; die steht dann oben auf der Render-Seite deines Dienstes.
+automatisch eine andere Adresse; die steht dann oben auf der Render-Seite deines Dienstes — deine Kopie
+findet diese Adresse selbst, ohne dass du sie irgendwo eintragen musst.
 
 ## Deinen ersten Admin anlegen (kein Terminal, keine Kommandozeile nötig)
 Nach dem Deploy läuft deine Kopie zunächst in einem geschützten Einrichtungsmodus, bis du deinen ersten
@@ -65,5 +70,5 @@ du weißt genau, was sich dadurch ändert — Render könnte dabei Einstellungen
 erneut anwenden (Quelle: render.com/docs/infrastructure-as-code, "Render applies the new configuration
 to the existing resource"). Deine Stripe-/Bunny-/Resend-Schlüssel liegen NICHT in Render, sondern
 verschlüsselt in deiner eigenen Datenbank (vom Assistenten gespeichert) — "Manual Sync" kann sie also
-gar nicht betreffen. Deine Render-eigenen Werte (`BASE_URL`, `ADMIN_ERLAUBT`) bleiben dabei laut
-Render-Dokumentation erhalten.
+gar nicht betreffen. Dein Render-eigener Wert (`ADMIN_ERLAUBT`) bleibt dabei laut Render-Dokumentation
+erhalten.

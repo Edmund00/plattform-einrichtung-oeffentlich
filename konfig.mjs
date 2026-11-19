@@ -3,7 +3,7 @@
 // nie ihren Wert (so landet nie ein Schlüssel im Log). Kein dotenv, keine Datei: nur process.env.
 // Alle Variablen mit Zweck und Beispiel: docs/UMGEBUNG.md
 //
-// Gelesen werden: STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, BASE_URL, PORT, HOST, DB_DATEI, DATEI_ORDNER, MAX_UPLOAD_MB, NODE_ENV, TRUST_PROXY.
+// Gelesen werden: STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, BASE_URL, RENDER_EXTERNAL_URL, PORT, HOST, DB_DATEI, DATEI_ORDNER, MAX_UPLOAD_MB, NODE_ENV, TRUST_PROXY.
 // (ADMIN_PASSWORT liest nur das Skript tools/admin-anlegen.mjs, nicht der Server.)
 
 import { randomBytes } from 'node:crypto';
@@ -160,9 +160,16 @@ export function ladeKonfig(env = process.env, optionen = {}) {
   }
 
   // BASE_URL: öffentliche Adresse (bestimmt den Herkunftsschutz und die Rückkehr-Adressen von Stripe)
+  // F-321 (19.11.2026, echter Live-Test): BASE_URL musste der Kunde VOR dem ersten Deploy raten, Render weist
+  // bei Namenskollision aber eine ANDERE Adresse zu -> Login scheitert mit 403, ohne erkennbaren Grund.
+  // Render setzt fuer jeden Web-Dienst automatisch RENDER_EXTERNAL_URL auf die tatsaechliche Adresse
+  // (render.com/docs/environment-variables, Abschnitt RENDER_EXTERNAL_URL, 19.11.2026 geprueft). Deshalb:
+  // BASE_URL hat weiterhin Vorrang, wenn explizit gesetzt (eigene Domain, Fremd-Hosting, bestehende Installationen
+  // unveraendert) -- NUR wenn BASE_URL fehlt, wird RENDER_EXTERNAL_URL automatisch verwendet.
   let baseUrl = `http://localhost:${port}`;
-  if (wert('BASE_URL')) {
-    const b = wert('BASE_URL');
+  const baseUrlRoh = wert('BASE_URL') || wert('RENDER_EXTERNAL_URL');
+  if (baseUrlRoh) {
+    const b = baseUrlRoh;
     if (!/^https?:\/\//.test(b)) fehler.push('BASE_URL muss mit http:// oder https:// beginnen.');
     else if (b.endsWith('/')) fehler.push('BASE_URL darf nicht mit einem Schrägstrich enden.');
     else {
@@ -176,7 +183,7 @@ export function ladeKonfig(env = process.env, optionen = {}) {
       else baseUrl = klein;
     }
   } else if (produktion) {
-    fehler.push('BASE_URL fehlt (im Betrieb Pflicht: öffentliche Adresse mit https://, ohne Schrägstrich am Ende).');
+    fehler.push('BASE_URL fehlt (im Betrieb Pflicht: öffentliche Adresse mit https://, ohne Schrägstrich am Ende, oder RENDER_EXTERNAL_URL muss gesetzt sein).');
   }
   const secureCookies = baseUrl.startsWith('https://');
 
