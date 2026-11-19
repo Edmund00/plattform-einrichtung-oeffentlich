@@ -1,8 +1,8 @@
 ﻿{
-  "name": "stripe-lern-app",
+  "name": "musterakademie",
   "version": "1.0.0",
   "private": true,
-  "description": "Kleine Uebungs-App: Stripe Checkout, Abo, Webhook, Kundenportal (nur Testmodus)",
+  "description": "Musterakademie: selbst betriebene Kursverkaufs-Plattform (Stripe Checkout, Abos, Webhooks, Kundenportal, Bunny-Stream-Videos)",
   "type": "module",
   "scripts": {
     "start": "node server.mjs"

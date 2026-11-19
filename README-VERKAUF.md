@@ -1,9 +1,6 @@
 # Eigene Kopie auf Render.com einrichten
 
 Dieser Knopf erstellt eine eigene, unabhängige Kopie dieser Plattform in deinem eigenen Render-Konto.
-Der Knopf zeigt auf die ÖFFENTLICHE Verkaufskopie `Edmund00/plattform-einrichtung-oeffentlich` (Stand
-c17b29a, ein einziger Commit, ohne unsere interne Entwicklungsgeschichte) — das echte Entwickler-Repo
-bleibt privat. Syntax wörtlich aus Renders eigener "Deploy to Render"-Doku (Beleg: Abschnitt 1.2 des Plans).
 
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Edmund00/plattform-einrichtung-oeffentlich)
 
