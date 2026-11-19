@@ -21,6 +21,8 @@ function antwortNeutral(res, l) {
 }
 
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+// Fuer Text, der als JS-Zeichenkette in ein <script> eingebettet wird (kein HTML-Escaping -- sonst erscheinen &#39; etc. woertlich).
+const escJs = s => String(s).replace(/[\\<>&']/g, c => ({ '\\': '\\\\', "'": "\\'", '<': '\\u003c', '>': '\\u003e', '&': '\\u0026' })[c]);
 const text = k => esc(HU['einrichtung_' + k]).replace('{MIN}', String(PASSWORT_MIN_LAENGE));
 
 // Gemeinsamer Rahmen für Erststart, Neustarthinweis und Anmeldung; Standardfarben ohne marke.css.
@@ -28,8 +30,23 @@ export function einrichtungsSeite(titel, inhalt, pfad, klasse = '') {
   const wahl = ['de', 'hu', 'en'].map(l => '<a class="knopf klein hell" href="' + pfad + '?lang=' + l + '" hreflang="' + l + '"' + (sprache() === l ? ' aria-current="page"' : '') + '>' + l.toUpperCase() + '</a>').join(' ');
   return '<!doctype html><html lang="' + sprache() + '"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex"><title>' + text(titel) + '</title><link rel="stylesheet" href="/fonts/fonts.css"><link rel="stylesheet" href="/kunde.css"><link rel="stylesheet" href="/admin/admin.css"></head><body><div id="app"><header class="kopf"><h1>' + text('name') + '</h1><nav aria-label="' + text('sprache') + '">' + wahl + '</nav></header><main class="karte formular-kartya' + klasse + '"><h2>' + text(titel) + '</h2>' + inhalt + '</main></div></body></html>';
 }
-function hinweisSeite() {
-  return einrichtungsSeite('konto', '<p>' + text('hinweis') + '</p><a class="knopf" href="/anmelden?lang=' + sprache() + '">' + text('anmelden') + '</a>', '/anmelden');
+// F-45/F-319: Nach dem Erststart laeuft der Prozess noch im Setup-Modus (kennt nur /health + /einrichtung);
+// /anmelden existiert erst nach einem Neustart in den Einrichtungsmodus. Render startet einen Dienst nicht
+// automatisch neu, wenn der Prozess selbst weiterlaeuft (nur bei Health-Check-Ausfall oder manuellem Klick,
+// Quelle: render.com/docs/deploys "Restarting a service"). Deshalb: Anleitung zum manuellen Neustart + JS-Polling
+// gegen /health (meldet {modus}, kein 404 wie /anmelden hier), bis modus nicht mehr 'setup' ist, dann Weiterleitung.
+function neustartSeite() {
+  const zielAnmelden = '/anmelden?lang=' + sprache();
+  const skript = '<script>(function(){' +
+    "var ziel='" + escJs(zielAnmelden) + "';var status=document.getElementById('neustart-status');" +
+    "var aufgegeben='" + escJs(HU.einrichtung_neustart_aufgegeben) + "';" +
+    'var versuche=0;function poll(){versuche++;if(versuche>150){if(status)status.textContent=aufgegeben;return;}' +
+    "fetch('/health',{cache:'no-store'}).then(function(r){return r.json().catch(function(){return null;});}).then(function(j){" +
+    "if(j&&j.modus&&j.modus!=='setup'){window.location.href=ziel;}else{setTimeout(poll,2000);}" +
+    '}).catch(function(){setTimeout(poll,3000);});}' +
+    'setTimeout(poll,2000);' +
+    '})();</script>';
+  return einrichtungsSeite('konto', '<p>' + text('hinweis') + '</p><p>' + text('neustart_anleitung') + '</p><p role="status" id="neustart-status">' + text('neustart_warten') + '</p><a class="knopf" href="/anmelden?lang=' + sprache() + '">' + text('anmelden') + '</a>' + skript, '/anmelden');
 }
 function feld(name, typ, extra = '', hilfe = '') {
   return '<div class="feld"><label for="' + name + '">' + text(name) + '</label><input id="' + name + '" name="' + name + '" type="' + typ + '" required ' + extra + (hilfe ? ' aria-describedby="' + name + '-hilfe"' : '') + '>' + (hilfe ? '<p class="hinweis" id="' + name + '-hilfe">' + text(hilfe) + '</p>' : '') + '</div>';
@@ -129,15 +146,15 @@ export function erstelleEinrichtungsRouter({ db, erststartDateiPfad = 'daten/ERS
     // 5) Nach Abschluss ERSTSTART.txt loeschen (ausserhalb der Transaktion; Datei ist kein Teil der DB).
     loescheErststartDatei(erststartDateiPfad);
 
-    // 6) Antwort: Hinweisseite (kein Redirect – /anmelden existiert im Setup-Modus nicht).
+    // 6) Antwort: Neustart-Seite (kein Redirect – /anmelden existiert im Setup-Modus nicht, erst nach Neustart).
     //    Keine Sitzung vor Abschluss (Spez-7); lang ist nur die Sprachwahl. Anmeldung im Einrichtungsmodus-Server.
     sichereKopfzeilen(res);
-    res.status(200).type('text/html; charset=utf-8').send(render(hinweisSeite));
+    res.status(200).type('text/html; charset=utf-8').send(render(neustartSeite));
   });
 
   router.get('/anmelden', (_req, res) => {
     sichereKopfzeilen(res);
-    res.status(200).type('text/html; charset=utf-8').send(hinweisSeite());
+    res.status(200).type('text/html; charset=utf-8').send(neustartSeite());
   });
 
   return router;

@@ -1,7 +1,7 @@
 # Bunny Stream einrichten (für Videos)
 
-Diese drei Werte brauchst du, BEVOR du den "Deploy to Render"-Knopf drückst (siehe README-VERKAUF.md).
-Trage sie dort ein, wenn Render danach fragt.
+Diese drei Werte brauchst du NACH deiner ersten Admin-Anmeldung, im Einrichtungsassistenten deiner Plattform
+(siehe README-VERKAUF.md) — nicht mehr im Render-Blueprint-Formular vor dem Deploy.
 
 ## Schritt 0: Konto anlegen
 1. Gehe zu https://dash.bunny.net/auth/register und lege ein Konto an.

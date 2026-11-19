@@ -15,6 +15,18 @@
 # Deploy-Versuch brach deshalb beim Start ab ("WIEDERGABE_GEHEIMNIS fehlt oder ist zu kurz"). generateValue
 # wie EINSTELLUNGEN_SCHLUESSEL, da der Kunde diesen Wert nie selbst braucht/sehen soll (konfig.mjs: "Nie in
 # Dateien oder im Chat speichern oder anzeigen").
+#
+# F-319-NACHTRAG (19.11.2026): Stripe/Bunny/Resend-Schluessel stehen hier bewusst NICHT mehr als Blueprint-
+# Felder. Grund (selbst lokal nachgestellt): konfig.mjs startet den geschuetzten Web-Einrichtungsweg
+# (/einrichtung, Einmal-Code, erststart.mjs) nur, wenn EINRICHTUNGSMODUS=1 UND beide Stripe-Variablen fehlen.
+# Mit Stripe-Schluesseln schon im Blueprint-Formular startet die Kopie direkt im Normalmodus, in dem es
+# /einrichtung gar nicht gibt und die Admin-Anmeldung mangels Admin fail-closed gesperrt ist -- der Kunde
+# haette dann nur noch die Render-Shell als Weg zum ersten Admin. EINRICHTUNGSMODUS=1 ist ein FESTER Wert
+# (kein sync:false): der schaltet den Setup-Modus nur frei, solange noch kein Admin existiert; sobald der
+# im Browser gebaute Einrichtungsassistent durchlaufen ist, steht instanz_zustand auf 'AKTIV' (server.mjs
+# Zeile 249) und der Normalmodus greift unabhaengig von dieser Variable (konfig.mjs: nur 'UNINITIALISIERT'
+# bzw. 'ADMIN_ERSTELLT' lesen EINRICHTUNGSMODUS ueberhaupt). Stripe/Bunny/Resend traegt der Kunde danach im
+# Admin-Bereich (Einrichtungsassistent, assistent-routen.mjs Schritt 4+) selbst ein.
 services:
   - type: web
     runtime: node
@@ -39,21 +51,9 @@ services:
         generateValue: true
       - key: WIEDERGABE_GEHEIMNIS
         generateValue: true
+      - key: EINRICHTUNGSMODUS
+        value: '1'
       - key: BASE_URL
         sync: false
       - key: ADMIN_ERLAUBT
-        sync: false
-      - key: STRIPE_SECRET_KEY
-        sync: false
-      - key: STRIPE_WEBHOOK_SECRET
-        sync: false
-      - key: BUNNY_STREAM_BIBLIOTHEK_ID
-        sync: false
-      - key: BUNNY_STREAM_API_KEY
-        sync: false
-      - key: BUNNY_STREAM_TOKEN_KEY
-        sync: false
-      - key: RESEND_API_KEY
-        sync: false
-      - key: MAIL_FROM
         sync: false
